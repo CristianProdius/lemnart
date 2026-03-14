@@ -1,12 +1,12 @@
 "use client"
 
-import Button from '@/components/ui/button';
 import Currency from '@/components/ui/currency';
 import useCart from '@/hooks/use-cart';
 import axios from 'axios';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { toast } from 'react-hot-toast';
+import { ShoppingCart } from 'lucide-react';
 
 const Summary = () => {
     const searchParams = useSearchParams();
@@ -16,11 +16,11 @@ const Summary = () => {
 
     useEffect(() => {
         if(searchParams.get('success')) {
-            toast.success("Payment completed.");
+            toast.success("Plata a fost efectuată cu succes.");
             removeAll();
         }
         if(searchParams.get("canceled")) {
-            toast.error("Something went wrong.")
+            toast.error("Ceva nu a funcționat.")
         }
     }, [searchParams, removeAll])
 
@@ -32,22 +32,38 @@ const Summary = () => {
         window.location = response.data.url
     }
 
-    return ( 
-        <div className='px-4 py-6 mt-16 rounded-lg bg-gray-50 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8'>
-            <h2 className='text-lg font-medium text-gray-900'>Order Summary</h2>
-            <div className='mt-6 space-y-4'>
-                <div className='flex items-center justify-between pt-4 border-t border-gray-200'>
-                    <div className='text-base font-medium text-gray-400'>
-                        Order Total
-                    </div>
-                    <Currency value={totalPrice} />
+    return (
+        <div className="mt-16 border border-white/10 p-6 lg:col-span-5 lg:mt-0 lg:p-8">
+            <h2
+                className="text-xs font-medium uppercase tracking-[0.3em] text-white/40"
+                style={{ fontFamily: "var(--font-barlow)" }}
+            >
+                Sumar comandă
+            </h2>
+            <div className="mt-8 space-y-4">
+                <div className="flex items-center justify-between border-t border-white/10 pt-6">
+                    <span
+                        className="text-sm text-white/50"
+                        style={{ fontFamily: "var(--font-barlow)" }}
+                    >
+                        Total
+                    </span>
+                    <span className="text-lg tabular-nums text-[var(--color-accent-light)]">
+                        <Currency value={totalPrice} />
+                    </span>
                 </div>
             </div>
-            <Button disabled={items.length === 0} className='w-full mt-6' onClick={onCheckout}>
-                Checkout
-            </Button>
+            <button
+                disabled={items.length === 0}
+                onClick={onCheckout}
+                className="mt-8 flex w-full items-center justify-center gap-3 bg-[var(--color-accent-light)] px-8 py-4 text-sm font-semibold text-[#1A1A1A] transition-all duration-200 hover:bg-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-40"
+                style={{ fontFamily: "var(--font-barlow)" }}
+            >
+                Finalizează comanda
+                <ShoppingCart size={18} />
+            </button>
         </div>
-     );
+    );
 }
- 
+
 export default Summary;
