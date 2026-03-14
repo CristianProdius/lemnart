@@ -6,26 +6,126 @@
     from 180deg at 50% 50%,
     var(--tw-gradient-stops)
   );
+
+  /* Premium Color Palette */
+  --color-background: #FAFAFA;
+  --color-foreground: #1A1A1A;
+  --color-accent: #8B6914;
+  --color-accent-light: #C8A55C;
+  --color-muted: #F5F5F0;
+  --color-border: #E5E5E0;
 }
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: var(--color-border, currentColor);
   }
 }
 
 html, body, :root {
   height: 100%;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* GPU-accelerated animated elements */
+.will-change-transform {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+/* Navbar logo transition */
+.navbar-logo {
+  color: white;
+  transition: color 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+[data-scrolled="true"] .navbar-logo {
+  color: var(--color-foreground);
+}
+
+/* Text outline effect — used by CTA section */
+.text-outline {
+  -webkit-text-stroke: 2px var(--color-foreground);
+  color: transparent;
+  transition: color 1s ease, -webkit-text-stroke-color 1s ease;
+}
+
+.text-outline.filled {
+  -webkit-text-stroke: 2px transparent;
+  color: var(--color-foreground);
+}
+
+/* Glow button pulse */
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(139, 105, 20, 0.2), 0 0 60px rgba(139, 105, 20, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(139, 105, 20, 0.4), 0 0 80px rgba(139, 105, 20, 0.2);
+  }
+}
+
+.glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* Section breathing entrance */
+.section-breathe {
+  will-change: transform;
+}
+
+/* Clip reveal for process numbers */
+.clip-reveal {
+  clip-path: inset(100% 0 0 0);
+}
+
+.clip-reveal.revealed {
+  clip-path: inset(0 0 0 0);
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-accent-light);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
+
+/* Section divider line animation */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-accent-light) 50%,
+    transparent 100%
+  );
+  transform: scaleX(0);
+  transform-origin: center;
 }

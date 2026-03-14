@@ -10,6 +10,7 @@ import PreviewModal from './../preview-modal';
 import usePreviewModal from "@/hooks/use-preview-modal";
 import { MouseEventHandler } from 'react';
 import useCart from "@/hooks/use-cart";
+import { motion } from "framer-motion";
 
 interface ProductCard {
     data: Product;
@@ -33,8 +34,12 @@ const ProductCard: React.FC<ProductCard> = ({ data }) => {
         cart.addItem(data);
     }
 
-    return ( 
-        <div onClick={handleClick} className="p-3 space-y-4 bg-white border cursor-pointer group rounded-xl">
+    return (
+        <motion.div
+            onClick={handleClick}
+            whileHover={{ y: -8, scale: 1.02 }}
+            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="p-3 space-y-4 bg-white border cursor-pointer group rounded-xl">
             {/* Images and Actions */}
             <div className="relative bg-gray-100 aspect-square rounded-xl">
                 <Image
@@ -66,7 +71,7 @@ const ProductCard: React.FC<ProductCard> = ({ data }) => {
             <div className="flex items-center justify-between">
                 <Currency value={data?.price} />
             </div>
-        </div>
+        </motion.div>
     );
 }
 
