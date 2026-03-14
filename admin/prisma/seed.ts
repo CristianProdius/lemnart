@@ -30,35 +30,35 @@ async function main() {
     },
   })
 
-  const geometricBoard = await prisma.billboard.create({
+  const clasicBoard = await prisma.billboard.create({
     data: {
       storeId,
-      label: 'Arhitectură Geometrică — Linii curate, impact vizual maxim',
-      imageUrl: 'billboards/geometric.webp',
+      label: 'Colecția Clasic — Eleganță atemporală',
+      imageUrl: 'billboards/clasic.webp',
     },
   })
 
-  const floralBoard = await prisma.billboard.create({
+  const modernBoard = await prisma.billboard.create({
     data: {
       storeId,
-      label: 'Eleganță Florală — Peste 50 de variații stilistice',
-      imageUrl: 'billboards/floral.webp',
+      label: 'Colecția Modern — Linii curate, design contemporan',
+      imageUrl: 'billboards/modern.webp',
     },
   })
 
-  const abstractBoard = await prisma.billboard.create({
+  const rusticBoard = await prisma.billboard.create({
     data: {
       storeId,
-      label: 'Seria Abstractă — Design contemporan, minimalism pur',
-      imageUrl: 'billboards/abstract.webp',
+      label: 'Colecția Rustic — Căldura lemnului natural',
+      imageUrl: 'billboards/rustic.webp',
     },
   })
 
-  const prestigioBoard = await prisma.billboard.create({
+  const minimalistBoard = await prisma.billboard.create({
     data: {
       storeId,
-      label: 'Colecția Prestigio — Clasic și Complex',
-      imageUrl: 'billboards/prestigio.webp',
+      label: 'Colecția Minimalist — Simplitate rafinată',
+      imageUrl: 'billboards/minimalist.webp',
     },
   })
 
@@ -66,35 +66,35 @@ async function main() {
 
   // ── Categories ──────────────────────────────────────────────
 
-  const geometric = await prisma.category.create({
+  const clasic = await prisma.category.create({
     data: {
       storeId,
-      billboardId: geometricBoard.id,
-      name: 'Geometric',
+      billboardId: clasicBoard.id,
+      name: 'Clasic',
     },
   })
 
-  const floral = await prisma.category.create({
+  const modern = await prisma.category.create({
     data: {
       storeId,
-      billboardId: floralBoard.id,
-      name: 'Floral',
+      billboardId: modernBoard.id,
+      name: 'Modern',
     },
   })
 
-  const abstract = await prisma.category.create({
+  const rustic = await prisma.category.create({
     data: {
       storeId,
-      billboardId: abstractBoard.id,
-      name: 'Abstract',
+      billboardId: rusticBoard.id,
+      name: 'Rustic',
     },
   })
 
-  const prestigio = await prisma.category.create({
+  const minimalist = await prisma.category.create({
     data: {
       storeId,
-      billboardId: prestigioBoard.id,
-      name: 'Prestigio',
+      billboardId: minimalistBoard.id,
+      name: 'Minimalist',
     },
   })
 
@@ -138,21 +138,21 @@ async function main() {
 
   // ── Products ────────────────────────────────────────────────
 
-  // Geometric Collection
+  // Clasic Collection
   await prisma.product.create({
     data: {
       storeId,
-      categoryId: geometric.id,
-      name: 'Mască Geometrică Diamant',
+      categoryId: clasic.id,
+      name: 'Mască Clasică Baroc',
       price: 5200,
       isFeatured: true,
       isArchived: false,
       sizeId: s100x60.id,
-      colorId: albMat.id,
+      colorId: auriuMetalic.id,
       images: {
         create: [
-          { url: 'products/geometric-diamant-1.webp' },
-          { url: 'products/geometric-diamant-2.webp' },
+          { url: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1618220179428-22790b461013?w=800&h=800&fit=crop' },
         ],
       },
     },
@@ -161,17 +161,77 @@ async function main() {
   await prisma.product.create({
     data: {
       storeId,
-      categoryId: geometric.id,
-      name: 'Mască Geometrică Hexagon',
+      categoryId: clasic.id,
+      name: 'Mască Clasică Versailles',
+      price: 6500,
+      isFeatured: true,
+      isArchived: false,
+      sizeId: s120x60.id,
+      colorId: argintiu.id,
+      images: {
+        create: [
+          { url: 'https://images.unsplash.com/photo-1615529328331-f8917597711f?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=800&h=800&fit=crop' },
+        ],
+      },
+    },
+  })
+
+  await prisma.product.create({
+    data: {
+      storeId,
+      categoryId: clasic.id,
+      name: 'Mască Clasică Regal',
+      price: 7800,
+      isFeatured: false,
+      isArchived: false,
+      sizeId: s140x60.id,
+      colorId: albMat.id,
+      images: {
+        create: [
+          { url: 'https://images.unsplash.com/photo-1617325247661-675ab4b64ae2?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=800&fit=crop' },
+        ],
+      },
+    },
+  })
+
+  await prisma.product.create({
+    data: {
+      storeId,
+      categoryId: clasic.id,
+      name: 'Mască Clasică Imperial',
+      price: 8000,
+      isFeatured: false,
+      isArchived: false,
+      sizeId: s160x60.id,
+      colorId: albLucios.id,
+      images: {
+        create: [
+          { url: 'https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=800&fit=crop' },
+        ],
+      },
+    },
+  })
+
+  console.log('[SEED] Created 4 Clasic products')
+
+  // Modern Collection
+  await prisma.product.create({
+    data: {
+      storeId,
+      categoryId: modern.id,
+      name: 'Mască Modernă Geometrică',
       price: 4800,
       isFeatured: true,
       isArchived: false,
       sizeId: s80x60.id,
-      colorId: albMat.id,
+      colorId: negruMat.id,
       images: {
         create: [
-          { url: 'products/geometric-hexagon-1.webp' },
-          { url: 'products/geometric-hexagon-2.webp' },
+          { url: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=800&h=800&fit=crop' },
         ],
       },
     },
@@ -180,17 +240,17 @@ async function main() {
   await prisma.product.create({
     data: {
       storeId,
-      categoryId: geometric.id,
-      name: 'Mască Geometrică Cuburi',
-      price: 6500,
-      isFeatured: false,
+      categoryId: modern.id,
+      name: 'Mască Modernă Hexagon',
+      price: 5500,
+      isFeatured: true,
       isArchived: false,
-      sizeId: s120x60.id,
+      sizeId: s100x60.id,
       colorId: griAntracit.id,
       images: {
         create: [
-          { url: 'products/geometric-cuburi-1.webp' },
-          { url: 'products/geometric-cuburi-2.webp' },
+          { url: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&h=800&fit=crop' },
         ],
       },
     },
@@ -199,8 +259,27 @@ async function main() {
   await prisma.product.create({
     data: {
       storeId,
-      categoryId: geometric.id,
-      name: 'Mască Geometrică Linii',
+      categoryId: modern.id,
+      name: 'Mască Modernă Cuburi',
+      price: 6200,
+      isFeatured: false,
+      isArchived: false,
+      sizeId: s120x60.id,
+      colorId: albMat.id,
+      images: {
+        create: [
+          { url: 'https://images.unsplash.com/photo-1617104678098-de229db51175?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=800&h=800&fit=crop' },
+        ],
+      },
+    },
+  })
+
+  await prisma.product.create({
+    data: {
+      storeId,
+      categoryId: modern.id,
+      name: 'Mască Modernă Linii',
       price: 7200,
       isFeatured: false,
       isArchived: false,
@@ -208,49 +287,30 @@ async function main() {
       colorId: negruMat.id,
       images: {
         create: [
-          { url: 'products/geometric-linii-1.webp' },
-          { url: 'products/geometric-linii-2.webp' },
+          { url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&h=800&fit=crop' },
         ],
       },
     },
   })
 
-  console.log('[SEED] Created 4 Geometric products')
+  console.log('[SEED] Created 4 Modern products')
 
-  // Floral Collection
+  // Rustic Collection
   await prisma.product.create({
     data: {
       storeId,
-      categoryId: floral.id,
-      name: 'Mască Florală Trandafir',
-      price: 5500,
-      isFeatured: true,
-      isArchived: false,
-      sizeId: s100x60.id,
-      colorId: albLucios.id,
-      images: {
-        create: [
-          { url: 'products/floral-trandafir-1.webp' },
-          { url: 'products/floral-trandafir-2.webp' },
-        ],
-      },
-    },
-  })
-
-  await prisma.product.create({
-    data: {
-      storeId,
-      categoryId: floral.id,
-      name: 'Mască Florală Crin',
-      price: 5000,
+      categoryId: rustic.id,
+      name: 'Mască Rustică Stejar',
+      price: 4500,
       isFeatured: true,
       isArchived: false,
       sizeId: s80x60.id,
       colorId: bejNisip.id,
       images: {
         create: [
-          { url: 'products/floral-crin-1.webp' },
-          { url: 'products/floral-crin-2.webp' },
+          { url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1616046229478-9901c5536a45?w=800&h=800&fit=crop' },
         ],
       },
     },
@@ -259,17 +319,36 @@ async function main() {
   await prisma.product.create({
     data: {
       storeId,
-      categoryId: floral.id,
-      name: 'Mască Florală Frunze',
+      categoryId: rustic.id,
+      name: 'Mască Rustică Nuc',
+      price: 5000,
+      isFeatured: false,
+      isArchived: false,
+      sizeId: s100x60.id,
+      colorId: verdeOlive.id,
+      images: {
+        create: [
+          { url: 'https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1615876234886-fd9a39fda97f?w=800&h=800&fit=crop' },
+        ],
+      },
+    },
+  })
+
+  await prisma.product.create({
+    data: {
+      storeId,
+      categoryId: rustic.id,
+      name: 'Mască Rustică Frunze',
       price: 6800,
       isFeatured: false,
       isArchived: false,
       sizeId: s120x60.id,
-      colorId: verdeOlive.id,
+      colorId: bejNisip.id,
       images: {
         create: [
-          { url: 'products/floral-frunze-1.webp' },
-          { url: 'products/floral-frunze-2.webp' },
+          { url: 'https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?w=800&h=800&fit=crop' },
         ],
       },
     },
@@ -278,8 +357,8 @@ async function main() {
   await prisma.product.create({
     data: {
       storeId,
-      categoryId: floral.id,
-      name: 'Mască Florală Bujor',
+      categoryId: rustic.id,
+      name: 'Mască Rustică Ramuri',
       price: 7500,
       isFeatured: false,
       isArchived: false,
@@ -287,49 +366,49 @@ async function main() {
       colorId: albMat.id,
       images: {
         create: [
-          { url: 'products/floral-bujor-1.webp' },
-          { url: 'products/floral-bujor-2.webp' },
+          { url: 'https://images.unsplash.com/photo-1600585153490-76fb20a32601?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=800&h=800&fit=crop' },
         ],
       },
     },
   })
 
-  console.log('[SEED] Created 4 Floral products')
+  console.log('[SEED] Created 4 Rustic products')
 
-  // Abstract Collection
+  // Minimalist Collection
   await prisma.product.create({
     data: {
       storeId,
-      categoryId: abstract.id,
-      name: 'Mască Abstractă Val',
-      price: 4500,
+      categoryId: minimalist.id,
+      name: 'Mască Minimalistă Val',
+      price: 4200,
+      isFeatured: true,
+      isArchived: false,
+      sizeId: s60x40.id,
+      colorId: albMat.id,
+      images: {
+        create: [
+          { url: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1617325247661-675ab4b64ae2?w=800&h=800&fit=crop' },
+        ],
+      },
+    },
+  })
+
+  await prisma.product.create({
+    data: {
+      storeId,
+      categoryId: minimalist.id,
+      name: 'Mască Minimalistă Cerc',
+      price: 5800,
       isFeatured: true,
       isArchived: false,
       sizeId: s80x60.id,
-      colorId: albMat.id,
-      images: {
-        create: [
-          { url: 'products/abstract-val-1.webp' },
-          { url: 'products/abstract-val-2.webp' },
-        ],
-      },
-    },
-  })
-
-  await prisma.product.create({
-    data: {
-      storeId,
-      categoryId: abstract.id,
-      name: 'Mască Abstractă Cerc',
-      price: 5800,
-      isFeatured: false,
-      isArchived: false,
-      sizeId: s100x60.id,
       colorId: negruMat.id,
       images: {
         create: [
-          { url: 'products/abstract-cerc-1.webp' },
-          { url: 'products/abstract-cerc-2.webp' },
+          { url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&h=800&fit=crop' },
         ],
       },
     },
@@ -338,17 +417,17 @@ async function main() {
   await prisma.product.create({
     data: {
       storeId,
-      categoryId: abstract.id,
-      name: 'Mască Abstractă Flux',
+      categoryId: minimalist.id,
+      name: 'Mască Minimalistă Flux',
       price: 6200,
-      isFeatured: true,
+      isFeatured: false,
       isArchived: false,
-      sizeId: s120x60.id,
+      sizeId: s100x60.id,
       colorId: griAntracit.id,
       images: {
         create: [
-          { url: 'products/abstract-flux-1.webp' },
-          { url: 'products/abstract-flux-2.webp' },
+          { url: 'https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&h=800&fit=crop' },
         ],
       },
     },
@@ -357,102 +436,23 @@ async function main() {
   await prisma.product.create({
     data: {
       storeId,
-      categoryId: abstract.id,
-      name: 'Mască Abstractă Zen',
+      categoryId: minimalist.id,
+      name: 'Mască Minimalistă Zen',
       price: 7000,
       isFeatured: false,
       isArchived: false,
-      sizeId: s140x60.id,
+      sizeId: s120x60.id,
       colorId: albLucios.id,
       images: {
         create: [
-          { url: 'products/abstract-zen-1.webp' },
-          { url: 'products/abstract-zen-2.webp' },
+          { url: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&h=800&fit=crop' },
+          { url: 'https://images.unsplash.com/photo-1615529328331-f8917597711f?w=800&h=800&fit=crop' },
         ],
       },
     },
   })
 
-  console.log('[SEED] Created 4 Abstract products')
-
-  // Prestigio Collection
-  await prisma.product.create({
-    data: {
-      storeId,
-      categoryId: prestigio.id,
-      name: 'Mască Prestigio Baroc',
-      price: 6500,
-      isFeatured: true,
-      isArchived: false,
-      sizeId: s100x60.id,
-      colorId: auriuMetalic.id,
-      images: {
-        create: [
-          { url: 'products/prestigio-baroc-1.webp' },
-          { url: 'products/prestigio-baroc-2.webp' },
-        ],
-      },
-    },
-  })
-
-  await prisma.product.create({
-    data: {
-      storeId,
-      categoryId: prestigio.id,
-      name: 'Mască Prestigio Versailles',
-      price: 7800,
-      isFeatured: true,
-      isArchived: false,
-      sizeId: s120x60.id,
-      colorId: argintiu.id,
-      images: {
-        create: [
-          { url: 'products/prestigio-versailles-1.webp' },
-          { url: 'products/prestigio-versailles-2.webp' },
-        ],
-      },
-    },
-  })
-
-  await prisma.product.create({
-    data: {
-      storeId,
-      categoryId: prestigio.id,
-      name: 'Mască Prestigio Regal',
-      price: 8000,
-      isFeatured: false,
-      isArchived: false,
-      sizeId: s140x60.id,
-      colorId: auriuMetalic.id,
-      images: {
-        create: [
-          { url: 'products/prestigio-regal-1.webp' },
-          { url: 'products/prestigio-regal-2.webp' },
-        ],
-      },
-    },
-  })
-
-  await prisma.product.create({
-    data: {
-      storeId,
-      categoryId: prestigio.id,
-      name: 'Mască Prestigio Imperial',
-      price: 7200,
-      isFeatured: false,
-      isArchived: false,
-      sizeId: s160x60.id,
-      colorId: albMat.id,
-      images: {
-        create: [
-          { url: 'products/prestigio-imperial-1.webp' },
-          { url: 'products/prestigio-imperial-2.webp' },
-        ],
-      },
-    },
-  })
-
-  console.log('[SEED] Created 4 Prestigio products')
+  console.log('[SEED] Created 4 Minimalist products')
 
   // ── Summary ─────────────────────────────────────────────────
 

@@ -1,153 +1,138 @@
 "use client"
 
-import { useRef, useCallback } from "react"
+import { useRef, useCallback, useState } from "react"
 import { useGSAP } from "@gsap/react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import Image from "next/image"
+import Link from "next/link"
 import SplitText from "@/components/ui/split-text"
+import { cn } from "@/lib/utils"
+import { Category, Product } from "@/types"
 
 gsap.registerPlugin(ScrollTrigger)
 
-const collections = [
+const collectionsData = [
     {
-        id: "1",
         name: "Clasic",
         description: "Eleganță atemporală",
         image: "/images/collection-classic.jpg",
-        href: "/category/clasic",
     },
     {
-        id: "2",
         name: "Modern",
         description: "Linii curate, design contemporan",
         image: "/images/collection-modern.jpg",
-        href: "/category/modern",
     },
     {
-        id: "3",
         name: "Rustic",
         description: "Căldura lemnului natural",
         image: "/images/collection-rustic.jpg",
-        href: "/category/rustic",
     },
     {
-        id: "4",
         name: "Minimalist",
         description: "Simplitate rafinată",
         image: "/images/collection-minimalist.jpg",
-        href: "/category/minimalist",
     },
 ]
 
-const Collections = () => {
+interface CollectionsProps {
+    categories?: Category[]
+    products?: Product[]
+}
+
+const Collections: React.FC<CollectionsProps> = ({ categories, products }) => {
     const sectionRef = useRef<HTMLElement>(null)
-    const gridRef = useRef<HTMLDivElement>(null)
-    const dividerRef = useRef<HTMLDivElement>(null)
+    const listRef = useRef<HTMLDivElement>(null)
+    const previewRef = useRef<HTMLDivElement>(null)
+    const [activePreview, setActivePreview] = useState<string | null>(null)
 
-    // Magnetic tilt per card
-    const handleMouseMove = useCallback(
-        (e: React.MouseEvent<HTMLAnchorElement>) => {
-            const card = e.currentTarget
-            const rect = card.getBoundingClientRect()
-            const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2
-            const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2
+    const handleMouseMove = useCallback((e: React.MouseEvent) => {
+        if (!previewRef.current) return
+        gsap.to(previewRef.current, {
+            x: e.clientX,
+            y: e.clientY,
+            duration: 0.4,
+            ease: "power2.out",
+            force3D: true,
+        })
+    }, [])
 
-            gsap.to(card, {
-                rotateY: x * 8,
-                rotateX: -y * 8,
-                duration: 0.4,
+    const handleRowEnter = useCallback((id: string) => {
+        setActivePreview(id)
+        if (previewRef.current) {
+            gsap.killTweensOf(previewRef.current)
+            gsap.to(previewRef.current, {
+                opacity: 1,
+                scale: 1,
+                duration: 0.2,
                 ease: "power2.out",
-                force3D: true,
             })
+        }
+    }, [])
 
-            // Image parallax inside card
-            const img = card.querySelector(".card-img") as HTMLElement
-            if (img) {
-                gsap.to(img, {
-                    x: -x * 15,
-                    y: -y * 15,
-                    scale: 1.12,
-                    duration: 0.4,
-                    ease: "power2.out",
-                    force3D: true,
-                })
-            }
-        },
-        []
-    )
-
-    const handleMouseLeave = useCallback(
-        (e: React.MouseEvent<HTMLAnchorElement>) => {
-            const card = e.currentTarget
-            gsap.to(card, {
-                rotateY: 0,
-                rotateX: 0,
-                duration: 0.6,
-                ease: "elastic.out(1, 0.5)",
-                force3D: true,
+    const handleRowLeave = useCallback(() => {
+        if (previewRef.current) {
+            gsap.to(previewRef.current, {
+                opacity: 0,
+                scale: 0.95,
+                duration: 0.2,
+                ease: "power2.out",
             })
-            const img = card.querySelector(".card-img") as HTMLElement
-            if (img) {
-                gsap.to(img, {
-                    x: 0,
-                    y: 0,
-                    scale: 1,
-                    duration: 0.6,
-                    ease: "elastic.out(1, 0.5)",
-                    force3D: true,
-                })
-            }
-        },
-        []
-    )
+        }
+    }, [])
+
+    const collections = collectionsData.map((item, i) => {
+        const match = categories?.find(
+            (cat) => cat.name.toLowerCase() === item.name.toLowerCase()
+        )
+        const categoryProducts = match
+            ? products?.filter((p) => p.category.id === match.id)
+            : products?.filter((p) => p.category.name.toLowerCase() === item.name.toLowerCase())
+        const previewImage = categoryProducts?.[0]?.images?.[0]?.url || item.image
+        return {
+            id: match?.id || String(i + 1),
+            name: item.name,
+            description: item.description,
+            image: previewImage,
+            href: match ? `/category/${match.id}` : `/category/${item.name.toLowerCase()}`,
+        }
+    })
 
     useGSAP(
         () => {
             if (!sectionRef.current) return
 
-            // Section breathing entrance
-            gsap.from(sectionRef.current, {
-                scale: 0.97,
-                opacity: 0.8,
-                duration: 1,
-                ease: "power2.out",
-                scrollTrigger: {
-                    trigger: sectionRef.current,
-                    start: "top 85%",
-                    toggleActions: "play none none reverse",
-                },
-            })
-
-            // Divider line draw
-            if (dividerRef.current) {
-                gsap.to(dividerRef.current, {
-                    scaleX: 1,
-                    duration: 1.2,
-                    ease: "power2.inOut",
+            // Label entrance
+            const label = sectionRef.current.querySelector(".collections-label")
+            if (label) {
+                gsap.from(label, {
+                    y: 20,
+                    opacity: 0,
+                    duration: 1,
+                    ease: "power2.out",
+                    force3D: true,
                     scrollTrigger: {
-                        trigger: dividerRef.current,
-                        start: "top 90%",
+                        trigger: label,
+                        start: "top 85%",
                         toggleActions: "play none none reverse",
                     },
                 })
             }
 
-            // Cards stagger with rotation
-            if (gridRef.current) {
-                const cards = gridRef.current.querySelectorAll(".collection-card")
-                gsap.from(cards, {
-                    y: 80,
+            // Rows stagger entrance — deliberate, one by one
+            if (listRef.current) {
+                const rows =
+                    listRef.current.querySelectorAll(".collection-row")
+                gsap.from(rows, {
+                    y: 60,
                     opacity: 0,
-                    rotateZ: 2,
-                    scale: 0.95,
-                    duration: 1,
-                    ease: "power3.out",
-                    stagger: 0.12,
+                    duration: 1.2,
+                    ease: "power2.out",
+                    stagger: 0.2,
                     force3D: true,
                     scrollTrigger: {
-                        trigger: gridRef.current,
-                        start: "top 80%",
+                        trigger: listRef.current,
+                        start: "top 70%",
                         toggleActions: "play none none reverse",
                     },
                 })
@@ -157,26 +142,46 @@ const Collections = () => {
     )
 
     return (
-        <>
-            {/* Section divider */}
-            <div className="mx-auto max-w-7xl px-6">
-                <div ref={dividerRef} className="section-divider" />
-            </div>
+        <section
+            ref={sectionRef}
+            className="py-28 md:py-40 bg-[#1A1A1A] text-white"
+            onMouseMove={handleMouseMove}
+        >
+                {/* Cursor-following preview image */}
+                <div
+                    ref={previewRef}
+                    className="pointer-events-none fixed left-0 top-0 z-10 hidden md:block"
+                    style={{
+                        opacity: 0,
+                        transform: "translate(-50%, -50%) scale(0.95)",
+                    }}
+                >
+                    <div className="relative h-[400px] w-[320px] overflow-hidden rounded-2xl shadow-2xl">
+                        {collections.map((c) => (
+                            <Image
+                                key={c.id}
+                                src={c.image}
+                                alt={c.name}
+                                fill
+                                className={cn(
+                                    "object-cover transition-opacity duration-200 ease-out",
+                                    activePreview === c.id ? "opacity-100" : "opacity-0"
+                                )}
+                                sizes="320px"
+                            />
+                        ))}
+                    </div>
+                </div>
 
-            <section
-                ref={sectionRef}
-                className="section-breathe py-28 md:py-40"
-                style={{ backgroundColor: "var(--color-muted)" }}
-            >
                 <div className="mx-auto max-w-7xl px-6">
                     {/* Heading */}
-                    <div className="mb-20 text-center">
-                        <p className="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-[#C8A55C]">
+                    <div className="mb-20">
+                        <p className="collections-label mb-4 text-xs font-medium uppercase tracking-[0.3em] text-[var(--color-accent-light)]">
                             Descoperă
                         </p>
                         <SplitText
                             as="h2"
-                            className="text-4xl font-bold tracking-tight md:text-6xl"
+                            className="text-4xl font-bold tracking-tight text-white md:text-6xl"
                             scrollTrigger
                             stagger={0.06}
                         >
@@ -184,44 +189,37 @@ const Collections = () => {
                         </SplitText>
                     </div>
 
-                    {/* Cards */}
+                    {/* Text list */}
                     <div
-                        ref={gridRef}
-                        className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4"
+                        ref={listRef}
+                        className="border-t border-white/10"
                     >
-                        {collections.map((c) => (
-                            <a
+                        {collections.map((c, i) => (
+                            <Link
                                 key={c.id}
                                 href={c.href}
-                                className="collection-card group relative block aspect-[3/4] overflow-hidden rounded-2xl"
-                                style={{ perspective: "800px" }}
-                                onMouseMove={handleMouseMove}
-                                onMouseLeave={handleMouseLeave}
+                                className="collection-row group flex items-center justify-between border-b border-white/10 py-8 transition-colors duration-200 ease-out hover:bg-white/[0.03] md:py-10"
+                                onMouseEnter={() => handleRowEnter(c.id)}
+                                onMouseLeave={handleRowLeave}
                             >
-                                <div className="absolute inset-0 overflow-hidden rounded-2xl bg-[#1A1A1A]">
-                                    <Image
-                                        src={c.image}
-                                        alt={c.name}
-                                        fill
-                                        className="card-img object-cover opacity-75 transition-opacity duration-700 group-hover:opacity-50 will-change-transform"
-                                    />
-                                </div>
-
-                                {/* Gradient */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-                                {/* Content */}
-                                <div className="absolute bottom-0 left-0 right-0 p-7">
-                                    <p className="mb-1 text-xs font-medium uppercase tracking-[0.2em] text-[#C8A55C] opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0 translate-y-2">
-                                        {c.description}
-                                    </p>
-                                    <h3 className="text-2xl font-bold text-white">
+                                <div className="flex items-baseline gap-6 md:gap-10">
+                                    <span className="font-body text-sm font-medium tabular-nums text-[var(--color-accent-light)]">
+                                        {String(i + 1).padStart(2, "0")}
+                                    </span>
+                                    <h3 className="font-display text-3xl font-bold italic tracking-tight text-white transition-colors duration-200 ease-out group-hover:text-[var(--color-accent-light)] md:text-5xl lg:text-7xl">
                                         {c.name}
                                     </h3>
-                                    <div className="mt-3 flex items-center gap-2 text-sm text-white/50 transition-colors duration-300 group-hover:text-[#C8A55C]">
-                                        <span>Explorează</span>
+                                </div>
+                                <div className="flex items-center gap-4 md:gap-8">
+                                    <span
+                                        className="hidden text-sm font-body text-white/40 md:block"
+                                        style={{ textWrap: "pretty" }}
+                                    >
+                                        {c.description}
+                                    </span>
+                                    <div className="flex size-10 items-center justify-center rounded-full border border-white/10 transition-colors duration-200 ease-out group-hover:border-[var(--color-accent-light)] group-hover:bg-[var(--color-accent-light)]/10 md:size-12">
                                         <svg
-                                            className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-2"
+                                            className="size-4 text-white/30 transition-[color,transform] duration-200 ease-out group-hover:text-[var(--color-accent-light)] group-hover:translate-x-0.5"
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             stroke="currentColor"
@@ -235,12 +233,11 @@ const Collections = () => {
                                         </svg>
                                     </div>
                                 </div>
-                            </a>
+                            </Link>
                         ))}
                     </div>
                 </div>
-            </section>
-        </>
+        </section>
     )
 }
 

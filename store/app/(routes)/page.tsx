@@ -7,11 +7,16 @@ import Testimonials from "@/components/sections/testimonials";
 import FAQ from "@/components/sections/faq";
 import CTA from "@/components/sections/cta";
 import getProducts from "@/actions/get-products";
+import getCategories from "@/actions/get-categories";
 
 export const revalidate = 0;
 
 const HomePage = async () => {
-    const products = await getProducts({ isFeatured: true })
+    const [products, allProducts, categories] = await Promise.all([
+        getProducts({ isFeatured: true }),
+        getProducts({}),
+        getCategories(),
+    ])
     return (
         <>
             <Hero
@@ -22,7 +27,7 @@ const HomePage = async () => {
                 secondaryLink={{ label: "Află mai multe", href: "#collections" }}
                 videoSrc="/hero-bg.mp4"
             />
-            <Collections />
+            <Collections categories={categories} products={allProducts} />
             <Process />
             <Quality />
             <FeaturedProducts items={products} />
