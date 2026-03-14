@@ -15,16 +15,23 @@ type SearchParams = Promise<{ colorId: string, sizeId: string }>
 const CategoryPage = async ({ params, searchParams }: { params: Params, searchParams: SearchParams }) => {
     const { categoryId } = await params;
     const { colorId, sizeId } = await searchParams;
-    const products = await getProducts({ categoryId, colorId, sizeId })
+
+    const isAll = categoryId === "all";
+
+    const products = await getProducts({
+        categoryId: isAll ? undefined : categoryId,
+        colorId,
+        sizeId,
+    })
     const sizes = await getSizes();
     const colors = await getColors();
-    const category = await getCategory(categoryId)
+    const category = isAll ? null : await getCategory(categoryId);
 
     return (
         <div className="bg-[#1A1A1A]">
             {/* Hero */}
             <CategoryHero
-                name={category?.name}
+                name={isAll ? "Toate Produsele" : category?.name}
                 billboard={category?.billboard}
                 productCount={products?.length ?? 0}
             />
