@@ -21,6 +21,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ storeId
         return new NextResponse("Product ids are required", { status: 400 });
     }
 
+    if (!stripe) {
+        return new NextResponse("Payment provider not configured", { status: 503, headers: corsHeaders });
+    }
+
     const products = await prismadb.product.findMany({
         where: {
             id: {
