@@ -3,7 +3,6 @@ import getProducts from "@/actions/get-products";
 import Gallery from "@/components/gallery";
 import Info from "@/components/info";
 import ProductList from "@/components/product-list";
-import Container from "@/components/ui/container";
 
 type Params = Promise<{ productId: string }>
 
@@ -11,24 +10,40 @@ const ProductPage = async ({ params }: { params: Params }) => {
     const { productId } = await params;
     const product = await getProduct(productId);
     const suggestProducts = await getProducts({ categoryId: product?.category?.id })
-    return ( 
-        <div className="bg-white">
-            <Container>
-                <div className="px-4 py-10 sm:px-6 lg:px-8">
-                    <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
-                        {/* Gallery */}
-                        <Gallery images={product.images} />
-                        <div className="px-4 mt-0 sm:mt-16 sm:px-0 lg:mt-0">
-                            {/* Info */}
-                            <Info data={product} />
-                        </div>
+
+    return (
+        <div className="bg-[#1A1A1A]">
+            {/* Product section */}
+            <div className="mx-auto max-w-7xl px-6 py-12 md:py-20">
+                {/* Breadcrumb */}
+                <p
+                    className="mb-10 text-xs font-medium uppercase tracking-[0.3em] text-[var(--color-accent-light)]"
+                    style={{ fontFamily: "var(--font-barlow)" }}
+                >
+                    Acasă
+                    <span className="mx-2 text-white/20">/</span>
+                    {product?.category?.name}
+                    <span className="mx-2 text-white/20">/</span>
+                    <span className="text-white/60">{product.name}</span>
+                </p>
+
+                <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-16">
+                    {/* Gallery */}
+                    <Gallery images={product.images} />
+                    <div className="mt-10 lg:mt-0">
+                        {/* Info */}
+                        <Info data={product} />
                     </div>
-                    <hr className="my-10"/>
-                    <ProductList title="Related Items" items={suggestProducts} />
                 </div>
-            </Container>
+
+                {/* Divider */}
+                <div className="my-16 h-px bg-white/10 md:my-24" />
+
+                {/* Related products */}
+                <ProductList title="Produse Similare" items={suggestProducts} variant="dark" />
+            </div>
         </div>
-     );
+    );
 }
- 
+
 export default ProductPage;
