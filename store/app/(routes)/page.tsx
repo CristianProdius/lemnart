@@ -15,10 +15,11 @@ const HomePage = async () => {
     return (
         <>
             <Hero
-                headingLine1="Artizanatul care îți transformă"
-                headingLine2="casa în operă de artă"
-                subtext="Mascare calorifere premium din lemn masiv, create artizanal cu atenție la fiecare detaliu pentru designeri și proprietari exigenți."
+                headingLine1="Artizanatul care îți"
+                headingLine2="transformă casa."
+                subtitle="Mascare calorifere din lemn masiv, create manual cu atenție la fiecare detaliu."
                 cta={{ label: "Descoperă Colecția", href: "/category/all" }}
+                secondaryLink={{ label: "Află mai multe", href: "#collections" }}
                 videoSrc="/hero-bg.mp4"
             />
             <Collections />

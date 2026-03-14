@@ -1,5 +1,4 @@
 "use client"
-import Button from '@/components/ui/button';
 import useCart from '@/hooks/use-cart';
 import { ShoppingBag } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -21,26 +20,26 @@ const NavbarActions = () => {
 
     return (
         <div className="flex items-center ml-auto gap-x-3">
-            <Button
-                className="flex items-center px-4 py-2 rounded-full bg-[#1A1A1A] text-white transition-all duration-300 hover:bg-[#333]"
+            <button
+                className="navbar-cart flex items-center px-4 py-2 rounded-full"
                 onClick={() => router.push("/cart")}
+                aria-label="Shopping cart"
             >
                 <ShoppingBag size={18} />
                 <span className='ml-2 text-sm font-medium'>
                     {cart?.items?.length}
                 </span>
-            </Button>
+            </button>
 
-            {/* CTA with 45-degree arrow in circular housing */}
             <a
                 href="/contact"
-                className="hidden md:inline-flex items-center gap-2 rounded-full bg-[#222] px-5 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-[#333] hover:shadow-lg"
+                className="navbar-cta hidden md:inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium"
                 style={{ fontFamily: "var(--font-barlow)" }}
             >
                 Solicită Ofertă
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/15">
+                <span className="navbar-cta-icon flex h-6 w-6 items-center justify-center rounded-full">
                     <svg
-                        className="h-3 w-3 text-white"
+                        className="h-3 w-3"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"

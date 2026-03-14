@@ -49,14 +49,53 @@ body {
   color: white;
 }
 
-/* Navbar logo transition */
+/* ─── Logo ─── */
 .navbar-logo {
   color: white;
-  transition: color 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-[data-scrolled="true"] .navbar-logo {
-  color: var(--color-foreground);
+/* ─── Separator ─── */
+.navbar-separator {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ─── Nav links ─── */
+.nav-link {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.nav-link:hover {
+  color: white;
+}
+
+.nav-link.nav-link-active {
+  color: white;
+}
+
+/* ─── Cart button ─── */
+.navbar-cart {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.navbar-cart:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ─── CTA button ─── */
+.navbar-cta {
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.navbar-cta:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.navbar-cta-icon {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* Text outline effect — used by CTA section */
