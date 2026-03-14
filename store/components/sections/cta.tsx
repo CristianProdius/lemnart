@@ -4,93 +4,68 @@ import { useRef } from "react"
 import { useGSAP } from "@gsap/react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Phone, Mail } from "lucide-react"
+import { ArrowRight, Phone, Mail } from "lucide-react"
 
 gsap.registerPlugin(ScrollTrigger)
 
+/**
+ * CTA — Infinite Marquee with Floating CTA
+ *
+ * Two rows of oversized text scroll infinitely in opposite
+ * directions — one left, one right — creating visual energy
+ * and movement. A static, sharp-cornered card floats centered
+ * on top containing the actual CTA content (subtitle, button,
+ * contact). The marquee text is the heading repeated.
+ *
+ * The contrast between the kinetic background and the still
+ * card creates tension and draws focus.
+ */
+
 const CTA = () => {
     const sectionRef = useRef<HTMLElement>(null)
-    const headingRef = useRef<HTMLHeadingElement>(null)
-    const contentRef = useRef<HTMLDivElement>(null)
-    const dividerRef = useRef<HTMLDivElement>(null)
+    const cardRef = useRef<HTMLDivElement>(null)
+    const marquee1Ref = useRef<HTMLDivElement>(null)
+    const marquee2Ref = useRef<HTMLDivElement>(null)
 
     useGSAP(
         () => {
             if (!sectionRef.current) return
 
-            // Section breathing
-            gsap.from(sectionRef.current, {
-                scale: 0.97,
-                opacity: 0.8,
-                duration: 1,
-                ease: "power2.out",
-                scrollTrigger: {
-                    trigger: sectionRef.current,
-                    start: "top 85%",
-                    toggleActions: "play none none reverse",
-                },
-            })
-
-            // Divider
-            if (dividerRef.current) {
-                gsap.to(dividerRef.current, {
-                    scaleX: 1,
-                    duration: 1.2,
-                    ease: "power2.inOut",
-                    scrollTrigger: {
-                        trigger: dividerRef.current,
-                        start: "top 90%",
-                        toggleActions: "play none none reverse",
-                    },
+            // Marquee 1 — scrolls left
+            if (marquee1Ref.current) {
+                gsap.to(marquee1Ref.current, {
+                    xPercent: -50,
+                    duration: 30,
+                    ease: "none",
+                    repeat: -1,
                 })
             }
 
-            // Text outline → filled transition on scroll
-            if (headingRef.current) {
-                const words = headingRef.current.querySelectorAll(".cta-word")
+            // Marquee 2 — scrolls right
+            if (marquee2Ref.current) {
+                gsap.fromTo(
+                    marquee2Ref.current,
+                    { xPercent: -50 },
+                    {
+                        xPercent: 0,
+                        duration: 30,
+                        ease: "none",
+                        repeat: -1,
+                    }
+                )
+            }
 
-                // Initial entrance
-                gsap.from(words, {
-                    y: 80,
+            // Card entrance
+            if (cardRef.current) {
+                gsap.from(cardRef.current, {
+                    y: 60,
                     opacity: 0,
+                    scale: 0.95,
                     duration: 1,
                     ease: "power3.out",
-                    stagger: 0.08,
-                    force3D: true,
                     scrollTrigger: {
-                        trigger: headingRef.current,
-                        start: "top 80%",
-                        toggleActions: "play none none reverse",
-                    },
-                })
-
-                // Outline → fill on deeper scroll
-                words.forEach((word, i) => {
-                    gsap.to(word, {
-                        color: "var(--color-foreground)",
-                        webkitTextStroke: "0px transparent",
-                        duration: 0.6,
-                        ease: "power2.out",
-                        scrollTrigger: {
-                            trigger: headingRef.current,
-                            start: `${55 + i * 5}% 80%`,
-                            toggleActions: "play none none reverse",
-                        },
-                    })
-                })
-            }
-
-            // Content below heading
-            if (contentRef.current) {
-                gsap.from(contentRef.current.children, {
-                    y: 30,
-                    opacity: 0,
-                    duration: 0.7,
-                    ease: "power2.out",
-                    stagger: 0.12,
-                    scrollTrigger: {
-                        trigger: contentRef.current,
-                        start: "top 85%",
+                        trigger: sectionRef.current,
+                        start: "top 70%",
                         toggleActions: "play none none reverse",
                     },
                 })
@@ -99,105 +74,101 @@ const CTA = () => {
         { scope: sectionRef }
     )
 
-    const heading = "Transformă-ți Spațiul"
-    const words = heading.split(" ")
+    const marqueeText = "Transformă-ți Spațiul — "
+    const repeated = marqueeText.repeat(6)
 
     return (
-        <>
-            <div className="mx-auto max-w-7xl px-6">
-                <div ref={dividerRef} className="section-divider" />
+        <section
+            ref={sectionRef}
+            className="relative overflow-hidden bg-[#1A1A1A] py-32 text-white md:py-48"
+        >
+            {/* Marquee Row 1 — scrolls left */}
+            <div className="pointer-events-none select-none">
+                <div
+                    ref={marquee1Ref}
+                    className="flex whitespace-nowrap"
+                    style={{ width: "fit-content" }}
+                >
+                    <span
+                        className="text-7xl font-bold text-white/[0.03] md:text-9xl"
+                        aria-hidden="true"
+                    >
+                        {repeated}
+                    </span>
+                </div>
             </div>
 
-            <section
-                ref={sectionRef}
-                className="section-breathe relative overflow-hidden py-32 md:py-48"
-                style={{
-                    background:
-                        "linear-gradient(160deg, #F8F4E8 0%, #F0EBD8 40%, #EDE5D0 100%)",
-                }}
-            >
-                {/* Radial glow */}
+            {/* Floating CTA Card — centered */}
+            <div className="absolute inset-0 flex items-center justify-center px-6">
                 <div
-                    className="pointer-events-none absolute inset-0"
-                    style={{
-                        background:
-                            "radial-gradient(ellipse at 50% 80%, rgba(200, 165, 92, 0.15) 0%, transparent 60%)",
-                    }}
-                />
+                    ref={cardRef}
+                    className="w-full max-w-lg border border-white/8 bg-[#1A1A1A]/95 p-10 text-center backdrop-blur-sm md:p-14"
+                >
+                    <p className="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-[var(--color-accent-light)]">
+                        Contactează-ne
+                    </p>
 
-                <div className="relative mx-auto max-w-5xl px-6 text-center">
-                    {/* Big heading with outline effect */}
                     <h2
-                        ref={headingRef}
-                        className="mb-8 text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl lg:text-[6rem]"
-                        style={{ perspective: "600px" }}
+                        className="text-balance text-3xl text-white md:text-4xl"
+                        style={{
+                            fontFamily: "var(--font-instrument-serif)",
+                            fontStyle: "italic",
+                        }}
                     >
-                        {words.map((word, i) => (
-                            <span
-                                key={i}
-                                className="cta-word inline-block will-change-transform"
-                                style={{
-                                    WebkitTextStroke: "2px var(--color-foreground)",
-                                    color: "transparent",
-                                    backfaceVisibility: "hidden",
-                                }}
-                            >
-                                {word}
-                                {i < words.length - 1 && "\u00A0"}
-                            </span>
-                        ))}
+                        Transformă-ți Spațiul
                     </h2>
 
-                    <div ref={contentRef}>
-                        <p className="mx-auto mb-10 max-w-lg text-base leading-relaxed text-neutral-600 md:text-lg">
-                            Solicită o consultație gratuită și descoperă soluția
-                            perfectă pentru casa ta.
-                        </p>
+                    <p className="text-pretty mx-auto mt-4 max-w-xs text-sm leading-relaxed text-white/40">
+                        Solicită o consultație gratuită și descoperă soluția
+                        perfectă pentru casa ta.
+                    </p>
 
+                    <a
+                        href="/contact"
+                        className="group mt-8 inline-flex items-center gap-3 border border-[var(--color-accent-light)] px-10 py-4 text-sm font-medium text-[var(--color-accent-light)] transition-all duration-300 hover:bg-[var(--color-accent-light)] hover:text-[#1A1A1A]"
+                    >
+                        Contactează-ne
+                        <ArrowRight
+                            size={16}
+                            className="transition-transform duration-300 group-hover:translate-x-1"
+                        />
+                    </a>
+
+                    <div className="mt-10 flex flex-col items-center justify-center gap-6 sm:flex-row">
                         <a
-                            href="/contact"
-                            className="glow-pulse inline-flex items-center gap-2 rounded-full bg-[#8B6914] px-10 py-4 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#6B5210] hover:shadow-[0_0_40px_rgba(139,105,20,0.4)]"
+                            href="tel:+40700000000"
+                            className="flex items-center gap-2 text-xs text-white/25 transition-colors duration-300 hover:text-[var(--color-accent-light)]"
                         >
-                            Contactează-ne
-                            <svg
-                                className="h-4 w-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                                />
-                            </svg>
+                            <Phone size={12} />
+                            +40 700 000 000
                         </a>
-
-                        <div className="mt-14 flex flex-col items-center justify-center gap-8 sm:flex-row">
-                            <a
-                                href="tel:+40700000000"
-                                className="group flex items-center gap-3 text-sm text-neutral-500 transition-colors duration-300 hover:text-[#8B6914]"
-                            >
-                                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 transition-all duration-300 group-hover:bg-[#C8A55C]/10">
-                                    <Phone size={16} />
-                                </span>
-                                +40 700 000 000
-                            </a>
-                            <a
-                                href="mailto:contact@lemnart.ro"
-                                className="group flex items-center gap-3 text-sm text-neutral-500 transition-colors duration-300 hover:text-[#8B6914]"
-                            >
-                                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 transition-all duration-300 group-hover:bg-[#C8A55C]/10">
-                                    <Mail size={16} />
-                                </span>
-                                contact@lemnart.ro
-                            </a>
-                        </div>
+                        <a
+                            href="mailto:contact@lemnart.ro"
+                            className="flex items-center gap-2 text-xs text-white/25 transition-colors duration-300 hover:text-[var(--color-accent-light)]"
+                        >
+                            <Mail size={12} />
+                            contact@lemnart.ro
+                        </a>
                     </div>
                 </div>
-            </section>
-        </>
+            </div>
+
+            {/* Marquee Row 2 — scrolls right */}
+            <div className="pointer-events-none select-none">
+                <div
+                    ref={marquee2Ref}
+                    className="flex whitespace-nowrap"
+                    style={{ width: "fit-content" }}
+                >
+                    <span
+                        className="text-7xl font-bold text-white/[0.03] md:text-9xl"
+                        aria-hidden="true"
+                    >
+                        {repeated}
+                    </span>
+                </div>
+            </div>
+        </section>
     )
 }
 

@@ -4,168 +4,112 @@ import { useRef } from "react"
 import { useGSAP } from "@gsap/react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import {
-    TreePine,
-    Paintbrush,
-    Wind,
-    Scaling,
-    ShieldCheck,
-    PackageCheck,
-} from "lucide-react"
 import SplitText from "@/components/ui/split-text"
 
 gsap.registerPlugin(ScrollTrigger)
 
 const badges = [
-    {
-        title: "Lemn Masiv",
-        description: "Stejar, nuc și fag din surse certificate.",
-        Icon: TreePine,
-    },
-    {
-        title: "Finisaje Premium",
-        description: "Lacuri și vopsele ecologice, rezistente.",
-        Icon: Paintbrush,
-    },
-    {
-        title: "Ventilație Optimă",
-        description: "Design care permite circulația eficientă a căldurii.",
-        Icon: Wind,
-    },
-    {
-        title: "Măsuri Personalizate",
-        description: "Fiecare piesă este fabricată pe comandă.",
-        Icon: Scaling,
-    },
-    {
-        title: "Garanție 5 Ani",
-        description: "Încredere totală în calitatea produselor.",
-        Icon: ShieldCheck,
-    },
-    {
-        title: "Montaj Inclus",
-        description: "Instalare profesională la domiciliu.",
-        Icon: PackageCheck,
-    },
+    { title: "Lemn Masiv", description: "Stejar, nuc și fag din surse certificate." },
+    { title: "Finisaje Premium", description: "Lacuri și vopsele ecologice, rezistente." },
+    { title: "Ventilație Optimă", description: "Design care permite circulația eficientă a căldurii." },
+    { title: "Măsuri Personalizate", description: "Fiecare piesă este fabricată pe comandă." },
+    { title: "Garanție 5 Ani", description: "Încredere totală în calitatea produselor." },
+    { title: "Montaj Inclus", description: "Instalare profesională la domiciliu." },
 ]
 
 const Quality = () => {
     const sectionRef = useRef<HTMLElement>(null)
-    const gridRef = useRef<HTMLDivElement>(null)
-    const dividerRef = useRef<HTMLDivElement>(null)
+    const entriesRef = useRef<HTMLDivElement>(null)
 
     useGSAP(
         () => {
             if (!sectionRef.current) return
 
-            // Section breathing
-            gsap.from(sectionRef.current, {
-                scale: 0.97,
-                opacity: 0.8,
-                duration: 1,
-                ease: "power2.out",
-                scrollTrigger: {
-                    trigger: sectionRef.current,
-                    start: "top 85%",
-                    toggleActions: "play none none reverse",
-                },
-            })
+            if (!entriesRef.current) return
 
-            // Divider
-            if (dividerRef.current) {
-                gsap.to(dividerRef.current, {
-                    scaleX: 1,
-                    duration: 1.2,
-                    ease: "power2.inOut",
-                    scrollTrigger: {
-                        trigger: dividerRef.current,
-                        start: "top 90%",
-                        toggleActions: "play none none reverse",
-                    },
-                })
-            }
-
-            // Batch process cards from center
-            if (gridRef.current) {
-                const items = gridRef.current.querySelectorAll(".quality-badge")
-                gsap.from(items, {
-                    y: 60,
+            const rows = entriesRef.current.querySelectorAll(".ghost-entry")
+            rows.forEach((row, i) => {
+                gsap.from(row, {
+                    y: 40,
                     opacity: 0,
-                    scale: 0.9,
-                    duration: 0.9,
-                    ease: "power3.out",
-                    force3D: true,
-                    stagger: {
-                        amount: 0.4,
-                        grid: "auto",
-                        from: "center",
-                    },
+                    duration: 0.8,
+                    ease: "power2.out",
                     scrollTrigger: {
-                        trigger: gridRef.current,
-                        start: "top 80%",
+                        trigger: row,
+                        start: "top 88%",
                         toggleActions: "play none none reverse",
                     },
+                    delay: i * 0.05,
                 })
-            }
+            })
         },
         { scope: sectionRef }
     )
 
     return (
-        <>
+        <section
+            ref={sectionRef}
+            className="bg-[#1A1A1A] py-28 text-white md:py-40"
+        >
             <div className="mx-auto max-w-7xl px-6">
-                <div ref={dividerRef} className="section-divider" />
-            </div>
-
-            <section
-                ref={sectionRef}
-                className="section-breathe py-28 md:py-40"
-                style={{ backgroundColor: "var(--color-muted)" }}
-            >
-                <div className="mx-auto max-w-7xl px-6">
-                    {/* Heading */}
-                    <div className="mb-20 text-center">
-                        <p className="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-[#C8A55C]">
-                            De Ce Noi
-                        </p>
-                        <SplitText
-                            as="h2"
-                            className="text-4xl font-bold tracking-tight md:text-6xl"
-                            scrollTrigger
-                            stagger={0.06}
-                        >
-                            Calitate Fără Compromis
-                        </SplitText>
-                    </div>
-
-                    <div
-                        ref={gridRef}
-                        className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+                {/* Heading */}
+                <div className="mb-20 md:mb-28">
+                    <p className="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-[var(--color-accent-light)]">
+                        De Ce Noi
+                    </p>
+                    <SplitText
+                        as="h2"
+                        className="text-balance text-4xl font-bold text-white md:text-6xl"
+                        scrollTrigger
+                        stagger={0.06}
                     >
-                        {badges.map((badge) => (
-                            <div
-                                key={badge.title}
-                                className="quality-badge group rounded-2xl border border-[#E5E5E0] bg-[#FAFAFA] p-8 transition-all duration-500 hover:-translate-y-1 hover:border-[#C8A55C]/30 hover:shadow-[0_8px_40px_rgba(139,105,20,0.06)]"
-                            >
-                                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-[#F5F5F0] to-[#EDE5D0] transition-all duration-500 group-hover:from-[#C8A55C]/10 group-hover:to-[#C8A55C]/20">
-                                    <badge.Icon
-                                        size={26}
-                                        strokeWidth={1.5}
-                                        className="text-[#8B6914] transition-transform duration-500 group-hover:scale-110"
-                                    />
-                                </div>
-                                <h3 className="mb-2 text-lg font-semibold text-[#1A1A1A]">
-                                    {badge.title}
-                                </h3>
-                                <p className="text-sm leading-relaxed text-neutral-500">
-                                    {badge.description}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
+                        Calitate Fără Compromis
+                    </SplitText>
                 </div>
-            </section>
-        </>
+
+                {/* Ghost entries */}
+                <div ref={entriesRef}>
+                    <div className="h-px bg-white/10" />
+
+                    {badges.map((badge, i) => (
+                        <div key={badge.title}>
+                            <div className="ghost-entry relative overflow-hidden py-12 md:py-16">
+                                {/* Ghost title — massive, barely visible */}
+                                <span
+                                    className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 select-none whitespace-nowrap text-6xl font-bold md:text-8xl lg:text-9xl"
+                                    style={{ color: "rgba(255, 255, 255, 0.03)" }}
+                                    aria-hidden="true"
+                                >
+                                    {badge.title}
+                                </span>
+
+                                {/* Real content */}
+                                <div className="relative flex items-start gap-6 md:gap-10">
+                                    <span
+                                        className="shrink-0 pt-1 text-xs text-[var(--color-accent-light)]"
+                                        style={{
+                                            fontVariantNumeric: "tabular-nums",
+                                        }}
+                                    >
+                                        {String(i + 1).padStart(2, "0")}
+                                    </span>
+                                    <div>
+                                        <h3 className="mb-2 text-xl font-semibold text-white md:text-2xl">
+                                            {badge.title}
+                                        </h3>
+                                        <p className="text-pretty max-w-lg text-sm leading-relaxed text-white/40 md:text-base">
+                                            {badge.description}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="h-px bg-white/10" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
     )
 }
 

@@ -4,10 +4,22 @@ import { useRef } from "react"
 import { useGSAP } from "@gsap/react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Star } from "lucide-react"
 import SplitText from "@/components/ui/split-text"
 
 gsap.registerPlugin(ScrollTrigger)
+
+/**
+ * V1 — Gold-Line Triptych
+ *
+ * Three testimonials separated by thin vertical gold lines — like
+ * a high-end wine list or luxury menu. No cards, no backgrounds,
+ * just panels defined by delicate 1px gold borders. A top and
+ * bottom horizontal rule frames the entire grid.
+ *
+ * The luxury is in the proportion: generous inner padding, perfectly
+ * sized typography, and the restraint of using only thin lines
+ * as structural elements.
+ */
 
 const testimonials = [
     {
@@ -15,105 +27,74 @@ const testimonials = [
         quote: "Mascarea caloriferului a schimbat complet aspectul livingului. Calitate excepțională și finisaj impecabil!",
         name: "Maria P.",
         location: "București",
-        stars: 5,
     },
     {
         id: 2,
         quote: "Profesioniști de la A la Z. De la măsurare până la montaj, totul a decurs perfect. Recomand cu încredere.",
         name: "Andrei M.",
         location: "Cluj-Napoca",
-        stars: 5,
     },
     {
         id: 3,
         quote: "Am comandat pentru 4 camere. Fiecare piesă arată fabulos și se simte calitatea lemnului masiv.",
         name: "Elena D.",
         location: "Timișoara",
-        stars: 5,
     },
 ]
 
 const Testimonials = () => {
     const sectionRef = useRef<HTMLElement>(null)
-    const cardsRef = useRef<HTMLDivElement>(null)
-    const dividerRef = useRef<HTMLDivElement>(null)
+    const gridRef = useRef<HTMLDivElement>(null)
+    const topLineRef = useRef<HTMLDivElement>(null)
+    const bottomLineRef = useRef<HTMLDivElement>(null)
 
     useGSAP(
         () => {
             if (!sectionRef.current) return
 
-            // Section breathing
-            gsap.from(sectionRef.current, {
-                scale: 0.97,
-                opacity: 0.8,
-                duration: 1,
-                ease: "power2.out",
-                scrollTrigger: {
-                    trigger: sectionRef.current,
-                    start: "top 85%",
-                    toggleActions: "play none none reverse",
-                },
-            })
-
-            // Divider
-            if (dividerRef.current) {
-                gsap.to(dividerRef.current, {
-                    scaleX: 1,
-                    duration: 1.2,
+            // Horizontal rules draw in
+            ;[topLineRef, bottomLineRef].forEach((ref) => {
+                if (!ref.current) return
+                gsap.from(ref.current, {
+                    scaleX: 0,
+                    duration: 1.4,
                     ease: "power2.inOut",
                     scrollTrigger: {
-                        trigger: dividerRef.current,
+                        trigger: ref.current,
                         start: "top 90%",
                         toggleActions: "play none none reverse",
                     },
                 })
-            }
+            })
 
-            if (!cardsRef.current) return
+            if (!gridRef.current) return
 
-            const cards = cardsRef.current.querySelectorAll(".testimonial-card")
-
-            // Entrance
-            gsap.from(cards, {
-                y: 60,
+            // Panels stagger in
+            const panels = gridRef.current.querySelectorAll(".triptych-panel")
+            gsap.from(panels, {
+                y: 40,
                 opacity: 0,
-                scale: 0.95,
-                duration: 0.9,
+                duration: 1,
                 ease: "power3.out",
-                stagger: 0.12,
-                force3D: true,
+                stagger: 0.15,
                 scrollTrigger: {
-                    trigger: cardsRef.current,
+                    trigger: gridRef.current,
                     start: "top 80%",
                     toggleActions: "play none none reverse",
                 },
             })
 
-            // Floating — different speed per card for organic feel
-            cards.forEach((card, i) => {
-                const speed = 2.5 + i * 0.7
-                const amplitude = 6 + i * 3
-                gsap.to(card, {
-                    y: `+=${amplitude}`,
-                    duration: speed,
-                    repeat: -1,
-                    yoyo: true,
-                    ease: "sine.inOut",
-                    delay: i * 0.5,
-                })
-            })
-
-            // Quote marks scale in
-            const quotes = cardsRef.current.querySelectorAll(".quote-mark")
-            gsap.from(quotes, {
-                scale: 0,
+            // Ghost marks
+            const marks = gridRef.current.querySelectorAll(".ghost-mark")
+            gsap.from(marks, {
+                scale: 0.7,
                 opacity: 0,
-                duration: 0.6,
-                ease: "back.out(2)",
+                duration: 1.2,
+                ease: "power2.out",
                 stagger: 0.15,
                 scrollTrigger: {
-                    trigger: cardsRef.current,
-                    start: "top 75%",
+                    trigger: gridRef.current,
+                    start: "top 80%",
                     toggleActions: "play none none reverse",
                 },
             })
@@ -122,76 +103,111 @@ const Testimonials = () => {
     )
 
     return (
-        <>
+        <section
+            ref={sectionRef}
+            className="bg-[#1A1A1A] py-28 text-white md:py-40"
+        >
             <div className="mx-auto max-w-7xl px-6">
-                <div ref={dividerRef} className="section-divider" />
-            </div>
-
-            <section
-                ref={sectionRef}
-                className="section-breathe py-28 md:py-40"
-                style={{ backgroundColor: "var(--color-muted)" }}
-            >
-                <div className="mx-auto max-w-7xl px-6">
-                    {/* Heading */}
-                    <div className="mb-20 text-center">
-                        <p className="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-[#C8A55C]">
-                            Testimoniale
-                        </p>
-                        <SplitText
-                            as="h2"
-                            className="text-4xl font-bold tracking-tight md:text-6xl"
-                            scrollTrigger
-                            stagger={0.06}
-                        >
-                            Ce Spun Clienții Noștri
-                        </SplitText>
-                    </div>
-
-                    <div
-                        ref={cardsRef}
-                        className="grid grid-cols-1 gap-8 md:grid-cols-3"
+                {/* Heading */}
+                <div className="mb-20 text-center md:mb-28">
+                    <p className="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-[var(--color-accent-light)]">
+                        Testimoniale
+                    </p>
+                    <SplitText
+                        as="h2"
+                        className="text-balance text-4xl font-bold tracking-tight text-white md:text-6xl"
+                        scrollTrigger
+                        stagger={0.06}
                     >
-                        {testimonials.map((t) => (
-                            <div
-                                key={t.id}
-                                className="testimonial-card relative rounded-2xl border border-[#E5E5E0] bg-[#FAFAFA] p-8 will-change-transform"
-                            >
-                                {/* Quote mark */}
-                                <span className="quote-mark mb-4 block text-5xl font-bold leading-none text-[#C8A55C]/15">
-                                    &ldquo;
-                                </span>
-
-                                {/* Stars */}
-                                <div className="mb-5 flex gap-1">
-                                    {Array.from({ length: t.stars }).map((_, i) => (
-                                        <Star
-                                            key={i}
-                                            size={14}
-                                            fill="#C8A55C"
-                                            stroke="#C8A55C"
-                                        />
-                                    ))}
-                                </div>
-
-                                <p className="mb-8 text-base leading-relaxed text-[#1A1A1A]/80">
-                                    {t.quote}
-                                </p>
-
-                                <div className="border-t border-[#E5E5E0] pt-5">
-                                    <p className="text-sm font-semibold text-[#1A1A1A]">
-                                        {t.name}
-                                    </p>
-                                    <p className="text-xs text-neutral-400">
-                                        {t.location}
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                        Ce Spun Clienții Noștri
+                    </SplitText>
                 </div>
-            </section>
-        </>
+
+                {/* Top rule */}
+                <div
+                    ref={topLineRef}
+                    className="h-px origin-center bg-[var(--color-accent-light)]/20"
+                />
+
+                {/* Triptych grid */}
+                <div
+                    ref={gridRef}
+                    className="grid grid-cols-1 md:grid-cols-3"
+                >
+                    {testimonials.map((t, i) => (
+                        <div
+                            key={t.id}
+                            className="triptych-panel relative px-6 py-14 md:px-10 md:py-16"
+                            style={{
+                                borderRight:
+                                    i < testimonials.length - 1
+                                        ? "1px solid rgba(200, 165, 92, 0.15)"
+                                        : "none",
+                                borderBottom:
+                                    i < testimonials.length - 1
+                                        ? "1px solid rgba(200, 165, 92, 0.15)"
+                                        : "none",
+                            }}
+                        >
+                            {/* Remove bottom border on desktop (only vertical lines) */}
+                            <style>{`
+                                @media (min-width: 768px) {
+                                    .triptych-panel { border-bottom: none !important; }
+                                }
+                            `}</style>
+
+                            {/* Ghost quote mark */}
+                            <span
+                                className="ghost-mark pointer-events-none absolute left-6 top-8 select-none text-7xl font-bold leading-none md:left-10 md:text-8xl"
+                                style={{ color: "rgba(200, 165, 92, 0.04)" }}
+                                aria-hidden="true"
+                            >
+                                &ldquo;
+                            </span>
+
+                            {/* Rating dots */}
+                            <div className="relative mb-6 flex gap-1.5">
+                                {Array.from({ length: 5 }).map((_, j) => (
+                                    <span
+                                        key={j}
+                                        className="size-1 rounded-full bg-[var(--color-accent-light)]"
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Quote */}
+                            <blockquote
+                                className="text-pretty relative mb-10 text-lg leading-relaxed text-white/85 md:text-xl"
+                                style={{
+                                    fontFamily:
+                                        "var(--font-instrument-serif)",
+                                    fontStyle: "italic",
+                                }}
+                            >
+                                {t.quote}
+                            </blockquote>
+
+                            {/* Attribution */}
+                            <div className="relative mt-auto">
+                                <div className="mb-3 h-px w-8 bg-white/10" />
+                                <p className="text-sm font-medium text-white/70">
+                                    {t.name}
+                                </p>
+                                <p className="mt-0.5 text-xs text-white/30">
+                                    {t.location}
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Bottom rule */}
+                <div
+                    ref={bottomLineRef}
+                    className="h-px origin-center bg-[var(--color-accent-light)]/20"
+                />
+            </div>
+        </section>
     )
 }
 

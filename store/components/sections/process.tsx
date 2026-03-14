@@ -42,207 +42,145 @@ const steps = [
 
 const Process = () => {
     const sectionRef = useRef<HTMLElement>(null)
-    const stepsRef = useRef<HTMLDivElement>(null)
-    const lineRef = useRef<HTMLDivElement>(null)
-    const dividerRef = useRef<HTMLDivElement>(null)
+    const rightRef = useRef<HTMLDivElement>(null)
 
     useGSAP(
         () => {
-            if (!sectionRef.current) return
+            if (!sectionRef.current || !rightRef.current) return
 
-            // Section breathing
-            gsap.from(sectionRef.current, {
-                scale: 0.97,
-                opacity: 0.8,
-                duration: 1,
-                ease: "power2.out",
-                scrollTrigger: {
-                    trigger: sectionRef.current,
-                    start: "top 85%",
-                    toggleActions: "play none none reverse",
-                },
-            })
-
-            // Divider
-            if (dividerRef.current) {
-                gsap.to(dividerRef.current, {
-                    scaleX: 1,
-                    duration: 1.2,
-                    ease: "power2.inOut",
+            // Label entrance
+            const label = sectionRef.current.querySelector(".process-label")
+            if (label) {
+                gsap.from(label, {
+                    y: 20,
+                    opacity: 0,
+                    duration: 1,
+                    ease: "power2.out",
                     scrollTrigger: {
-                        trigger: dividerRef.current,
-                        start: "top 90%",
+                        trigger: label,
+                        start: "top 85%",
                         toggleActions: "play none none reverse",
                     },
                 })
             }
 
-            if (!stepsRef.current) return
-
-            // Connecting line — draws with scroll
-            if (lineRef.current) {
-                gsap.from(lineRef.current, {
-                    scaleX: 0,
-                    transformOrigin: "left center",
-                    ease: "none",
+            // Intro paragraph
+            const intro = sectionRef.current.querySelector(".process-intro")
+            if (intro) {
+                gsap.from(intro, {
+                    y: 20,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power2.out",
                     scrollTrigger: {
-                        trigger: stepsRef.current,
-                        start: "top 70%",
-                        end: "bottom 60%",
-                        scrub: 1,
+                        trigger: intro,
+                        start: "top 85%",
+                        toggleActions: "play none none reverse",
                     },
+                    delay: 0.2,
                 })
             }
 
-            // Each step
-            const stepEls = stepsRef.current.querySelectorAll(".process-step")
-            stepEls.forEach((step, i) => {
-                // Number clip-reveal
-                const num = step.querySelector(".step-number")
-                if (num) {
-                    gsap.from(num, {
-                        clipPath: "inset(100% 0 0 0)",
-                        duration: 0.8,
-                        ease: "power3.out",
-                        scrollTrigger: {
-                            trigger: step,
-                            start: "top 80%",
-                            toggleActions: "play none none reverse",
-                        },
-                        delay: i * 0.15,
-                    })
-                }
-
-                // Circle pulse
-                const circle = step.querySelector(".step-circle")
-                if (circle) {
-                    gsap.from(circle, {
-                        scale: 0,
-                        opacity: 0,
-                        duration: 0.6,
-                        ease: "back.out(2)",
-                        scrollTrigger: {
-                            trigger: step,
-                            start: "top 80%",
-                            toggleActions: "play none none reverse",
-                        },
-                        delay: i * 0.15 + 0.2,
-                    })
-
-                    // Pulse once
-                    gsap.to(circle, {
-                        boxShadow: "0 0 0 15px rgba(200, 165, 92, 0)",
-                        duration: 1,
-                        ease: "power2.out",
-                        scrollTrigger: {
-                            trigger: step,
-                            start: "top 75%",
-                            toggleActions: "play none none none",
-                        },
-                        delay: i * 0.15 + 0.5,
-                    })
-                }
-
-                // Text content fade up
-                const content = step.querySelector(".step-content")
-                if (content) {
-                    gsap.from(content, {
-                        y: 30,
-                        opacity: 0,
-                        duration: 0.7,
-                        ease: "power2.out",
-                        scrollTrigger: {
-                            trigger: step,
-                            start: "top 80%",
-                            toggleActions: "play none none reverse",
-                        },
-                        delay: i * 0.15 + 0.3,
-                    })
-                }
+            // Stagger each step row
+            const items = rightRef.current.querySelectorAll(".split-step")
+            items.forEach((item, i) => {
+                gsap.from(item, {
+                    y: 40,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: item,
+                        start: "top 85%",
+                        toggleActions: "play none none reverse",
+                    },
+                    delay: i * 0.1,
+                })
             })
         },
         { scope: sectionRef }
     )
 
     return (
-        <>
+        <section
+            ref={sectionRef}
+            className="bg-[#1A1A1A] py-28 text-white md:py-40"
+        >
             <div className="mx-auto max-w-7xl px-6">
-                <div ref={dividerRef} className="section-divider" />
-            </div>
-
-            <section
-                ref={sectionRef}
-                className="section-breathe py-28 md:py-40"
-                style={{ backgroundColor: "var(--color-background)" }}
-            >
-                <div className="mx-auto max-w-7xl px-6">
-                    {/* Heading */}
-                    <div className="mb-24 text-center">
-                        <p className="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-[#C8A55C]">
-                            Cum Funcționează
-                        </p>
-                        <SplitText
-                            as="h2"
-                            className="text-4xl font-bold tracking-tight md:text-6xl"
-                            scrollTrigger
-                            stagger={0.06}
-                        >
-                            De la Idee la Realitate
-                        </SplitText>
+                <div className="grid grid-cols-1 gap-16 lg:grid-cols-12 lg:gap-20">
+                    {/* Left — sticky heading */}
+                    <div className="lg:col-span-5">
+                        <div className="lg:sticky lg:top-32">
+                            <p className="process-label mb-4 text-xs font-medium uppercase tracking-[0.3em] text-[var(--color-accent-light)]">
+                                Cum Funcționează
+                            </p>
+                            <SplitText
+                                as="h2"
+                                className="text-pretty mb-6 text-4xl font-bold text-white md:text-5xl"
+                                scrollTrigger
+                                stagger={0.06}
+                            >
+                                De la Idee la Realitate
+                            </SplitText>
+                            <p className="process-intro text-pretty max-w-sm text-base leading-relaxed text-white/50">
+                                Patru pași simpli care transformă spațiul
+                                tău. De la prima măsurătoare până la
+                                instalarea finală — ne ocupăm de tot.
+                            </p>
+                        </div>
                     </div>
 
-                    <div ref={stepsRef} className="relative">
-                        {/* Connecting line (desktop) */}
-                        <div
-                            ref={lineRef}
-                            className="absolute left-[12.5%] right-[12.5%] top-8 hidden h-px bg-gradient-to-r from-transparent via-[#C8A55C]/30 to-transparent lg:block"
-                        />
+                    {/* Right — steps list */}
+                    <div ref={rightRef} className="lg:col-span-7">
+                        <div className="flex flex-col">
+                            {steps.map((step, i) => (
+                                <div key={step.number}>
+                                    {/* Top border on first item */}
+                                    {i === 0 && (
+                                        <div className="h-px bg-white/10" />
+                                    )}
 
-                        <div className="grid grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
-                            {steps.map((step) => (
-                                <div
-                                    key={step.number}
-                                    className="process-step flex flex-col items-center text-center"
-                                >
-                                    {/* Circle with icon */}
-                                    <div
-                                        className="step-circle relative mb-8 flex h-16 w-16 items-center justify-center rounded-full will-change-transform"
-                                        style={{
-                                            backgroundColor: "var(--color-muted)",
-                                            boxShadow: "0 0 0 0 rgba(200, 165, 92, 0.3)",
-                                        }}
-                                    >
-                                        <step.Icon
-                                            size={24}
-                                            strokeWidth={1.5}
-                                            className="text-[#8B6914]"
-                                        />
+                                    <div className="split-step flex items-start gap-6 py-10 md:gap-8">
+                                        {/* Number */}
+                                        <span
+                                            className="shrink-0 pt-1 text-3xl font-bold text-white/15 md:text-4xl"
+                                            style={{
+                                                fontVariantNumeric:
+                                                    "tabular-nums",
+                                            }}
+                                        >
+                                            {step.number}
+                                        </span>
+
+                                        {/* Content */}
+                                        <div className="flex-1">
+                                            <div className="mb-2 flex items-center gap-3">
+                                                <div className="flex size-9 items-center justify-center rounded-lg bg-white/[0.07]">
+                                                    <step.Icon
+                                                        size={16}
+                                                        strokeWidth={1.5}
+                                                        className="text-[var(--color-accent-light)]"
+                                                    />
+                                                </div>
+                                                <h3 className="text-lg font-semibold text-white">
+                                                    {step.title}
+                                                </h3>
+                                            </div>
+                                            <p className="text-pretty ml-12 text-sm leading-relaxed text-white/40">
+                                                {step.description}
+                                            </p>
+                                        </div>
                                     </div>
 
-                                    {/* Number */}
-                                    <span
-                                        className="step-number mb-3 block text-5xl font-bold text-[#C8A55C]/15"
-                                        style={{ fontVariantNumeric: "tabular-nums" }}
-                                    >
-                                        {step.number}
-                                    </span>
-
-                                    {/* Content */}
-                                    <div className="step-content">
-                                        <h3 className="mb-2 text-lg font-semibold text-[#1A1A1A]">
-                                            {step.title}
-                                        </h3>
-                                        <p className="text-sm leading-relaxed text-neutral-500">
-                                            {step.description}
-                                        </p>
-                                    </div>
+                                    {/* Bottom border */}
+                                    <div className="h-px bg-white/10" />
                                 </div>
                             ))}
                         </div>
                     </div>
                 </div>
-            </section>
-        </>
+            </div>
+        </section>
     )
 }
 

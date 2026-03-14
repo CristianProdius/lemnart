@@ -4,239 +4,239 @@ import { useRef, useState, useCallback } from "react"
 import { useGSAP } from "@gsap/react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Plus } from "lucide-react"
 import SplitText from "@/components/ui/split-text"
 
 gsap.registerPlugin(ScrollTrigger)
 
+/**
+ * FAQ — 3D Grid Card Flip
+ *
+ * Breaks completely from the accordion model. FAQs are displayed
+ * as a 2-column grid of physical cards. Each card has a front face
+ * (question + ghost number) and a back face (answer). Clicking a
+ * card flips it 180° on the Y-axis — a horizontal flip like
+ * turning a playing card.
+ *
+ * Only one card can be flipped at a time. The active card gets
+ * a gold border. Cards stagger in on scroll with a subtle
+ * rotateY tilt. The grid layout + flip interaction creates a
+ * tactile, game-like experience.
+ */
+
 const faqs = [
     {
         question: "Cât durează o comandă personalizată?",
-        answer:
-            "Termenul standard este de 2-3 săptămâni de la confirmarea comenzii. Pentru proiecte mai complexe sau comenzi multiple, termenul poate fi de 3-4 săptămâni. Vă ținem la curent pe parcursul întregului proces.",
+        answer: "Termenul standard este de 2-3 săptămâni de la confirmarea comenzii. Pentru proiecte mai complexe sau comenzi multiple, termenul poate fi de 3-4 săptămâni. Vă ținem la curent pe parcursul întregului proces.",
     },
     {
         question: "Ce materiale folosiți?",
-        answer:
-            "Lucrăm exclusiv cu lemn masiv — stejar, nuc, fag și alte esențe premium din surse certificate. Finisajele sunt realizate cu lacuri și vopsele ecologice, rezistente la uzură și căldură.",
+        answer: "Lucrăm exclusiv cu lemn masiv — stejar, nuc, fag și alte esențe premium din surse certificate. Finisajele sunt realizate cu lacuri și vopsele ecologice, rezistente la uzură și căldură.",
     },
     {
         question: "Oferiți montaj?",
-        answer:
-            "Da, montajul profesional este inclus în preț. Echipa noastră se ocupă de instalarea completă, asigurând o fixare sigură și un aspect impecabil, fără deteriorarea pereților.",
+        answer: "Da, montajul profesional este inclus în preț. Echipa noastră se ocupă de instalarea completă, asigurând o fixare sigură și un aspect impecabil, fără deteriorarea pereților.",
     },
     {
         question: "Mascarea afectează eficiența caloriferului?",
-        answer:
-            "Designul nostru asigură ventilație optimă prin deschideri strategice în partea superioară și inferioară. Testele arată o pierdere minimă de eficiență termică, de doar 5-10%.",
+        answer: "Designul nostru asigură ventilație optimă prin deschideri strategice în partea superioară și inferioară. Testele arată o pierdere minimă de eficiență termică, de doar 5-10%.",
     },
     {
         question: "Care este zona de livrare?",
-        answer:
-            "Livrăm și montăm în toată România. Pentru localitățile din afara Bucureștiului, programăm vizite de măsurare și montaj în funcție de zonă. Transportul este inclus pentru comenzi peste 1.500 RON.",
+        answer: "Livrăm și montăm în toată România. Pentru localitățile din afara Bucureștiului, programăm vizite de măsurare și montaj în funcție de zonă. Transportul este inclus pentru comenzi peste 1.500 RON.",
     },
 ]
 
 const FAQ = () => {
     const sectionRef = useRef<HTMLElement>(null)
-    const listRef = useRef<HTMLDivElement>(null)
-    const dividerRef = useRef<HTMLDivElement>(null)
-    const [openIndex, setOpenIndex] = useState<number | null>(null)
-    const answerRefs = useRef<(HTMLDivElement | null)[]>([])
+    const gridRef = useRef<HTMLDivElement>(null)
+    const [flippedIndex, setFlippedIndex] = useState<number | null>(null)
+    const cardRefs = useRef<(HTMLDivElement | null)[]>([])
 
-    const toggle = useCallback(
+    const flipCard = useCallback(
         (index: number) => {
-            // Close previous
-            if (openIndex !== null && openIndex !== index) {
-                const prev = answerRefs.current[openIndex]
-                if (prev) {
-                    gsap.to(prev, {
-                        height: 0,
-                        duration: 0.4,
-                        ease: "power2.inOut",
-                        onComplete: () => {
-                            const inner = prev.querySelector(".faq-answer-inner")
-                            if (inner)
-                                gsap.set(inner, { opacity: 0, y: 10 })
-                        },
+            // Flip previous card back
+            if (flippedIndex !== null && flippedIndex !== index) {
+                const prevCard = cardRefs.current[flippedIndex]
+                if (prevCard) {
+                    gsap.to(prevCard, {
+                        rotationY: 0,
+                        duration: 0.5,
+                        ease: "power3.inOut",
                     })
                 }
             }
 
-            if (openIndex === index) {
-                // Close current
-                const el = answerRefs.current[index]
-                if (el) {
-                    gsap.to(el, {
-                        height: 0,
-                        duration: 0.4,
-                        ease: "power2.inOut",
-                    })
-                }
-                setOpenIndex(null)
-            } else {
-                // Open new
-                const el = answerRefs.current[index]
-                if (el) {
-                    gsap.set(el, { height: "auto" })
-                    const h = el.offsetHeight
-                    gsap.from(el, {
-                        height: 0,
+            if (flippedIndex === index) {
+                // Flip back
+                const card = cardRefs.current[index]
+                if (card) {
+                    gsap.to(card, {
+                        rotationY: 0,
                         duration: 0.5,
-                        ease: "power3.out",
-                        onComplete: () => {
-                            // Fade in content after height is done
-                            const inner =
-                                el.querySelector(".faq-answer-inner")
-                            if (inner) {
-                                gsap.fromTo(
-                                    inner,
-                                    { opacity: 0, y: 10 },
-                                    {
-                                        opacity: 1,
-                                        y: 0,
-                                        duration: 0.3,
-                                        ease: "power2.out",
-                                    }
-                                )
-                            }
-                        },
+                        ease: "power3.inOut",
                     })
                 }
-                setOpenIndex(index)
+                setFlippedIndex(null)
+            } else {
+                // Flip to reveal answer
+                const card = cardRefs.current[index]
+                if (card) {
+                    gsap.to(card, {
+                        rotationY: 180,
+                        duration: 0.6,
+                        ease: "power3.inOut",
+                    })
+                }
+                setFlippedIndex(index)
             }
         },
-        [openIndex]
+        [flippedIndex]
     )
 
     useGSAP(
         () => {
-            if (!sectionRef.current) return
+            if (!gridRef.current) return
 
-            // Section breathing
-            gsap.from(sectionRef.current, {
-                scale: 0.97,
-                opacity: 0.8,
-                duration: 1,
-                ease: "power2.out",
+            const cards = gridRef.current.querySelectorAll(".faq-flip-card")
+            gsap.from(cards, {
+                y: 60,
+                opacity: 0,
+                rotationY: -15,
+                duration: 0.9,
+                ease: "power3.out",
+                stagger: 0.1,
                 scrollTrigger: {
-                    trigger: sectionRef.current,
+                    trigger: gridRef.current,
                     start: "top 85%",
                     toggleActions: "play none none reverse",
                 },
             })
-
-            // Divider
-            if (dividerRef.current) {
-                gsap.to(dividerRef.current, {
-                    scaleX: 1,
-                    duration: 1.2,
-                    ease: "power2.inOut",
-                    scrollTrigger: {
-                        trigger: dividerRef.current,
-                        start: "top 90%",
-                        toggleActions: "play none none reverse",
-                    },
-                })
-            }
-
-            // Items stagger
-            if (listRef.current) {
-                const items = listRef.current.querySelectorAll(".faq-item")
-                gsap.from(items, {
-                    y: 30,
-                    opacity: 0,
-                    duration: 0.7,
-                    ease: "power2.out",
-                    stagger: 0.08,
-                    force3D: true,
-                    scrollTrigger: {
-                        trigger: listRef.current,
-                        start: "top 80%",
-                        toggleActions: "play none none reverse",
-                    },
-                })
-            }
         },
         { scope: sectionRef }
     )
 
     return (
-        <>
-            <div className="mx-auto max-w-3xl px-6">
-                <div ref={dividerRef} className="section-divider" />
-            </div>
+        <section
+            ref={sectionRef}
+            className="bg-[#1A1A1A] py-28 text-white md:py-40"
+        >
+            <div className="mx-auto max-w-5xl px-6">
+                {/* Heading */}
+                <div className="mb-20 text-center md:mb-28">
+                    <p className="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-[var(--color-accent-light)]">
+                        Suport
+                    </p>
+                    <SplitText
+                        as="h2"
+                        className="text-balance text-4xl font-bold tracking-tight text-white md:text-6xl"
+                        scrollTrigger
+                        stagger={0.06}
+                    >
+                        Întrebări Frecvente
+                    </SplitText>
+                    <p className="text-pretty mx-auto mt-6 max-w-md text-sm leading-relaxed text-white/40">
+                        Apasă pe orice card pentru a descoperi răspunsul.
+                    </p>
+                </div>
 
-            <section
-                ref={sectionRef}
-                className="section-breathe py-28 md:py-40"
-                style={{ backgroundColor: "var(--color-background)" }}
-            >
-                <div className="mx-auto max-w-3xl px-6">
-                    {/* Heading */}
-                    <div className="mb-16 text-center">
-                        <p className="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-[#C8A55C]">
-                            Suport
-                        </p>
-                        <SplitText
-                            as="h2"
-                            className="text-4xl font-bold tracking-tight md:text-6xl"
-                            scrollTrigger
-                            stagger={0.06}
+                {/* Card Grid */}
+                <div
+                    ref={gridRef}
+                    className="grid grid-cols-1 gap-4 md:grid-cols-2"
+                    style={{ perspective: "1200px" }}
+                >
+                    {faqs.map((faq, index) => (
+                        <div
+                            key={index}
+                            className="faq-flip-card cursor-pointer"
+                            style={{ perspective: "1000px" }}
+                            onClick={() => flipCard(index)}
+                            role="button"
+                            tabIndex={0}
+                            aria-label={`${faq.question} — apasă pentru răspuns`}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault()
+                                    flipCard(index)
+                                }
+                            }}
                         >
-                            Întrebări Frecvente
-                        </SplitText>
-                    </div>
-
-                    <div ref={listRef} className="space-y-3">
-                        {faqs.map((faq, index) => (
                             <div
-                                key={index}
-                                className={`faq-item overflow-hidden rounded-xl border transition-colors duration-300 ${
-                                    openIndex === index
-                                        ? "border-[#C8A55C]/30 bg-[#F5F5F0]"
-                                        : "border-[#E5E5E0] bg-transparent"
-                                }`}
+                                ref={(el) => {
+                                    cardRefs.current[index] = el
+                                }}
+                                className="relative"
+                                style={{
+                                    transformStyle: "preserve-3d",
+                                }}
                             >
-                                <button
-                                    onClick={() => toggle(index)}
-                                    className="flex w-full items-center justify-between px-7 py-5 text-left"
-                                >
-                                    <span className="pr-6 text-[15px] font-medium text-[#1A1A1A]">
-                                        {faq.question}
-                                    </span>
-                                    <span
-                                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
-                                            openIndex === index
-                                                ? "rotate-45 bg-[#8B6914] text-white"
-                                                : "bg-[#F5F5F0] text-neutral-400"
-                                        }`}
-                                    >
-                                        <Plus size={14} strokeWidth={2.5} />
-                                    </span>
-                                </button>
-
+                                {/* Front Face — Question */}
                                 <div
-                                    ref={(el) => {
-                                        answerRefs.current[index] = el
-                                    }}
-                                    className="overflow-hidden"
+                                    className="flex min-h-[220px] flex-col justify-between border p-8 transition-colors duration-300 md:min-h-[240px] md:p-10"
                                     style={{
-                                        height: openIndex === index ? "auto" : 0,
+                                        backfaceVisibility: "hidden",
+                                        borderColor:
+                                            flippedIndex === index
+                                                ? "var(--color-accent-light)"
+                                                : "rgba(255,255,255,0.06)",
                                     }}
                                 >
-                                    <div className="faq-answer-inner px-7 pb-6">
-                                        <p className="text-sm leading-relaxed text-neutral-500">
-                                            {faq.answer}
+                                    {/* Ghost number */}
+                                    <span
+                                        className="select-none text-6xl font-bold leading-none md:text-7xl"
+                                        style={{
+                                            fontVariantNumeric: "tabular-nums",
+                                            color: "rgba(255,255,255,0.03)",
+                                        }}
+                                        aria-hidden="true"
+                                    >
+                                        {String(index + 1).padStart(2, "0")}
+                                    </span>
+
+                                    <div>
+                                        <p className="text-balance text-base font-medium text-white/85 md:text-lg">
+                                            {faq.question}
+                                        </p>
+                                        <p className="mt-3 text-[10px] font-medium uppercase tracking-widest text-white/20">
+                                            Flip for answer
                                         </p>
                                     </div>
                                 </div>
+
+                                {/* Back Face — Answer */}
+                                <div
+                                    className="absolute inset-0 flex flex-col justify-center border border-[var(--color-accent-light)]/25 p-8 md:p-10"
+                                    style={{
+                                        backfaceVisibility: "hidden",
+                                        transform: "rotateY(180deg)",
+                                        backgroundColor: "#1F1F1F",
+                                    }}
+                                >
+                                    {/* Small number */}
+                                    <span
+                                        className="mb-4 text-xs"
+                                        style={{
+                                            fontVariantNumeric: "tabular-nums",
+                                            color: "var(--color-accent-light)",
+                                        }}
+                                    >
+                                        {String(index + 1).padStart(2, "0")}
+                                    </span>
+
+                                    <p className="text-pretty text-sm leading-relaxed text-white/60 md:text-base">
+                                        {faq.answer}
+                                    </p>
+
+                                    <p className="mt-6 text-[10px] font-medium uppercase tracking-widest text-white/20">
+                                        Flip to close
+                                    </p>
+                                </div>
                             </div>
-                        ))}
-                    </div>
+                        </div>
+                    ))}
                 </div>
-            </section>
-        </>
+            </div>
+        </section>
     )
 }
 

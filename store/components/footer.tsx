@@ -1,119 +1,230 @@
+"use client"
+
+import { useRef } from "react"
+import { useGSAP } from "@gsap/react"
+import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import Link from "next/link"
 import { Phone, Mail, MapPin } from "lucide-react"
 
+gsap.registerPlugin(ScrollTrigger)
+
+/**
+ * Footer — "The Cartographer" (Asymmetric Editorial Grid)
+ *
+ * 60/40 two-column split. Left column has oversized ghost brand name,
+ * tagline in Instrument Serif italic, a gold rule that draws in, and
+ * nav + legal links. Right column: contact info with gold numbered
+ * prefixes. Bottom bar: copyright + full-width gold line above.
+ */
+
+const contactItems = [
+    { num: "01", label: "Telefon", value: "+40 700 000 000", href: "tel:+40700000000", icon: Phone },
+    { num: "02", label: "Email", value: "contact@lemnart.ro", href: "mailto:contact@lemnart.ro", icon: Mail },
+    { num: "03", label: "Locație", value: "București, România", href: null, icon: MapPin },
+]
+
 const Footer = () => {
+    const footerRef = useRef<HTMLElement>(null)
+    const goldRuleRef = useRef<HTMLDivElement>(null)
+    const bottomRuleRef = useRef<HTMLDivElement>(null)
+    const ghostRef = useRef<HTMLSpanElement>(null)
+    const linksRef = useRef<HTMLDivElement>(null)
+    const contactRef = useRef<HTMLDivElement>(null)
+
+    useGSAP(
+        () => {
+            if (!footerRef.current) return
+
+            // Ghost brand fade in
+            if (ghostRef.current) {
+                gsap.from(ghostRef.current, {
+                    opacity: 0,
+                    scale: 0.97,
+                    duration: 1.6,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: footerRef.current,
+                        start: "top 85%",
+                        toggleActions: "play none none reverse",
+                    },
+                })
+            }
+
+            // Gold rule draws in
+            if (goldRuleRef.current) {
+                gsap.from(goldRuleRef.current, {
+                    scaleX: 0,
+                    duration: 1.4,
+                    ease: "power2.inOut",
+                    scrollTrigger: {
+                        trigger: goldRuleRef.current,
+                        start: "top 90%",
+                        toggleActions: "play none none reverse",
+                    },
+                })
+            }
+
+            // Links stagger up
+            if (linksRef.current) {
+                const links = linksRef.current.querySelectorAll(".footer-link")
+                gsap.from(links, {
+                    y: 30,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power3.out",
+                    stagger: 0.08,
+                    scrollTrigger: {
+                        trigger: linksRef.current,
+                        start: "top 90%",
+                        toggleActions: "play none none reverse",
+                    },
+                })
+            }
+
+            // Contact items stagger from right
+            if (contactRef.current) {
+                const items = contactRef.current.querySelectorAll(".contact-item")
+                gsap.from(items, {
+                    x: 40,
+                    opacity: 0,
+                    duration: 0.9,
+                    ease: "power3.out",
+                    stagger: 0.12,
+                    scrollTrigger: {
+                        trigger: contactRef.current,
+                        start: "top 90%",
+                        toggleActions: "play none none reverse",
+                    },
+                })
+            }
+
+            // Bottom rule draws
+            if (bottomRuleRef.current) {
+                gsap.from(bottomRuleRef.current, {
+                    scaleX: 0,
+                    duration: 1.4,
+                    ease: "power2.inOut",
+                    scrollTrigger: {
+                        trigger: bottomRuleRef.current,
+                        start: "top 95%",
+                        toggleActions: "play none none reverse",
+                    },
+                })
+            }
+        },
+        { scope: footerRef }
+    )
+
     return (
         <footer
-            className="border-t"
-            style={{
-                backgroundColor: "var(--color-foreground)",
-                borderColor: "transparent",
-            }}
+            ref={footerRef}
+            className="bg-[#111111] py-20 text-white md:py-28"
         >
-            <div className="mx-auto max-w-7xl px-6 py-16">
-                <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
-                    {/* Brand */}
-                    <div className="md:col-span-1">
-                        <Link href="/" className="text-2xl font-bold text-white">
+            <div className="mx-auto max-w-7xl px-6">
+                {/* Two-column split */}
+                <div className="grid grid-cols-1 gap-16 md:grid-cols-5">
+                    {/* Left column — 60% */}
+                    <div className="relative md:col-span-3">
+                        {/* Ghost brand */}
+                        <span
+                            ref={ghostRef}
+                            className="pointer-events-none select-none text-[80px] font-bold uppercase leading-none tracking-[0.2em] text-white/[0.03] md:text-[120px]"
+                            style={{ fontFamily: "var(--font-barlow)" }}
+                            aria-hidden="true"
+                        >
                             LEMNART
-                        </Link>
-                        <p className="mt-4 text-sm leading-relaxed text-white/50">
-                            Mascare calorifere din lemn masiv, fabricate artizanal.
-                            Design premium pentru spații de excepție.
-                        </p>
-                    </div>
+                        </span>
 
-                    {/* Links */}
-                    <div>
-                        <h4 className="mb-4 text-sm font-semibold uppercase tracking-widest text-white/70">
-                            Navigare
-                        </h4>
-                        <ul className="space-y-3">
-                            <li>
-                                <Link href="/" className="text-sm text-white/50 transition-colors hover:text-white">
+                        {/* Tagline */}
+                        <p
+                            className="mt-6 max-w-sm text-xl text-white/60 md:text-2xl"
+                            style={{
+                                fontFamily: "var(--font-instrument-serif)",
+                                fontStyle: "italic",
+                            }}
+                        >
+                            Mascare calorifere din lemn masiv, fabricate artizanal.
+                        </p>
+
+                        {/* Gold rule */}
+                        <div
+                            ref={goldRuleRef}
+                            className="my-10 h-px origin-left bg-[var(--color-accent-light)]/30"
+                        />
+
+                        {/* Links */}
+                        <div ref={linksRef} className="flex flex-wrap gap-x-12 gap-y-6">
+                            <div className="flex flex-wrap gap-x-8 gap-y-3">
+                                <Link href="/" className="footer-link text-sm text-white/50 transition-colors hover:text-white">
                                     Acasă
                                 </Link>
-                            </li>
-                            <li>
-                                <Link href="/category/all" className="text-sm text-white/50 transition-colors hover:text-white">
+                                <Link href="/category/all" className="footer-link text-sm text-white/50 transition-colors hover:text-white">
                                     Colecții
                                 </Link>
-                            </li>
-                            <li>
-                                <Link href="/contact" className="text-sm text-white/50 transition-colors hover:text-white">
+                                <Link href="/contact" className="footer-link text-sm text-white/50 transition-colors hover:text-white">
                                     Contact
                                 </Link>
-                            </li>
-                        </ul>
-                    </div>
-
-                    {/* Legal */}
-                    <div>
-                        <h4 className="mb-4 text-sm font-semibold uppercase tracking-widest text-white/70">
-                            Informații
-                        </h4>
-                        <ul className="space-y-3">
-                            <li>
-                                <Link href="/terms" className="text-sm text-white/50 transition-colors hover:text-white">
+                            </div>
+                            <div className="flex flex-wrap gap-x-8 gap-y-3">
+                                <Link href="/terms" className="footer-link text-sm text-white/40 transition-colors hover:text-white">
                                     Termeni și Condiții
                                 </Link>
-                            </li>
-                            <li>
-                                <Link href="/privacy" className="text-sm text-white/50 transition-colors hover:text-white">
-                                    Politica de Confidențialitate
+                                <Link href="/privacy" className="footer-link text-sm text-white/40 transition-colors hover:text-white">
+                                    Confidențialitate
                                 </Link>
-                            </li>
-                            <li>
-                                <Link href="/returns" className="text-sm text-white/50 transition-colors hover:text-white">
+                                <Link href="/returns" className="footer-link text-sm text-white/40 transition-colors hover:text-white">
                                     Politica de Retur
                                 </Link>
-                            </li>
-                        </ul>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Contact */}
-                    <div>
-                        <h4 className="mb-4 text-sm font-semibold uppercase tracking-widest text-white/70">
-                            Contact
-                        </h4>
-                        <ul className="space-y-3">
-                            <li>
-                                <a
-                                    href="tel:+40700000000"
-                                    className="flex items-center gap-2 text-sm text-white/50 transition-colors hover:text-white"
+                    {/* Right column — 40% */}
+                    <div ref={contactRef} className="flex flex-col justify-end gap-8 md:col-span-2">
+                        {contactItems.map((item) => (
+                            <div key={item.num} className="contact-item flex items-start gap-4">
+                                <span
+                                    className="text-xs font-medium tracking-widest"
+                                    style={{ color: "var(--color-accent-light)" }}
                                 >
-                                    <Phone size={14} />
-                                    +40 700 000 000
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="mailto:contact@lemnart.ro"
-                                    className="flex items-center gap-2 text-sm text-white/50 transition-colors hover:text-white"
-                                >
-                                    <Mail size={14} />
-                                    contact@lemnart.ro
-                                </a>
-                            </li>
-                            <li>
-                                <span className="flex items-center gap-2 text-sm text-white/50">
-                                    <MapPin size={14} />
-                                    București, România
+                                    {item.num}
                                 </span>
-                            </li>
-                        </ul>
+                                <div>
+                                    <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.3em] text-white/30">
+                                        {item.label}
+                                    </p>
+                                    {item.href ? (
+                                        <a
+                                            href={item.href}
+                                            className="flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+                                        >
+                                            <item.icon size={14} className="text-white/30" />
+                                            {item.value}
+                                        </a>
+                                    ) : (
+                                        <span className="flex items-center gap-2 text-sm text-white/60">
+                                            <item.icon size={14} className="text-white/30" />
+                                            {item.value}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
-                {/* Bottom */}
-                <div className="mt-12 border-t border-white/10 pt-8">
-                    <p className="text-center text-xs text-white/30">
-                        &copy; {new Date().getFullYear()} LemnArt. Toate drepturile rezervate.
-                    </p>
-                </div>
+                {/* Bottom bar */}
+                <div
+                    ref={bottomRuleRef}
+                    className="mt-16 h-px origin-center bg-[var(--color-accent-light)]/15"
+                />
+                <p className="mt-6 text-xs text-white/25">
+                    &copy; {new Date().getFullYear()} LemnArt. Toate drepturile rezervate.
+                </p>
             </div>
         </footer>
     )
 }
 
-export default Footer;
+export default Footer
