@@ -50,7 +50,7 @@ export const sidebarItems: NavGroup[] = [
       },
       {
         title: "Analytics",
-        url: "/dashboard/analytics",
+        url: "/dashboard/store/:storeId/analytics",
         icon: Gauge,
       },
       {
