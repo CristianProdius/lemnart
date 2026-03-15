@@ -111,7 +111,7 @@ const ContactPage = () => {
     }
 
     return (
-        <div className="bg-[#1A1A1A]">
+        <div className="bg-[var(--th-surface)]">
             {/* Hero */}
             <section ref={heroRef} className="py-24 md:py-32">
                 <div className="mx-auto max-w-7xl px-6">
@@ -121,12 +121,12 @@ const ContactPage = () => {
                         style={{ fontFamily: "var(--font-barlow)" }}
                     >
                         Acasă{" "}
-                        <span className="mx-2 text-white/20">/</span>{" "}
-                        <span className="text-white/60">Contact</span>
+                        <span className="mx-2 text-[var(--th-text-muted)]">/</span>{" "}
+                        <span className="text-[var(--th-text-tertiary)]">Contact</span>
                     </p>
 
                     <h1
-                        className="hero-animate text-5xl text-white md:text-7xl lg:text-8xl"
+                        className="hero-animate text-5xl text-[rgb(var(--th-text))] md:text-7xl lg:text-8xl"
                         style={{
                             fontFamily: "var(--font-instrument-serif)",
                             fontStyle: "italic",
@@ -136,7 +136,7 @@ const ContactPage = () => {
                     </h1>
 
                     <p
-                        className="hero-animate mt-6 max-w-xl text-base leading-relaxed text-white/40 md:text-lg"
+                        className="hero-animate mt-6 max-w-xl text-base leading-relaxed text-[var(--th-text-tertiary)] md:text-lg"
                         style={{ fontFamily: "var(--font-barlow)" }}
                     >
                         Suntem aici pentru a vă ajuta cu orice întrebare despre
@@ -170,7 +170,7 @@ const ContactPage = () => {
                                         key={item.num}
                                         className="contact-item flex items-start gap-4"
                                     >
-                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center border border-white/10 bg-white/[0.03]">
+                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center border border-[var(--th-border)] bg-[var(--th-overlay-hover)]">
                                             <item.icon
                                                 size={18}
                                                 className="text-[var(--color-accent-light)]"
@@ -178,7 +178,7 @@ const ContactPage = () => {
                                         </div>
                                         <div>
                                             <p
-                                                className="text-xs font-medium uppercase tracking-[0.2em] text-white/30"
+                                                className="text-xs font-medium uppercase tracking-[0.2em] text-[var(--th-text-muted)]"
                                                 style={{
                                                     fontFamily:
                                                         "var(--font-barlow)",
@@ -192,7 +192,7 @@ const ContactPage = () => {
                                             {item.href ? (
                                                 <a
                                                     href={item.href}
-                                                    className="mt-1 block text-sm text-white/70 transition hover:text-white"
+                                                    className="mt-1 block text-sm text-[var(--th-text-secondary)] transition hover:text-[rgb(var(--th-text))]"
                                                     style={{
                                                         fontFamily:
                                                             "var(--font-barlow)",
@@ -202,7 +202,7 @@ const ContactPage = () => {
                                                 </a>
                                             ) : (
                                                 <p
-                                                    className="mt-1 text-sm text-white/70"
+                                                    className="mt-1 text-sm text-[var(--th-text-secondary)]"
                                                     style={{
                                                         fontFamily:
                                                             "var(--font-barlow)",
@@ -217,12 +217,12 @@ const ContactPage = () => {
                             </div>
 
                             {/* Divider */}
-                            <div className="my-10 h-px bg-white/10" />
+                            <div className="my-10 h-px bg-[var(--th-border)]" />
 
                             {/* Hours */}
                             <div className="contact-item">
                                 <p
-                                    className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-white/30"
+                                    className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-[var(--th-text-muted)]"
                                     style={{
                                         fontFamily: "var(--font-barlow)",
                                     }}
@@ -230,26 +230,26 @@ const ContactPage = () => {
                                     Program
                                 </p>
                                 <div
-                                    className="space-y-2 text-sm text-white/60"
+                                    className="space-y-2 text-sm text-[var(--th-text-tertiary)]"
                                     style={{
                                         fontFamily: "var(--font-barlow)",
                                     }}
                                 >
                                     <div className="flex justify-between">
                                         <span>Luni – Vineri</span>
-                                        <span className="tabular-nums text-white/80">
+                                        <span className="tabular-nums text-[var(--th-text-secondary)]">
                                             09:00 – 18:00
                                         </span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span>Sâmbătă</span>
-                                        <span className="tabular-nums text-white/80">
+                                        <span className="tabular-nums text-[var(--th-text-secondary)]">
                                             10:00 – 14:00
                                         </span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span>Duminică</span>
-                                        <span className="text-white/30">
+                                        <span className="text-[var(--th-text-muted)]">
                                             Închis
                                         </span>
                                     </div>
@@ -274,7 +274,7 @@ const ContactPage = () => {
                                     <div>
                                         <label
                                             htmlFor="name"
-                                            className="mb-2 block text-xs font-medium uppercase tracking-[0.15em] text-white/30"
+                                            className="mb-2 block text-xs font-medium uppercase tracking-[0.15em] text-[var(--th-text-muted)]"
                                             style={{
                                                 fontFamily:
                                                     "var(--font-barlow)",
@@ -287,7 +287,7 @@ const ContactPage = () => {
                                             name="name"
                                             type="text"
                                             required
-                                            className="w-full border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white/90 outline-none transition placeholder:text-white/20 focus:border-[var(--color-accent-light)]/50"
+                                            className="w-full border border-[var(--th-border)] bg-[var(--th-overlay-hover)] px-4 py-3 text-sm text-[var(--th-text-secondary)] outline-none transition placeholder:text-[var(--th-text-muted)] focus:border-[var(--color-accent-light)]/50"
                                             style={{
                                                 fontFamily:
                                                     "var(--font-barlow)",
@@ -298,7 +298,7 @@ const ContactPage = () => {
                                     <div>
                                         <label
                                             htmlFor="email"
-                                            className="mb-2 block text-xs font-medium uppercase tracking-[0.15em] text-white/30"
+                                            className="mb-2 block text-xs font-medium uppercase tracking-[0.15em] text-[var(--th-text-muted)]"
                                             style={{
                                                 fontFamily:
                                                     "var(--font-barlow)",
@@ -311,7 +311,7 @@ const ContactPage = () => {
                                             name="email"
                                             type="email"
                                             required
-                                            className="w-full border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white/90 outline-none transition placeholder:text-white/20 focus:border-[var(--color-accent-light)]/50"
+                                            className="w-full border border-[var(--th-border)] bg-[var(--th-overlay-hover)] px-4 py-3 text-sm text-[var(--th-text-secondary)] outline-none transition placeholder:text-[var(--th-text-muted)] focus:border-[var(--color-accent-light)]/50"
                                             style={{
                                                 fontFamily:
                                                     "var(--font-barlow)",
@@ -324,7 +324,7 @@ const ContactPage = () => {
                                 <div className="form-field">
                                     <label
                                         htmlFor="subject"
-                                        className="mb-2 block text-xs font-medium uppercase tracking-[0.15em] text-white/30"
+                                        className="mb-2 block text-xs font-medium uppercase tracking-[0.15em] text-[var(--th-text-muted)]"
                                         style={{
                                             fontFamily: "var(--font-barlow)",
                                         }}
@@ -336,7 +336,7 @@ const ContactPage = () => {
                                         name="subject"
                                         type="text"
                                         required
-                                        className="w-full border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white/90 outline-none transition placeholder:text-white/20 focus:border-[var(--color-accent-light)]/50"
+                                        className="w-full border border-[var(--th-border)] bg-[var(--th-overlay-hover)] px-4 py-3 text-sm text-[var(--th-text-secondary)] outline-none transition placeholder:text-[var(--th-text-muted)] focus:border-[var(--color-accent-light)]/50"
                                         style={{
                                             fontFamily: "var(--font-barlow)",
                                         }}
@@ -347,7 +347,7 @@ const ContactPage = () => {
                                 <div className="form-field">
                                     <label
                                         htmlFor="message"
-                                        className="mb-2 block text-xs font-medium uppercase tracking-[0.15em] text-white/30"
+                                        className="mb-2 block text-xs font-medium uppercase tracking-[0.15em] text-[var(--th-text-muted)]"
                                         style={{
                                             fontFamily: "var(--font-barlow)",
                                         }}
@@ -359,7 +359,7 @@ const ContactPage = () => {
                                         name="message"
                                         rows={6}
                                         required
-                                        className="w-full resize-none border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white/90 outline-none transition placeholder:text-white/20 focus:border-[var(--color-accent-light)]/50"
+                                        className="w-full resize-none border border-[var(--th-border)] bg-[var(--th-overlay-hover)] px-4 py-3 text-sm text-[var(--th-text-secondary)] outline-none transition placeholder:text-[var(--th-text-muted)] focus:border-[var(--color-accent-light)]/50"
                                         style={{
                                             fontFamily: "var(--font-barlow)",
                                         }}
@@ -371,7 +371,7 @@ const ContactPage = () => {
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="flex items-center gap-3 bg-[var(--color-accent-light)] px-8 py-4 text-sm font-semibold text-[#1A1A1A] transition-all duration-200 hover:bg-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-40"
+                                        className="flex items-center gap-3 bg-[var(--color-accent-light)] px-8 py-4 text-sm font-semibold text-[var(--th-btn-inverse-text)] transition-all duration-200 hover:bg-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-40"
                                         style={{
                                             fontFamily: "var(--font-barlow)",
                                         }}

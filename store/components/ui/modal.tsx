@@ -27,10 +27,10 @@ const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
                             leaveTo="opacity-0 scale-95"
                         >
                             <Dialog.Panel className="w-full max-w-3xl overflow-hidden text-left align-middle">
-                                <div className="relative overflow-hidden bg-[#1A1A1A] p-6 shadow-2xl sm:p-8 lg:p-10">
+                                <div className="relative overflow-hidden bg-[var(--th-surface)] p-6 shadow-2xl sm:p-8 lg:p-10">
                                     <button
                                         onClick={onClose}
-                                        className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center text-white/40 transition hover:text-white"
+                                        className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center text-[var(--th-text-tertiary)] transition hover:text-[rgb(var(--th-text))]"
                                     >
                                         <X size={18} />
                                     </button>

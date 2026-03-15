@@ -37,7 +37,7 @@ const Filter: React.FC<FilterProps> = ({ data, name, valueKey }) => {
     return (
         <div>
             <p
-                className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-white/40"
+                className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-[var(--th-text-tertiary)]"
                 style={{ fontFamily: "var(--font-barlow)" }}
             >
                 {name}
@@ -50,8 +50,8 @@ const Filter: React.FC<FilterProps> = ({ data, name, valueKey }) => {
                         className={cn(
                             "flex items-center gap-2 px-4 py-2 text-sm transition-all duration-200",
                             selectedValue === filter.id
-                                ? "bg-white text-[#1A1A1A]"
-                                : "border border-white/15 text-white/60 hover:border-white/30 hover:text-white"
+                                ? "bg-[var(--th-btn-inverse-bg)] text-[var(--th-btn-inverse-text)]"
+                                : "border border-[var(--th-border-strong)] text-[var(--th-text-tertiary)] hover:border-[var(--th-text-muted)] hover:text-[rgb(var(--th-text))]"
                         )}
                         style={{ fontFamily: "var(--font-barlow)" }}
                     >
@@ -60,8 +60,8 @@ const Filter: React.FC<FilterProps> = ({ data, name, valueKey }) => {
                                 className={cn(
                                     "h-3.5 w-3.5 rounded-full border",
                                     selectedValue === filter.id
-                                        ? "border-[#1A1A1A]/20"
-                                        : "border-white/20"
+                                        ? "border-[var(--th-btn-inverse-text)]/20"
+                                        : "border-[var(--th-text-muted)]"
                                 )}
                                 style={{ backgroundColor: (filter as Color).value }}
                             />

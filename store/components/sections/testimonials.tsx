@@ -105,7 +105,7 @@ const Testimonials = () => {
     return (
         <section
             ref={sectionRef}
-            className="bg-[#1A1A1A] py-28 text-white md:py-40"
+            className="bg-[var(--th-surface)] py-28 text-[rgb(var(--th-text))] md:py-40"
         >
             <div className="mx-auto max-w-7xl px-6">
                 {/* Heading */}
@@ -115,7 +115,7 @@ const Testimonials = () => {
                     </p>
                     <SplitText
                         as="h2"
-                        className="text-balance text-4xl font-bold tracking-tight text-white md:text-6xl"
+                        className="text-balance text-4xl font-bold tracking-tight text-[rgb(var(--th-text))] md:text-6xl"
                         scrollTrigger
                         stagger={0.06}
                     >
@@ -177,7 +177,7 @@ const Testimonials = () => {
 
                             {/* Quote */}
                             <blockquote
-                                className="text-pretty relative mb-10 text-lg leading-relaxed text-white/85 md:text-xl"
+                                className="text-pretty relative mb-10 text-lg leading-relaxed text-[var(--th-text-secondary)] md:text-xl"
                                 style={{
                                     fontFamily:
                                         "var(--font-instrument-serif)",
@@ -189,11 +189,11 @@ const Testimonials = () => {
 
                             {/* Attribution */}
                             <div className="relative mt-auto">
-                                <div className="mb-3 h-px w-8 bg-white/10" />
-                                <p className="text-sm font-medium text-white/70">
+                                <div className="mb-3 h-px w-8 bg-[var(--th-border)]" />
+                                <p className="text-sm font-medium text-[var(--th-text-secondary)]">
                                     {t.name}
                                 </p>
-                                <p className="mt-0.5 text-xs text-white/30">
+                                <p className="mt-0.5 text-xs text-[var(--th-text-muted)]">
                                     {t.location}
                                 </p>
                             </div>

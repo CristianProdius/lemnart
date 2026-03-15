@@ -39,7 +39,7 @@ const CategoryHero: React.FC<CategoryHeroProps> = ({
     return (
         <section
             ref={sectionRef}
-            className="relative overflow-hidden bg-[#1A1A1A] py-24 text-white md:py-32"
+            className="relative overflow-hidden bg-[var(--th-surface)] py-24 text-[rgb(var(--th-text))] md:py-32"
         >
             {/* Billboard background image */}
             {billboard?.imageUrl && (
@@ -50,7 +50,7 @@ const CategoryHero: React.FC<CategoryHeroProps> = ({
             )}
 
             {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A]/40 via-[#1A1A1A]/70 to-[#1A1A1A]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[var(--th-surface)]/40 via-[var(--th-surface)]/70 to-[var(--th-surface)]" />
 
             <div className="relative mx-auto max-w-7xl px-6">
                 {/* Breadcrumb */}
@@ -58,12 +58,12 @@ const CategoryHero: React.FC<CategoryHeroProps> = ({
                     className="hero-animate mb-8 text-xs font-medium uppercase tracking-[0.3em] text-[var(--color-accent-light)]"
                     style={{ fontFamily: "var(--font-barlow)" }}
                 >
-                    Acasă <span className="mx-2 text-white/20">/</span> {name}
+                    Acasă <span className="mx-2 text-[var(--th-text-muted)]">/</span> {name}
                 </p>
 
                 {/* Category name */}
                 <h1
-                    className="hero-animate text-5xl text-white md:text-7xl lg:text-8xl"
+                    className="hero-animate text-5xl text-[rgb(var(--th-text))] md:text-7xl lg:text-8xl"
                     style={{
                         fontFamily: "var(--font-instrument-serif)",
                         fontStyle: "italic",
@@ -76,7 +76,7 @@ const CategoryHero: React.FC<CategoryHeroProps> = ({
                 <div className="hero-animate mt-8 flex items-center gap-6">
                     <div className="h-px w-16 bg-[var(--color-accent-light)]/30" />
                     <p
-                        className="text-sm text-white/40"
+                        className="text-sm text-[var(--th-text-tertiary)]"
                         style={{
                             fontFamily: "var(--font-barlow)",
                             fontVariantNumeric: "tabular-nums",

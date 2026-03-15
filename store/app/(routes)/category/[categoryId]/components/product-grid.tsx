@@ -19,12 +19,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ items }) => {
         return (
             <div className="flex flex-col items-center justify-center py-20 text-center">
                 <p
-                    className="text-xs font-medium uppercase tracking-[0.3em] text-white/30"
+                    className="text-xs font-medium uppercase tracking-[0.3em] text-[var(--th-text-muted)]"
                     style={{ fontFamily: "var(--font-barlow)" }}
                 >
                     Nu s-au găsit rezultate
                 </p>
-                <p className="mt-3 text-sm text-white/20">
+                <p className="mt-3 text-sm text-[var(--th-text-muted)]">
                     Încercați să modificați filtrele.
                 </p>
             </div>
@@ -38,7 +38,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ items }) => {
         >
             {items.map((item) => (
                 <div key={item.id}>
-                    <ProductCard data={item} variant="dark" />
+                    <ProductCard data={item} />
                 </div>
             ))}
         </div>

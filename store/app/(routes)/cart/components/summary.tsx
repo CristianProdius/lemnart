@@ -33,17 +33,17 @@ const Summary = () => {
     }
 
     return (
-        <div className="mt-16 border border-white/10 p-6 lg:col-span-5 lg:mt-0 lg:p-8">
+        <div className="mt-16 border border-[var(--th-border)] p-6 lg:col-span-5 lg:mt-0 lg:p-8">
             <h2
-                className="text-xs font-medium uppercase tracking-[0.3em] text-white/40"
+                className="text-xs font-medium uppercase tracking-[0.3em] text-[var(--th-text-tertiary)]"
                 style={{ fontFamily: "var(--font-barlow)" }}
             >
                 Sumar comandă
             </h2>
             <div className="mt-8 space-y-4">
-                <div className="flex items-center justify-between border-t border-white/10 pt-6">
+                <div className="flex items-center justify-between border-t border-[var(--th-border)] pt-6">
                     <span
-                        className="text-sm text-white/50"
+                        className="text-sm text-[var(--th-text-tertiary)]"
                         style={{ fontFamily: "var(--font-barlow)" }}
                     >
                         Total
@@ -56,7 +56,7 @@ const Summary = () => {
             <button
                 disabled={items.length === 0}
                 onClick={onCheckout}
-                className="mt-8 flex w-full items-center justify-center gap-3 bg-[var(--color-accent-light)] px-8 py-4 text-sm font-semibold text-[#1A1A1A] transition-all duration-200 hover:bg-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-40"
+                className="mt-8 flex w-full items-center justify-center gap-3 bg-[var(--color-accent-light)] px-8 py-4 text-sm font-semibold text-[var(--th-btn-inverse-text)] transition-all duration-200 hover:bg-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-40"
                 style={{ fontFamily: "var(--font-barlow)" }}
             >
                 Finalizează comanda

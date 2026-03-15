@@ -18,7 +18,7 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({ sizes, colors }) => {
         <>
             <button
                 onClick={() => setOpen(true)}
-                className="flex items-center gap-2 text-sm font-medium text-white/60 transition hover:text-white lg:hidden"
+                className="flex items-center gap-2 text-sm font-medium text-[var(--th-text-tertiary)] transition hover:text-[rgb(var(--th-text))] lg:hidden"
                 style={{ fontFamily: "var(--font-barlow)" }}
             >
                 <SlidersHorizontal size={16} />
@@ -35,18 +35,18 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({ sizes, colors }) => {
 
                 {/* Panel */}
                 <div className="fixed inset-0 z-40 flex justify-end">
-                    <Dialog.Panel className="relative flex w-full max-w-sm flex-col overflow-y-auto bg-[#1A1A1A] shadow-2xl">
+                    <Dialog.Panel className="relative flex w-full max-w-sm flex-col overflow-y-auto bg-[var(--th-surface)] shadow-2xl">
                         {/* Header */}
-                        <div className="flex items-center justify-between border-b border-white/10 px-6 py-5">
+                        <div className="flex items-center justify-between border-b border-[var(--th-border)] px-6 py-5">
                             <p
-                                className="text-xs font-medium uppercase tracking-[0.3em] text-white/40"
+                                className="text-xs font-medium uppercase tracking-[0.3em] text-[var(--th-text-tertiary)]"
                                 style={{ fontFamily: "var(--font-barlow)" }}
                             >
                                 Filtre
                             </p>
                             <button
                                 onClick={() => setOpen(false)}
-                                className="flex h-8 w-8 items-center justify-center text-white/40 transition hover:text-white"
+                                className="flex h-8 w-8 items-center justify-center text-[var(--th-text-tertiary)] transition hover:text-[rgb(var(--th-text))]"
                             >
                                 <X size={18} />
                             </button>

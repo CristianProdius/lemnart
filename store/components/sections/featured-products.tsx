@@ -99,7 +99,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ items }) => {
     return (
         <section
             ref={sectionRef}
-            className="bg-[#1A1A1A] py-28 text-white md:py-40"
+            className="bg-[var(--th-surface)] py-28 text-[rgb(var(--th-text))] md:py-40"
         >
             {/* Header */}
             <div className="mx-auto max-w-7xl px-6">
@@ -110,7 +110,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ items }) => {
                         </p>
                         <SplitText
                             as="h2"
-                            className="text-balance text-4xl font-bold tracking-tight text-white md:text-6xl"
+                            className="text-balance text-4xl font-bold tracking-tight text-[rgb(var(--th-text))] md:text-6xl"
                             scrollTrigger
                             stagger={0.06}
                         >
@@ -118,7 +118,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ items }) => {
                         </SplitText>
                     </div>
                     <p
-                        className="hidden text-sm text-white/40 md:block"
+                        className="hidden text-sm text-[var(--th-text-tertiary)] md:block"
                         style={{ fontVariantNumeric: "tabular-nums" }}
                     >
                         {String(activeIndex + 1).padStart(2, "0")} /{" "}
@@ -158,7 +158,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ items }) => {
                             {/* Hover overlay */}
                             <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-5 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                                 <span
-                                    className="text-xs text-white/50"
+                                    className="text-xs text-[var(--th-text-tertiary)]"
                                     style={{
                                         fontVariantNumeric: "tabular-nums",
                                     }}
@@ -194,10 +194,10 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ items }) => {
 
                         {/* Meta */}
                         <div className="mt-4">
-                            <p className="text-xs uppercase tracking-[0.15em] text-white/30">
+                            <p className="text-xs uppercase tracking-[0.15em] text-[var(--th-text-muted)]">
                                 {product.category?.name}
                             </p>
-                            <h3 className="mt-1 text-base font-medium text-white/90">
+                            <h3 className="mt-1 text-base font-medium text-[var(--th-text-secondary)]">
                                 {product.name}
                             </h3>
                             <div className="mt-2 tabular-nums text-sm text-[var(--color-accent-light)]">
@@ -210,7 +210,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ items }) => {
 
             {/* ── Progress bar ── */}
             <div className="mx-auto mt-12 max-w-7xl px-6">
-                <div className="h-px bg-white/10">
+                <div className="h-px bg-[var(--th-border)]">
                     <div
                         ref={progressRef}
                         className="h-full origin-left bg-[var(--color-accent-light)]"

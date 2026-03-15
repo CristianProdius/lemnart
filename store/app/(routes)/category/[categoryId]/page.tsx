@@ -28,10 +28,10 @@ const CategoryPage = async ({ params, searchParams }: { params: Params, searchPa
     const category = isAll ? null : await getCategory(categoryId);
 
     return (
-        <div className="bg-[#1A1A1A]">
+        <div className="bg-[var(--th-surface)]">
             {/* Hero */}
             <CategoryHero
-                name={isAll ? "Toate Produsele" : category?.name}
+                name={isAll ? "Toate Produsele" : category?.name ?? ""}
                 billboard={category?.billboard}
                 productCount={products?.length ?? 0}
             />
@@ -39,13 +39,13 @@ const CategoryPage = async ({ params, searchParams }: { params: Params, searchPa
             {/* Filters + Products */}
             <div className="mx-auto max-w-7xl px-6 py-12 md:py-16">
                 {/* Filter bar */}
-                <div className="mb-12 flex flex-wrap items-end gap-8 border-b border-white/10 pb-8">
+                <div className="mb-12 flex flex-wrap items-end gap-8 border-b border-[var(--th-border)] pb-8">
                     {/* Mobile trigger */}
                     <MobileFilters sizes={sizes} colors={colors} />
                     {/* Desktop filters */}
                     <div className="hidden items-end gap-8 lg:flex">
                         <Filter valueKey="sizeId" name="Dimensiune" data={sizes} />
-                        <div className="mb-2 h-8 w-px bg-white/10" />
+                        <div className="mb-2 h-8 w-px bg-[var(--th-border)]" />
                         <Filter valueKey="colorId" name="Culoare" data={colors} />
                     </div>
                 </div>

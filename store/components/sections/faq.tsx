@@ -118,7 +118,7 @@ const FAQ = () => {
     return (
         <section
             ref={sectionRef}
-            className="bg-[#1A1A1A] py-28 text-white md:py-40"
+            className="bg-[var(--th-surface)] py-28 text-[rgb(var(--th-text))] md:py-40"
         >
             <div className="mx-auto max-w-5xl px-6">
                 {/* Heading */}
@@ -128,13 +128,13 @@ const FAQ = () => {
                     </p>
                     <SplitText
                         as="h2"
-                        className="text-balance text-4xl font-bold tracking-tight text-white md:text-6xl"
+                        className="text-balance text-4xl font-bold tracking-tight text-[rgb(var(--th-text))] md:text-6xl"
                         scrollTrigger
                         stagger={0.06}
                     >
                         Întrebări Frecvente
                     </SplitText>
-                    <p className="text-pretty mx-auto mt-6 max-w-md text-sm leading-relaxed text-white/40">
+                    <p className="text-pretty mx-auto mt-6 max-w-md text-sm leading-relaxed text-[var(--th-text-tertiary)]">
                         Apasă pe orice card pentru a descoperi răspunsul.
                     </p>
                 </div>
@@ -178,7 +178,7 @@ const FAQ = () => {
                                         borderColor:
                                             flippedIndex === index
                                                 ? "var(--color-accent-light)"
-                                                : "rgba(255,255,255,0.06)",
+                                                : "var(--th-border)",
                                     }}
                                 >
                                     {/* Ghost number */}
@@ -186,7 +186,7 @@ const FAQ = () => {
                                         className="select-none text-6xl font-bold leading-none md:text-7xl"
                                         style={{
                                             fontVariantNumeric: "tabular-nums",
-                                            color: "rgba(255,255,255,0.03)",
+                                            color: "var(--th-text-ghost)",
                                         }}
                                         aria-hidden="true"
                                     >
@@ -194,10 +194,10 @@ const FAQ = () => {
                                     </span>
 
                                     <div>
-                                        <p className="text-balance text-base font-medium text-white/85 md:text-lg">
+                                        <p className="text-balance text-base font-medium text-[var(--th-text-secondary)] md:text-lg">
                                             {faq.question}
                                         </p>
-                                        <p className="mt-3 text-[10px] font-medium uppercase tracking-widest text-white/20">
+                                        <p className="mt-3 text-[10px] font-medium uppercase tracking-widest text-[var(--th-text-muted)]">
                                             Flip for answer
                                         </p>
                                     </div>
@@ -209,7 +209,7 @@ const FAQ = () => {
                                     style={{
                                         backfaceVisibility: "hidden",
                                         transform: "rotateY(180deg)",
-                                        backgroundColor: "#1F1F1F",
+                                        backgroundColor: "var(--th-surface-card)",
                                     }}
                                 >
                                     {/* Small number */}
@@ -223,11 +223,11 @@ const FAQ = () => {
                                         {String(index + 1).padStart(2, "0")}
                                     </span>
 
-                                    <p className="text-pretty text-sm leading-relaxed text-white/60 md:text-base">
+                                    <p className="text-pretty text-sm leading-relaxed text-[var(--th-text-tertiary)] md:text-base">
                                         {faq.answer}
                                     </p>
 
-                                    <p className="mt-6 text-[10px] font-medium uppercase tracking-widest text-white/20">
+                                    <p className="mt-6 text-[10px] font-medium uppercase tracking-widest text-[var(--th-text-muted)]">
                                         Flip to close
                                     </p>
                                 </div>

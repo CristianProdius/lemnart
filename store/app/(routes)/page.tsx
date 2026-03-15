@@ -24,7 +24,7 @@ const HomePage = async () => {
                 headingLine2="transformă casa."
                 subtitle="Mascare calorifere din lemn masiv, create manual cu atenție la fiecare detaliu."
                 cta={{ label: "Descoperă Colecția", href: "/category/all" }}
-                secondaryLink={{ label: "Află mai multe", href: "#collections" }}
+                secondaryLink={{ label: "Află mai multe", href: "/blog" }}
                 videoSrc="/hero-bg.mp4"
             />
             <Collections categories={categories} products={allProducts} />

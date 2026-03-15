@@ -17,7 +17,7 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
     }
 
     return (
-        <li className="flex gap-6 border-b border-white/10 py-8">
+        <li className="flex gap-6 border-b border-[var(--th-border)] py-8">
             <div className="relative h-24 w-24 shrink-0 overflow-hidden sm:h-40 sm:w-40">
                 <Image
                     fill
@@ -29,20 +29,20 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
             <div className="relative flex flex-1 flex-col justify-between">
                 <button
                     onClick={onRemove}
-                    className="absolute right-0 top-0 flex h-8 w-8 items-center justify-center text-white/30 transition hover:text-white"
+                    className="absolute right-0 top-0 flex h-8 w-8 items-center justify-center text-[var(--th-text-muted)] transition hover:text-[rgb(var(--th-text))]"
                 >
                     <X size={16} />
                 </button>
                 <div className="pr-10">
                     <p
-                        className="text-base font-medium text-white/90"
+                        className="text-base font-medium text-[var(--th-text-secondary)]"
                         style={{ fontFamily: "var(--font-barlow)" }}
                     >
                         {data.name}
                     </p>
-                    <div className="mt-2 flex items-center gap-3 text-sm text-white/40">
+                    <div className="mt-2 flex items-center gap-3 text-sm text-[var(--th-text-tertiary)]">
                         <span>{data.color.name}</span>
-                        <span className="h-3 w-px bg-white/15" />
+                        <span className="h-3 w-px bg-[var(--th-border-strong)]" />
                         <span>{data.size.name}</span>
                     </div>
                 </div>

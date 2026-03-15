@@ -8,22 +8,19 @@ import { useStaggerAnimation } from "@/hooks/use-stagger-animation";
 interface ProductListProps {
     title: string;
     items: Product[];
-    variant?: "light" | "dark";
 }
 
-const ProductList: React.FC<ProductListProps> = ({ title, items, variant = "light" }) => {
+const ProductList: React.FC<ProductListProps> = ({ title, items }) => {
     const gridRef = useStaggerAnimation<HTMLDivElement>({
         stagger: 0.1,
         y: 30,
     });
 
-    const isDark = variant === "dark";
-
     return (
         <div className="space-y-8">
             {title && (
                 <h3
-                    className={`text-2xl font-bold tracking-tight md:text-3xl ${isDark ? "text-white" : "text-[#1A1A1A]"}`}
+                    className="text-2xl font-bold tracking-tight text-[rgb(var(--th-text))] md:text-3xl"
                     style={{ fontFamily: "var(--font-barlow)" }}
                 >
                     {title}
@@ -36,7 +33,7 @@ const ProductList: React.FC<ProductListProps> = ({ title, items, variant = "ligh
             >
                 {items.map(item => (
                     <div key={item.id}>
-                        <ProductCard data={item} variant={variant} />
+                        <ProductCard data={item} />
                     </div>
                 ))}
             </div>

@@ -144,7 +144,7 @@ const Collections: React.FC<CollectionsProps> = ({ categories, products }) => {
     return (
         <section
             ref={sectionRef}
-            className="py-28 md:py-40 bg-[#1A1A1A] text-white"
+            className="py-28 md:py-40 bg-[var(--th-surface)] text-[rgb(var(--th-text))]"
             onMouseMove={handleMouseMove}
         >
                 {/* Cursor-following preview image */}
@@ -181,7 +181,7 @@ const Collections: React.FC<CollectionsProps> = ({ categories, products }) => {
                         </p>
                         <SplitText
                             as="h2"
-                            className="text-4xl font-bold tracking-tight text-white md:text-6xl"
+                            className="text-4xl font-bold tracking-tight text-[rgb(var(--th-text))] md:text-6xl"
                             scrollTrigger
                             stagger={0.06}
                         >
@@ -192,13 +192,13 @@ const Collections: React.FC<CollectionsProps> = ({ categories, products }) => {
                     {/* Text list */}
                     <div
                         ref={listRef}
-                        className="border-t border-white/10"
+                        className="border-t border-[var(--th-border)]"
                     >
                         {collections.map((c, i) => (
                             <Link
                                 key={c.id}
                                 href={c.href}
-                                className="collection-row group flex items-center justify-between border-b border-white/10 py-8 transition-colors duration-200 ease-out hover:bg-white/[0.03] md:py-10"
+                                className="collection-row group flex items-center justify-between border-b border-[var(--th-border)] py-8 transition-colors duration-200 ease-out hover:bg-[var(--th-overlay-hover)] md:py-10"
                                 onMouseEnter={() => handleRowEnter(c.id)}
                                 onMouseLeave={handleRowLeave}
                             >
@@ -206,20 +206,20 @@ const Collections: React.FC<CollectionsProps> = ({ categories, products }) => {
                                     <span className="font-body text-sm font-medium tabular-nums text-[var(--color-accent-light)]">
                                         {String(i + 1).padStart(2, "0")}
                                     </span>
-                                    <h3 className="font-display text-3xl font-bold italic tracking-tight text-white transition-colors duration-200 ease-out group-hover:text-[var(--color-accent-light)] md:text-5xl lg:text-7xl">
+                                    <h3 className="font-display text-3xl font-bold italic tracking-tight text-[rgb(var(--th-text))] transition-colors duration-200 ease-out group-hover:text-[var(--color-accent-light)] md:text-5xl lg:text-7xl">
                                         {c.name}
                                     </h3>
                                 </div>
                                 <div className="flex items-center gap-4 md:gap-8">
                                     <span
-                                        className="hidden text-sm font-body text-white/40 md:block"
+                                        className="hidden text-sm font-body text-[var(--th-text-tertiary)] md:block"
                                         style={{ textWrap: "pretty" }}
                                     >
                                         {c.description}
                                     </span>
-                                    <div className="flex size-10 items-center justify-center rounded-full border border-white/10 transition-colors duration-200 ease-out group-hover:border-[var(--color-accent-light)] group-hover:bg-[var(--color-accent-light)]/10 md:size-12">
+                                    <div className="flex size-10 items-center justify-center rounded-full border border-[var(--th-border)] transition-colors duration-200 ease-out group-hover:border-[var(--color-accent-light)] group-hover:bg-[var(--color-accent-light)]/10 md:size-12">
                                         <svg
-                                            className="size-4 text-white/30 transition-[color,transform] duration-200 ease-out group-hover:text-[var(--color-accent-light)] group-hover:translate-x-0.5"
+                                            className="size-4 text-[var(--th-text-muted)] transition-[color,transform] duration-200 ease-out group-hover:text-[var(--color-accent-light)] group-hover:translate-x-0.5"
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             stroke="currentColor"

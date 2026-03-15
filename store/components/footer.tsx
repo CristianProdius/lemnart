@@ -6,6 +6,7 @@ import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import Link from "next/link"
 import { Phone, Mail, MapPin } from "lucide-react"
+import ThemeToggle from "@/components/ui/theme-toggle"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -119,7 +120,7 @@ const Footer = () => {
     return (
         <footer
             ref={footerRef}
-            className="bg-[#111111] py-20 text-white md:py-28"
+            className="bg-[var(--th-surface-elevated)] py-20 text-[rgb(var(--th-text))] md:py-28"
         >
             <div className="mx-auto max-w-7xl px-6">
                 {/* Two-column split */}
@@ -129,7 +130,7 @@ const Footer = () => {
                         {/* Ghost brand */}
                         <span
                             ref={ghostRef}
-                            className="pointer-events-none select-none text-[80px] font-bold uppercase leading-none tracking-[0.2em] text-white/[0.03] md:text-[120px]"
+                            className="pointer-events-none select-none text-[80px] font-bold uppercase leading-none tracking-[0.2em] text-[var(--th-text-ghost)] md:text-[120px]"
                             style={{ fontFamily: "var(--font-barlow)" }}
                             aria-hidden="true"
                         >
@@ -138,7 +139,7 @@ const Footer = () => {
 
                         {/* Tagline */}
                         <p
-                            className="mt-6 max-w-sm text-xl text-white/60 md:text-2xl"
+                            className="mt-6 max-w-sm text-xl text-[var(--th-text-tertiary)] md:text-2xl"
                             style={{
                                 fontFamily: "var(--font-instrument-serif)",
                                 fontStyle: "italic",
@@ -156,24 +157,24 @@ const Footer = () => {
                         {/* Links */}
                         <div ref={linksRef} className="flex flex-wrap gap-x-12 gap-y-6">
                             <div className="flex flex-wrap gap-x-8 gap-y-3">
-                                <Link href="/" className="footer-link text-sm text-white/50 transition-colors hover:text-white">
+                                <Link href="/" className="footer-link text-sm text-[var(--th-text-tertiary)] transition-colors hover:text-[rgb(var(--th-text))]">
                                     Acasă
                                 </Link>
-                                <Link href="/category/all" className="footer-link text-sm text-white/50 transition-colors hover:text-white">
+                                <Link href="/category/all" className="footer-link text-sm text-[var(--th-text-tertiary)] transition-colors hover:text-[rgb(var(--th-text))]">
                                     Colecții
                                 </Link>
-                                <Link href="/contact" className="footer-link text-sm text-white/50 transition-colors hover:text-white">
+                                <Link href="/contact" className="footer-link text-sm text-[var(--th-text-tertiary)] transition-colors hover:text-[rgb(var(--th-text))]">
                                     Contact
                                 </Link>
                             </div>
                             <div className="flex flex-wrap gap-x-8 gap-y-3">
-                                <Link href="/terms" className="footer-link text-sm text-white/40 transition-colors hover:text-white">
+                                <Link href="/terms" className="footer-link text-sm text-[var(--th-text-tertiary)] transition-colors hover:text-[rgb(var(--th-text))]">
                                     Termeni și Condiții
                                 </Link>
-                                <Link href="/privacy" className="footer-link text-sm text-white/40 transition-colors hover:text-white">
+                                <Link href="/privacy" className="footer-link text-sm text-[var(--th-text-tertiary)] transition-colors hover:text-[rgb(var(--th-text))]">
                                     Confidențialitate
                                 </Link>
-                                <Link href="/returns" className="footer-link text-sm text-white/40 transition-colors hover:text-white">
+                                <Link href="/returns" className="footer-link text-sm text-[var(--th-text-tertiary)] transition-colors hover:text-[rgb(var(--th-text))]">
                                     Politica de Retur
                                 </Link>
                             </div>
@@ -191,20 +192,20 @@ const Footer = () => {
                                     {item.num}
                                 </span>
                                 <div>
-                                    <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.3em] text-white/30">
+                                    <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.3em] text-[var(--th-text-muted)]">
                                         {item.label}
                                     </p>
                                     {item.href ? (
                                         <a
                                             href={item.href}
-                                            className="flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+                                            className="flex items-center gap-2 text-sm text-[var(--th-text-tertiary)] transition-colors hover:text-[rgb(var(--th-text))]"
                                         >
-                                            <item.icon size={14} className="text-white/30" />
+                                            <item.icon size={14} className="text-[var(--th-text-muted)]" />
                                             {item.value}
                                         </a>
                                     ) : (
-                                        <span className="flex items-center gap-2 text-sm text-white/60">
-                                            <item.icon size={14} className="text-white/30" />
+                                        <span className="flex items-center gap-2 text-sm text-[var(--th-text-tertiary)]">
+                                            <item.icon size={14} className="text-[var(--th-text-muted)]" />
                                             {item.value}
                                         </span>
                                     )}
@@ -219,9 +220,12 @@ const Footer = () => {
                     ref={bottomRuleRef}
                     className="mt-16 h-px origin-center bg-[var(--color-accent-light)]/15"
                 />
-                <p className="mt-6 text-xs text-white/25">
-                    &copy; {new Date().getFullYear()} LemnArt. Toate drepturile rezervate.
-                </p>
+                <div className="mt-6 flex items-center justify-between">
+                    <p className="text-xs text-[var(--th-text-muted)]">
+                        &copy; {new Date().getFullYear()} LemnArt. Toate drepturile rezervate.
+                    </p>
+                    <ThemeToggle />
+                </div>
             </div>
         </footer>
     )

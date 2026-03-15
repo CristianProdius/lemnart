@@ -104,7 +104,7 @@ const Process = () => {
     return (
         <section
             ref={sectionRef}
-            className="bg-[#1A1A1A] py-28 text-white md:py-40"
+            className="bg-[var(--th-surface)] py-28 text-[rgb(var(--th-text))] md:py-40"
         >
             <div className="mx-auto max-w-7xl px-6">
                 <div className="grid grid-cols-1 gap-16 lg:grid-cols-12 lg:gap-20">
@@ -116,13 +116,13 @@ const Process = () => {
                             </p>
                             <SplitText
                                 as="h2"
-                                className="text-pretty mb-6 text-4xl font-bold text-white md:text-5xl"
+                                className="text-pretty mb-6 text-4xl font-bold text-[rgb(var(--th-text))] md:text-5xl"
                                 scrollTrigger
                                 stagger={0.06}
                             >
                                 De la Idee la Realitate
                             </SplitText>
-                            <p className="process-intro text-pretty max-w-sm text-base leading-relaxed text-white/50">
+                            <p className="process-intro text-pretty max-w-sm text-base leading-relaxed text-[var(--th-text-tertiary)]">
                                 Patru pași simpli care transformă spațiul
                                 tău. De la prima măsurătoare până la
                                 instalarea finală — ne ocupăm de tot.
@@ -137,13 +137,13 @@ const Process = () => {
                                 <div key={step.number}>
                                     {/* Top border on first item */}
                                     {i === 0 && (
-                                        <div className="h-px bg-white/10" />
+                                        <div className="h-px bg-[var(--th-border)]" />
                                     )}
 
                                     <div className="split-step flex items-start gap-6 py-10 md:gap-8">
                                         {/* Number */}
                                         <span
-                                            className="shrink-0 pt-1 text-3xl font-bold text-white/15 md:text-4xl"
+                                            className="shrink-0 pt-1 text-3xl font-bold text-[var(--th-text-muted)] md:text-4xl"
                                             style={{
                                                 fontVariantNumeric:
                                                     "tabular-nums",
@@ -155,25 +155,25 @@ const Process = () => {
                                         {/* Content */}
                                         <div className="flex-1">
                                             <div className="mb-2 flex items-center gap-3">
-                                                <div className="flex size-9 items-center justify-center rounded-lg bg-white/[0.07]">
+                                                <div className="flex size-9 items-center justify-center rounded-lg bg-[var(--th-overlay)]">
                                                     <step.Icon
                                                         size={16}
                                                         strokeWidth={1.5}
                                                         className="text-[var(--color-accent-light)]"
                                                     />
                                                 </div>
-                                                <h3 className="text-lg font-semibold text-white">
+                                                <h3 className="text-lg font-semibold text-[rgb(var(--th-text))]">
                                                     {step.title}
                                                 </h3>
                                             </div>
-                                            <p className="text-pretty ml-12 text-sm leading-relaxed text-white/40">
+                                            <p className="text-pretty ml-12 text-sm leading-relaxed text-[var(--th-text-tertiary)]">
                                                 {step.description}
                                             </p>
                                         </div>
                                     </div>
 
                                     {/* Bottom border */}
-                                    <div className="h-px bg-white/10" />
+                                    <div className="h-px bg-[var(--th-border)]" />
                                 </div>
                             ))}
                         </div>

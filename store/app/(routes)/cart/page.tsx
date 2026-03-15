@@ -17,20 +17,20 @@ const CartPage = () => {
     }
 
     return (
-        <div className="bg-[#1A1A1A]">
+        <div className="bg-[var(--th-surface)]">
             <div className="mx-auto max-w-7xl px-6 py-12 md:py-20">
                 {/* Breadcrumb */}
                 <p
                     className="mb-10 text-xs font-medium uppercase tracking-[0.3em] text-[var(--color-accent-light)]"
                     style={{ fontFamily: "var(--font-barlow)" }}
                 >
-                    Acasă <span className="mx-2 text-white/20">/</span>
-                    <span className="text-white/60">Coș de cumpărături</span>
+                    Acasă <span className="mx-2 text-[var(--th-text-muted)]">/</span>
+                    <span className="text-[var(--th-text-tertiary)]">Coș de cumpărături</span>
                 </p>
 
                 {/* Heading */}
                 <h1
-                    className="text-4xl text-white md:text-5xl"
+                    className="text-4xl text-[rgb(var(--th-text))] md:text-5xl"
                     style={{
                         fontFamily: "var(--font-instrument-serif)",
                         fontStyle: "italic",
@@ -44,12 +44,12 @@ const CartPage = () => {
                         {cart?.items?.length === 0 && (
                             <div className="flex flex-col items-center justify-center py-20 text-center">
                                 <p
-                                    className="text-xs font-medium uppercase tracking-[0.3em] text-white/30"
+                                    className="text-xs font-medium uppercase tracking-[0.3em] text-[var(--th-text-muted)]"
                                     style={{ fontFamily: "var(--font-barlow)" }}
                                 >
                                     Coșul este gol
                                 </p>
-                                <p className="mt-3 text-sm text-white/20">
+                                <p className="mt-3 text-sm text-[var(--th-text-muted)]">
                                     Adăugați produse pentru a continua.
                                 </p>
                             </div>

@@ -12,7 +12,7 @@ const ProductPage = async ({ params }: { params: Params }) => {
     const suggestProducts = await getProducts({ categoryId: product?.category?.id })
 
     return (
-        <div className="bg-[#1A1A1A]">
+        <div className="bg-[var(--th-surface)]">
             {/* Product section */}
             <div className="mx-auto max-w-7xl px-6 py-12 md:py-20">
                 {/* Breadcrumb */}
@@ -21,10 +21,10 @@ const ProductPage = async ({ params }: { params: Params }) => {
                     style={{ fontFamily: "var(--font-barlow)" }}
                 >
                     Acasă
-                    <span className="mx-2 text-white/20">/</span>
+                    <span className="mx-2 text-[var(--th-text-muted)]">/</span>
                     {product?.category?.name}
-                    <span className="mx-2 text-white/20">/</span>
-                    <span className="text-white/60">{product.name}</span>
+                    <span className="mx-2 text-[var(--th-text-muted)]">/</span>
+                    <span className="text-[var(--th-text-tertiary)]">{product.name}</span>
                 </p>
 
                 <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-16">
@@ -37,10 +37,10 @@ const ProductPage = async ({ params }: { params: Params }) => {
                 </div>
 
                 {/* Divider */}
-                <div className="my-16 h-px bg-white/10 md:my-24" />
+                <div className="my-16 h-px bg-[var(--th-border)] md:my-24" />
 
                 {/* Related products */}
-                <ProductList title="Produse Similare" items={suggestProducts} variant="dark" />
+                <ProductList title="Produse Similare" items={suggestProducts} />
             </div>
         </div>
     );

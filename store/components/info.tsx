@@ -24,7 +24,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
 
             {/* Product name */}
             <h1
-                className="mt-4 text-4xl text-white md:text-5xl"
+                className="mt-4 text-4xl text-[rgb(var(--th-text))] md:text-5xl"
                 style={{
                     fontFamily: "var(--font-instrument-serif)",
                     fontStyle: "italic",
@@ -39,19 +39,19 @@ const Info: React.FC<InfoProps> = ({ data }) => {
             </div>
 
             {/* Divider */}
-            <div className="my-8 h-px bg-white/10" />
+            <div className="my-8 h-px bg-[var(--th-border)]" />
 
             {/* Specs */}
             <div className="space-y-5">
                 <div className="flex items-center gap-x-4">
                     <span
-                        className="text-xs font-medium uppercase tracking-[0.2em] text-white/40"
+                        className="text-xs font-medium uppercase tracking-[0.2em] text-[var(--th-text-tertiary)]"
                         style={{ fontFamily: "var(--font-barlow)" }}
                     >
                         Dimensiune
                     </span>
                     <span
-                        className="text-sm text-white/80"
+                        className="text-sm text-[var(--th-text-secondary)]"
                         style={{ fontFamily: "var(--font-barlow)" }}
                     >
                         {data?.size?.value}
@@ -59,18 +59,18 @@ const Info: React.FC<InfoProps> = ({ data }) => {
                 </div>
                 <div className="flex items-center gap-x-4">
                     <span
-                        className="text-xs font-medium uppercase tracking-[0.2em] text-white/40"
+                        className="text-xs font-medium uppercase tracking-[0.2em] text-[var(--th-text-tertiary)]"
                         style={{ fontFamily: "var(--font-barlow)" }}
                     >
                         Culoare
                     </span>
                     <div className="flex items-center gap-2">
                         <span
-                            className="h-5 w-5 rounded-full border border-white/20"
+                            className="h-5 w-5 rounded-full border border-[var(--th-text-muted)]"
                             style={{ backgroundColor: data?.color?.value }}
                         />
                         <span
-                            className="text-sm text-white/80"
+                            className="text-sm text-[var(--th-text-secondary)]"
                             style={{ fontFamily: "var(--font-barlow)" }}
                         >
                             {data?.color?.name}
@@ -82,7 +82,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
             {/* Add to cart */}
             <button
                 onClick={() => cart.addItem(data)}
-                className="mt-10 flex w-full items-center justify-center gap-3 bg-[var(--color-accent-light)] px-8 py-4 text-sm font-semibold text-[#1A1A1A] transition-all duration-200 hover:bg-[var(--color-accent)] sm:w-auto"
+                className="mt-10 flex w-full items-center justify-center gap-3 bg-[var(--color-accent-light)] px-8 py-4 text-sm font-semibold text-[var(--th-btn-inverse-text)] transition-all duration-200 hover:bg-[var(--color-accent)] sm:w-auto"
                 style={{ fontFamily: "var(--font-barlow)" }}
             >
                 Adaugă în coș

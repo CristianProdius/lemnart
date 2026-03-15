@@ -49,7 +49,7 @@ const Quality = () => {
     return (
         <section
             ref={sectionRef}
-            className="bg-[#1A1A1A] py-28 text-white md:py-40"
+            className="bg-[var(--th-surface)] py-28 text-[rgb(var(--th-text))] md:py-40"
         >
             <div className="mx-auto max-w-7xl px-6">
                 {/* Heading */}
@@ -59,7 +59,7 @@ const Quality = () => {
                     </p>
                     <SplitText
                         as="h2"
-                        className="text-balance text-4xl font-bold text-white md:text-6xl"
+                        className="text-balance text-4xl font-bold text-[rgb(var(--th-text))] md:text-6xl"
                         scrollTrigger
                         stagger={0.06}
                     >
@@ -69,7 +69,7 @@ const Quality = () => {
 
                 {/* Ghost entries */}
                 <div ref={entriesRef}>
-                    <div className="h-px bg-white/10" />
+                    <div className="h-px bg-[var(--th-border)]" />
 
                     {badges.map((badge, i) => (
                         <div key={badge.title}>
@@ -77,7 +77,7 @@ const Quality = () => {
                                 {/* Ghost title — massive, barely visible */}
                                 <span
                                     className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 select-none whitespace-nowrap text-6xl font-bold md:text-8xl lg:text-9xl"
-                                    style={{ color: "rgba(255, 255, 255, 0.03)" }}
+                                    style={{ color: "var(--th-text-ghost)" }}
                                     aria-hidden="true"
                                 >
                                     {badge.title}
@@ -94,17 +94,17 @@ const Quality = () => {
                                         {String(i + 1).padStart(2, "0")}
                                     </span>
                                     <div>
-                                        <h3 className="mb-2 text-xl font-semibold text-white md:text-2xl">
+                                        <h3 className="mb-2 text-xl font-semibold text-[rgb(var(--th-text))] md:text-2xl">
                                             {badge.title}
                                         </h3>
-                                        <p className="text-pretty max-w-lg text-sm leading-relaxed text-white/40 md:text-base">
+                                        <p className="text-pretty max-w-lg text-sm leading-relaxed text-[var(--th-text-tertiary)] md:text-base">
                                             {badge.description}
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="h-px bg-white/10" />
+                            <div className="h-px bg-[var(--th-border)]" />
                         </div>
                     ))}
                 </div>

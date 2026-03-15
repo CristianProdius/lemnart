@@ -80,7 +80,7 @@ const CTA = () => {
     return (
         <section
             ref={sectionRef}
-            className="relative overflow-hidden bg-[#1A1A1A] py-32 text-white md:py-48"
+            className="relative overflow-hidden bg-[var(--th-surface)] py-32 text-[rgb(var(--th-text))] md:py-48"
         >
             {/* Marquee Row 1 — scrolls left */}
             <div className="pointer-events-none select-none">
@@ -90,7 +90,7 @@ const CTA = () => {
                     style={{ width: "fit-content" }}
                 >
                     <span
-                        className="text-7xl font-bold text-white/[0.03] md:text-9xl"
+                        className="text-7xl font-bold text-[var(--th-text-ghost)] md:text-9xl"
                         aria-hidden="true"
                     >
                         {repeated}
@@ -102,14 +102,14 @@ const CTA = () => {
             <div className="absolute inset-0 flex items-center justify-center px-6">
                 <div
                     ref={cardRef}
-                    className="w-full max-w-lg border border-white/8 bg-[#1A1A1A]/95 p-10 text-center backdrop-blur-sm md:p-14"
+                    className="w-full max-w-lg border border-[var(--th-border)] bg-[var(--th-surface)]/95 p-10 text-center backdrop-blur-sm md:p-14"
                 >
                     <p className="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-[var(--color-accent-light)]">
                         Contactează-ne
                     </p>
 
                     <h2
-                        className="text-balance text-3xl text-white md:text-4xl"
+                        className="text-balance text-3xl text-[rgb(var(--th-text))] md:text-4xl"
                         style={{
                             fontFamily: "var(--font-instrument-serif)",
                             fontStyle: "italic",
@@ -118,14 +118,14 @@ const CTA = () => {
                         Transformă-ți Spațiul
                     </h2>
 
-                    <p className="text-pretty mx-auto mt-4 max-w-xs text-sm leading-relaxed text-white/40">
+                    <p className="text-pretty mx-auto mt-4 max-w-xs text-sm leading-relaxed text-[var(--th-text-tertiary)]">
                         Solicită o consultație gratuită și descoperă soluția
                         perfectă pentru casa ta.
                     </p>
 
                     <a
                         href="/contact"
-                        className="group mt-8 inline-flex items-center gap-3 border border-[var(--color-accent-light)] px-10 py-4 text-sm font-medium text-[var(--color-accent-light)] transition-all duration-300 hover:bg-[var(--color-accent-light)] hover:text-[#1A1A1A]"
+                        className="group mt-8 inline-flex items-center gap-3 border border-[var(--color-accent-light)] px-10 py-4 text-sm font-medium text-[var(--color-accent-light)] transition-all duration-300 hover:bg-[var(--color-accent-light)] hover:text-[var(--th-btn-inverse-text)]"
                     >
                         Contactează-ne
                         <ArrowRight
@@ -137,14 +137,14 @@ const CTA = () => {
                     <div className="mt-10 flex flex-col items-center justify-center gap-6 sm:flex-row">
                         <a
                             href="tel:+40700000000"
-                            className="flex items-center gap-2 text-xs text-white/25 transition-colors duration-300 hover:text-[var(--color-accent-light)]"
+                            className="flex items-center gap-2 text-xs text-[var(--th-text-muted)] transition-colors duration-300 hover:text-[var(--color-accent-light)]"
                         >
                             <Phone size={12} />
                             +40 700 000 000
                         </a>
                         <a
                             href="mailto:contact@lemnart.ro"
-                            className="flex items-center gap-2 text-xs text-white/25 transition-colors duration-300 hover:text-[var(--color-accent-light)]"
+                            className="flex items-center gap-2 text-xs text-[var(--th-text-muted)] transition-colors duration-300 hover:text-[var(--color-accent-light)]"
                         >
                             <Mail size={12} />
                             contact@lemnart.ro
@@ -161,7 +161,7 @@ const CTA = () => {
                     style={{ width: "fit-content" }}
                 >
                     <span
-                        className="text-7xl font-bold text-white/[0.03] md:text-9xl"
+                        className="text-7xl font-bold text-[var(--th-text-ghost)] md:text-9xl"
                         aria-hidden="true"
                     >
                         {repeated}
