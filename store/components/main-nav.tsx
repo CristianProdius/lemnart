@@ -11,11 +11,18 @@ interface MainNavProps {
 const MainNav: React.FC<MainNavProps> = ({ data }) => {
     const pathname = usePathname();
 
-    const routes = data.map(route => ({
-        href: `/category/${route.id}`,
-        label: route.name,
-        active: pathname === `/category/${route.id}`
-    }))
+    const routes = [
+        ...data.map(route => ({
+            href: `/category/${route.id}`,
+            label: route.name,
+            active: pathname === `/category/${route.id}`
+        })),
+        {
+            href: '/configurator',
+            label: 'Configurator',
+            active: pathname === '/configurator'
+        },
+    ]
 
     return (
         <nav

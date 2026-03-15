@@ -1,27 +1,34 @@
 import { create } from "zustand";
-import { Product } from "@/types";
+import { CartItem, ConfiguredItem, Product } from "@/types";
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { toast } from "react-hot-toast";
 
 interface CartStore {
-    items: Product[];
-    addItem: (data: Product) => void;
+    items: CartItem[];
+    addItem: (data: CartItem) => void;
     removeItem: (id: string) => void;
     removeAll: () => void;
 }
 
+function isConfiguredItem(item: CartItem): item is ConfiguredItem {
+    return "type" in item && item.type === "configured";
+}
+
 const useCart = create(persist<CartStore>((set, get) =>({
     items: [],
-    addItem: (data: Product) => {
+    addItem: (data: CartItem) => {
         const currentItems = get().items;
-        const existingItem = currentItems.find(item => item.id === data.id);
 
-        if(existingItem) {
-            return toast("Item already in cart.");
+        // Configured items are always unique (each has a UUID)
+        if (!isConfiguredItem(data)) {
+            const existingItem = currentItems.find(item => item.id === data.id);
+            if(existingItem) {
+                return toast("Produsul este deja în coș.");
+            }
         }
 
         set({ items: [...get().items, data] })
-        toast.success("Item added to cart.")
+        toast.success("Produs adăugat în coș.")
     },
     removeItem: (id: string) => {
         set({ items: [...get().items.filter(item => item.id !== id)] });
@@ -32,4 +39,5 @@ const useCart = create(persist<CartStore>((set, get) =>({
     storage: createJSONStorage(() => localStorage)
 }))
 
+export { isConfiguredItem };
 export default useCart;

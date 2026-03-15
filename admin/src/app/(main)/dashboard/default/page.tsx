@@ -1,14 +1,22 @@
-import { ChartAreaInteractive } from "./_components/chart-area-interactive";
-import data from "./_components/data.json";
-import { ProposalSectionsTable } from "./_components/proposal-sections-table/table";
-import { SectionCards } from "./_components/section-cards";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
+import prismadb from "@/lib/prismadb";
 
-export default function Page() {
-  return (
-    <div className="@container/main flex flex-col gap-4 md:gap-6">
-      <SectionCards />
-      <ChartAreaInteractive />
-      <ProposalSectionsTable data={data} />
-    </div>
-  );
+export default async function Page() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
+
+  if (userId) {
+    const store = await prismadb.store.findFirst({
+      where: { userId },
+      select: { id: true },
+    });
+
+    if (store) {
+      redirect(`/dashboard/store/${store.id}`);
+    }
+  }
+
+  redirect("/dashboard/store/setup");
 }

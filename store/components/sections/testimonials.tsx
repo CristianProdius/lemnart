@@ -21,28 +21,33 @@ gsap.registerPlugin(ScrollTrigger)
  * as structural elements.
  */
 
-const testimonials = [
+const defaultTestimonials = [
     {
-        id: 1,
         quote: "Mascarea caloriferului a schimbat complet aspectul livingului. Calitate excepțională și finisaj impecabil!",
         name: "Maria P.",
         location: "București",
     },
     {
-        id: 2,
         quote: "Profesioniști de la A la Z. De la măsurare până la montaj, totul a decurs perfect. Recomand cu încredere.",
         name: "Andrei M.",
         location: "Cluj-Napoca",
     },
     {
-        id: 3,
         quote: "Am comandat pentru 4 camere. Fiecare piesă arată fabulos și se simte calitatea lemnului masiv.",
         name: "Elena D.",
         location: "Timișoara",
     },
 ]
 
-const Testimonials = () => {
+interface TestimonialsProps {
+    data?: { items: { quote: string; name: string; location: string }[] } | null;
+}
+
+const Testimonials: React.FC<TestimonialsProps> = ({ data }) => {
+    const testimonials = (data?.items ?? defaultTestimonials).map((t, i) => ({
+        ...t,
+        id: i + 1,
+    }));
     const sectionRef = useRef<HTMLElement>(null)
     const gridRef = useRef<HTMLDivElement>(null)
     const topLineRef = useRef<HTMLDivElement>(null)

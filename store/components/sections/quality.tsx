@@ -8,7 +8,7 @@ import SplitText from "@/components/ui/split-text"
 
 gsap.registerPlugin(ScrollTrigger)
 
-const badges = [
+const defaultBadges = [
     { title: "Lemn Masiv", description: "Stejar, nuc și fag din surse certificate." },
     { title: "Finisaje Premium", description: "Lacuri și vopsele ecologice, rezistente." },
     { title: "Ventilație Optimă", description: "Design care permite circulația eficientă a căldurii." },
@@ -17,7 +17,12 @@ const badges = [
     { title: "Montaj Inclus", description: "Instalare profesională la domiciliu." },
 ]
 
-const Quality = () => {
+interface QualityProps {
+    data?: { badges: { title: string; description: string }[] } | null;
+}
+
+const Quality: React.FC<QualityProps> = ({ data }) => {
+    const badges = data?.badges ?? defaultBadges;
     const sectionRef = useRef<HTMLElement>(null)
     const entriesRef = useRef<HTMLDivElement>(null)
 

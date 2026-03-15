@@ -9,38 +9,44 @@ import SplitText from "@/components/ui/split-text"
 
 gsap.registerPlugin(ScrollTrigger)
 
-const steps = [
+const ICONS = [Ruler, Palette, Hammer, Wrench] as const;
+
+const defaultSteps = [
     {
         number: "01",
         title: "Măsurare",
         description:
             "Venim la locație pentru dimensiuni precise și evaluarea spațiului.",
-        Icon: Ruler,
     },
     {
         number: "02",
         title: "Design",
         description:
             "Proiectăm modelul perfect pentru spațiul tău, cu materiale alese de tine.",
-        Icon: Palette,
     },
     {
         number: "03",
         title: "Fabricare",
         description:
             "Construim manual din materiale premium, cu atenție la fiecare detaliu.",
-        Icon: Hammer,
     },
     {
         number: "04",
         title: "Instalare",
         description:
             "Montaj profesional la domiciliu, fără griji și fără mizerie.",
-        Icon: Wrench,
     },
 ]
 
-const Process = () => {
+interface ProcessProps {
+    data?: { steps: { number: string; title: string; description: string }[] } | null;
+}
+
+const Process: React.FC<ProcessProps> = ({ data }) => {
+    const steps = (data?.steps ?? defaultSteps).map((step, i) => ({
+        ...step,
+        Icon: ICONS[i % ICONS.length],
+    }));
     const sectionRef = useRef<HTMLElement>(null)
     const rightRef = useRef<HTMLDivElement>(null)
 

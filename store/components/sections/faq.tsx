@@ -23,7 +23,7 @@ gsap.registerPlugin(ScrollTrigger)
  * tactile, game-like experience.
  */
 
-const faqs = [
+const defaultFaqs = [
     {
         question: "Cât durează o comandă personalizată?",
         answer: "Termenul standard este de 2-3 săptămâni de la confirmarea comenzii. Pentru proiecte mai complexe sau comenzi multiple, termenul poate fi de 3-4 săptămâni. Vă ținem la curent pe parcursul întregului proces.",
@@ -46,7 +46,12 @@ const faqs = [
     },
 ]
 
-const FAQ = () => {
+interface FAQProps {
+    data?: { items: { question: string; answer: string }[] } | null;
+}
+
+const FAQ: React.FC<FAQProps> = ({ data }) => {
+    const faqs = data?.items ?? defaultFaqs;
     const sectionRef = useRef<HTMLElement>(null)
     const gridRef = useRef<HTMLDivElement>(null)
     const [flippedIndex, setFlippedIndex] = useState<number | null>(null)

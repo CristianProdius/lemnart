@@ -5,6 +5,7 @@ import { useGSAP } from "@gsap/react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import BackgroundVideo from "@/components/ui/background-video"
+import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -101,16 +102,17 @@ const Hero: React.FC<HeroProps> = ({
                 )
             }
 
-            // CTA — scale in (no opacity to ensure visibility without JS)
+            // CTA — slide up and fade in
             if (ctaRef.current) {
                 tl.from(
                     ctaRef.current,
                     {
-                        scale: 0.95,
-                        duration: 0.8,
-                        ease: "back.out(1.7)",
+                        y: 40,
+                        opacity: 0,
+                        duration: 1,
+                        ease: "power3.out",
                     },
-                    "-=0.6"
+                    "-=0.4"
                 )
             }
 
@@ -201,22 +203,22 @@ const Hero: React.FC<HeroProps> = ({
 
                     {/* CTA */}
                     <div ref={ctaRef} className="mt-10 flex items-center gap-6">
-                        <a
+                        <Link
                             href={cta.href}
                             className="group inline-flex items-center gap-3 rounded-full bg-[#1A1A1A] px-7 py-4 text-sm font-medium text-white transition-all duration-200 hover:bg-[#333]"
                             style={{ fontFamily: "var(--font-barlow)" }}
                         >
                             {cta.label}
                             <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1" />
-                        </a>
+                        </Link>
                         {secondaryLink && (
-                            <a
+                            <Link
                                 href={secondaryLink.href}
                                 className="text-sm font-medium text-white/60 underline underline-offset-4 transition-colors duration-200 hover:text-white"
                                 style={{ fontFamily: "var(--font-barlow)" }}
                             >
                                 {secondaryLink.label}
-                            </a>
+                            </Link>
                         )}
                     </div>
                 </div>

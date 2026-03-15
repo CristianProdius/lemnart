@@ -4,6 +4,7 @@ import { useRef } from "react"
 import { useGSAP } from "@gsap/react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import Link from "next/link"
 import { ArrowRight, Phone, Mail } from "lucide-react"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -21,7 +22,19 @@ gsap.registerPlugin(ScrollTrigger)
  * card creates tension and draws focus.
  */
 
-const CTA = () => {
+interface CTAProps {
+    data?: {
+        marqueeText?: string;
+        heading?: string;
+        description?: string;
+        buttonLabel?: string;
+        buttonHref?: string;
+        phone?: string;
+        email?: string;
+    } | null;
+}
+
+const CTA: React.FC<CTAProps> = ({ data }) => {
     const sectionRef = useRef<HTMLElement>(null)
     const cardRef = useRef<HTMLDivElement>(null)
     const marquee1Ref = useRef<HTMLDivElement>(null)
@@ -74,8 +87,14 @@ const CTA = () => {
         { scope: sectionRef }
     )
 
-    const marqueeText = "Transformă-ți Spațiul — "
+    const marqueeText = (data?.marqueeText || "Transformă-ți Spațiul") + " — "
     const repeated = marqueeText.repeat(6)
+    const heading = data?.heading || "Transformă-ți Spațiul"
+    const description = data?.description || "Solicită o consultație gratuită și descoperă soluția perfectă pentru casa ta."
+    const buttonLabel = data?.buttonLabel || "Contactează-ne"
+    const buttonHref = data?.buttonHref || "/contact"
+    const phone = data?.phone || "+40 700 000 000"
+    const email = data?.email || "contact@lemnart.ro"
 
     return (
         <section
@@ -115,39 +134,38 @@ const CTA = () => {
                             fontStyle: "italic",
                         }}
                     >
-                        Transformă-ți Spațiul
+                        {heading}
                     </h2>
 
                     <p className="text-pretty mx-auto mt-4 max-w-xs text-sm leading-relaxed text-[var(--th-text-tertiary)]">
-                        Solicită o consultație gratuită și descoperă soluția
-                        perfectă pentru casa ta.
+                        {description}
                     </p>
 
-                    <a
-                        href="/contact"
+                    <Link
+                        href={buttonHref}
                         className="group mt-8 inline-flex items-center gap-3 border border-[var(--color-accent-light)] px-10 py-4 text-sm font-medium text-[var(--color-accent-light)] transition-all duration-300 hover:bg-[var(--color-accent-light)] hover:text-[var(--th-btn-inverse-text)]"
                     >
-                        Contactează-ne
+                        {buttonLabel}
                         <ArrowRight
                             size={16}
                             className="transition-transform duration-300 group-hover:translate-x-1"
                         />
-                    </a>
+                    </Link>
 
                     <div className="mt-10 flex flex-col items-center justify-center gap-6 sm:flex-row">
                         <a
-                            href="tel:+40700000000"
+                            href={`tel:${phone.replace(/\s/g, "")}`}
                             className="flex items-center gap-2 text-xs text-[var(--th-text-muted)] transition-colors duration-300 hover:text-[var(--color-accent-light)]"
                         >
                             <Phone size={12} />
-                            +40 700 000 000
+                            {phone}
                         </a>
                         <a
-                            href="mailto:contact@lemnart.ro"
+                            href={`mailto:${email}`}
                             className="flex items-center gap-2 text-xs text-[var(--th-text-muted)] transition-colors duration-300 hover:text-[var(--color-accent-light)]"
                         >
                             <Mail size={12} />
-                            contact@lemnart.ro
+                            {email}
                         </a>
                     </div>
                 </div>

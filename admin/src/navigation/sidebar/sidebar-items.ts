@@ -10,6 +10,7 @@ import {
   ReceiptText,
   Settings,
   ShoppingCart,
+  Sliders,
 } from "lucide-react";
 
 export interface NavSubItem {
@@ -43,8 +44,8 @@ export const sidebarItems: NavGroup[] = [
     label: "Dashboards",
     items: [
       {
-        title: "Default",
-        url: "/dashboard/default",
+        title: "Overview",
+        url: "/dashboard/store/:storeId",
         icon: LayoutDashboard,
       },
       {
@@ -100,6 +101,11 @@ export const sidebarItems: NavGroup[] = [
         icon: Package,
       },
       {
+        title: "Configurator",
+        url: "/dashboard/store/:storeId/configurator",
+        icon: Sliders,
+      },
+{
         title: "Settings",
         url: "/dashboard/store/:storeId/settings",
         icon: Settings,

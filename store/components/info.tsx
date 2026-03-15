@@ -2,8 +2,9 @@
 
 import { Product } from "@/types";
 import Currency from "@/components/ui/currency";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Sliders } from "lucide-react";
 import useCart from "@/hooks/use-cart";
+import Link from "next/link";
 
 interface InfoProps {
     data: Product;
@@ -88,6 +89,16 @@ const Info: React.FC<InfoProps> = ({ data }) => {
                 Adaugă în coș
                 <ShoppingCart size={18} />
             </button>
+
+            {/* Customize */}
+            <Link
+                href={`/configurator?style=${data?.category?.id}&color=${data?.color?.id}`}
+                className="mt-4 flex w-full items-center justify-center gap-3 border border-[var(--color-accent-light)] px-8 py-4 text-sm font-semibold text-[var(--color-accent-light)] transition-all duration-200 hover:bg-[var(--color-accent-light)] hover:text-[var(--th-btn-inverse-text)] sm:w-auto"
+                style={{ fontFamily: "var(--font-barlow)" }}
+            >
+                Personalizează
+                <Sliders size={18} />
+            </Link>
         </div>
     );
 }

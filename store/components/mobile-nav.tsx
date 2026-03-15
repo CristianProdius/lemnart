@@ -80,6 +80,19 @@ const MobileNav: React.FC<MobileNavProps> = ({ categories }) => {
                                 </Link>
                             ))}
                             <Link
+                                href="/configurator"
+                                onClick={() => setOpen(false)}
+                                className={cn(
+                                    "border-b border-[var(--th-border)] py-4 text-sm font-medium transition",
+                                    pathname === "/configurator"
+                                        ? "text-[rgb(var(--th-text))]"
+                                        : "text-[var(--th-text-tertiary)] hover:text-[rgb(var(--th-text))]"
+                                )}
+                                style={{ fontFamily: "var(--font-barlow)" }}
+                            >
+                                Configurator
+                            </Link>
+                            <Link
                                 href="/blog"
                                 onClick={() => setOpen(false)}
                                 className={cn(

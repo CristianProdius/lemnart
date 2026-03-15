@@ -1,7 +1,7 @@
 "use client"
 
 import Currency from '@/components/ui/currency';
-import useCart from '@/hooks/use-cart';
+import useCart, { isConfiguredItem } from '@/hooks/use-cart';
 import axios from 'axios';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
@@ -12,7 +12,13 @@ const Summary = () => {
     const searchParams = useSearchParams();
     const items = useCart(state => state.items);
     const removeAll = useCart(state => state.removeAll);
-    const totalPrice = items.reduce((total, item) => total + Number(item.price), 0)
+
+    const totalPrice = items.reduce((total, item) => {
+        if (isConfiguredItem(item)) {
+            return total + item.totalPrice;
+        }
+        return total + Number(item.price);
+    }, 0);
 
     useEffect(() => {
         if(searchParams.get('success')) {
@@ -25,8 +31,36 @@ const Summary = () => {
     }, [searchParams, removeAll])
 
     const onCheckout = async () => {
+        const productIds = items
+            .filter((item) => !isConfiguredItem(item))
+            .map((item) => item.id);
+
+        const configuredItems = items
+            .filter(isConfiguredItem)
+            .map((item) => ({
+                styleName: item.styleName,
+                colorName: item.colorName,
+                colorValue: item.colorValue,
+                width: item.width,
+                height: item.height,
+                depth: item.depth,
+                ventilationName: item.ventilationName,
+                mountingName: item.mountingName,
+                sections: item.sections,
+                accessories: item.accessories,
+                unitPrice: item.totalPrice,
+                configSnapshot: {
+                    styleId: item.styleId,
+                    colorId: item.colorId,
+                    ventilationId: item.ventilationId,
+                    mountingId: item.mountingId,
+                    priceBreakdown: item.priceBreakdown,
+                },
+            }));
+
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/checkout`, {
-            productIds: items.map(item => item.id),
+            productIds: productIds.length > 0 ? productIds : undefined,
+            configuredItems: configuredItems.length > 0 ? configuredItems : undefined,
         });
 
         window.location = response.data.url

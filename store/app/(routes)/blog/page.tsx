@@ -1,4 +1,5 @@
 import { getAllBlogPosts } from "@/lib/blog-data"
+import getBlogPosts from "@/actions/get-blog-posts"
 import BlogList from "./components/blog-list"
 import BlogListSchema from "@/components/schema/blog-list-schema"
 import Breadcrumb from "@/components/ui/breadcrumb"
@@ -10,8 +11,26 @@ export const metadata: Metadata = {
         "Articole despre mascări calorifere din lemn, tendințe în design interior, ghiduri de alegere și inspirație pentru casa ta.",
 }
 
-const BlogPage = () => {
-    const posts = getAllBlogPosts()
+const BlogPage = async () => {
+    const apiBlogPosts = await getBlogPosts()
+
+    // Map API posts to the format expected by BlogList, or fallback to hardcoded
+    const posts = apiBlogPosts.length > 0
+        ? apiBlogPosts.map((post) => ({
+            slug: post.slug,
+            title: post.title,
+            excerpt: post.excerpt,
+            content: post.content,
+            coverImage: post.coverImage,
+            date: post.publishedAt || post.createdAt,
+            readTime: post.readTime,
+            category: post.category,
+            author: {
+                name: post.authorName,
+                role: post.authorRole,
+            },
+        }))
+        : getAllBlogPosts()
 
     return (
         <div className="bg-[var(--th-surface)]">
