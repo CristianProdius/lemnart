@@ -1,8 +1,9 @@
-import Container from "@/components/ui/container";
 import Link from "next/link";
 import { MainNav } from "@/components";
 import getCategories from "@/actions/get-categories";
 import NavbarActions from "./navbar-actions";
+import NavbarScrollWrapper from "./navbar-scroll-wrapper";
+import MobileNav from "./mobile-nav";
 
 export const revalidate = 0;
 
@@ -10,17 +11,24 @@ const Navbar = async () => {
     const categories = await getCategories();
 
     return (
-        <div className="border-b">
-            <Container>
-                <div className="relative flex items-center h-16 px-4 sm:px-6 lg:px-8">
-                    <Link href="/" className="flex ml-4 lg:ml-0 gap-x-2">
-                        <p className="text-xl font-bold">STORE</p>
-                    </Link>
+        <NavbarScrollWrapper>
+            <div className="relative flex items-center h-[72px] px-6 md:px-12 lg:px-20">
+                <Link href="/" className="flex gap-x-2">
+                    <p
+                        className="navbar-logo text-xl font-bold"
+                        style={{ fontFamily: "var(--font-barlow)" }}
+                    >
+                        LEMNART
+                    </p>
+                </Link>
+                <span className="navbar-separator mx-5 hidden lg:block h-5 w-px" />
+                <div className="hidden lg:flex">
                     <MainNav data={categories || []} />
-                    <NavbarActions />
                 </div>
-            </Container>
-        </div>
+                <NavbarActions />
+                <MobileNav categories={categories || []} />
+            </div>
+        </NavbarScrollWrapper>
     )
 }
 export default Navbar;

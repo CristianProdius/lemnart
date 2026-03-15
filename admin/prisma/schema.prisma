@@ -80,9 +80,16 @@ model Store {
   products   Product[]   @relation("StoreToProduct")
   sizes      Size[]      @relation("StoreToSize")
   colors     Color[]     @relation("StoreToColor")
-  orders     Order[]     @relation("StoreToOrder")
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  orders              Order[]              @relation("StoreToOrder")
+  blogPosts           BlogPost[]           @relation("StoreToBlogPost")
+  siteContents        SiteContent[]        @relation("StoreToSiteContent")
+  configStyles        ConfigStyle[]        @relation("StoreToConfigStyle")
+  ventilationPatterns VentilationPattern[] @relation("StoreToVentilationPattern")
+  mountingTypes       MountingType[]       @relation("StoreToMountingType")
+  configAccessories   ConfigAccessory[]    @relation("StoreToConfigAccessory")
+  priceTiers          PriceTier[]          @relation("StoreToPriceTier")
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
 }
 
 model Billboard {
@@ -139,15 +146,16 @@ model Product {
 }
 
 model Order {
-  id         String      @id @default(uuid())
-  storeId    String // Foreign Key to Store
-  store      Store       @relation("StoreToOrder", fields: [storeId], references: [id])
-  orderItems OrderItem[] // Relation to OrderItem model
-  isPaid     Boolean     @default(false)
-  phone      String      @default("")
-  address    String      @default("")
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id              String               @id @default(uuid())
+  storeId         String // Foreign Key to Store
+  store           Store                @relation("StoreToOrder", fields: [storeId], references: [id])
+  orderItems      OrderItem[] // Relation to OrderItem model
+  configuredItems ConfiguredOrderItem[]
+  isPaid          Boolean              @default(false)
+  phone           String               @default("")
+  address         String               @default("")
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
 
   @@index([storeId])
 }
@@ -179,14 +187,15 @@ model Size {
 }
 
 model Color {
-  id        String    @id @default(uuid())
-  storeId   String // Foreign Key to Store
-  store     Store     @relation("StoreToColor", fields: [storeId], references: [id])
-  name      String
-  value     String
-  products  Product[] // Relation to Product model
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id         String      @id @default(uuid())
+  storeId    String // Foreign Key to Store
+  store      Store       @relation("StoreToColor", fields: [storeId], references: [id])
+  name       String
+  value      String
+  products   Product[] // Relation to Product model
+  priceTiers PriceTier[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
   @@index([storeId])
 }
@@ -200,4 +209,153 @@ model Image {
   updatedAt DateTime @updatedAt
 
   @@index([productId])
+}
+
+model BlogPost {
+  id          String    @id @default(uuid())
+  storeId     String
+  store       Store     @relation("StoreToBlogPost", fields: [storeId], references: [id])
+  title       String
+  slug        String
+  excerpt     String    @db.Text
+  content     String    @db.Text
+  coverImage  String    @default("")
+  category    String    @default("")
+  readTime    String    @default("")
+  authorName  String    @default("")
+  authorRole  String    @default("")
+  isPublished Boolean   @default(false)
+  sortOrder   Int       @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([storeId, slug])
+  @@index([storeId])
+}
+
+model SiteContent {
+  id        String   @id @default(uuid())
+  storeId   String
+  store     Store    @relation("StoreToSiteContent", fields: [storeId], references: [id])
+  key       String
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([storeId, key])
+  @@index([storeId])
+}
+
+model ConfigStyle {
+  id          String      @id @default(uuid())
+  storeId     String
+  store       Store       @relation("StoreToConfigStyle", fields: [storeId], references: [id])
+  name        String
+  slug        String
+  description String      @default("") @db.Text
+  modelUrl    String      @default("") // .glb 3D model URL
+  previewUrl  String      @default("") // Preview image URL
+  sortOrder   Int         @default(0)
+  isActive    Boolean     @default(true)
+  priceTiers  PriceTier[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([storeId, slug])
+  @@index([storeId])
+}
+
+model VentilationPattern {
+  id            String   @id @default(uuid())
+  storeId       String
+  store         Store    @relation("StoreToVentilationPattern", fields: [storeId], references: [id])
+  name          String
+  slug          String
+  previewUrl    String   @default("")
+  priceModifier Decimal  @default(0) // Price modifier (e.g., +50 RON)
+  sortOrder     Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([storeId, slug])
+  @@index([storeId])
+}
+
+model MountingType {
+  id            String   @id @default(uuid())
+  storeId       String
+  store         Store    @relation("StoreToMountingType", fields: [storeId], references: [id])
+  name          String
+  slug          String
+  priceModifier Decimal  @default(0)
+  sortOrder     Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([storeId, slug])
+  @@index([storeId])
+}
+
+model ConfigAccessory {
+  id         String   @id @default(uuid())
+  storeId    String
+  store      Store    @relation("StoreToConfigAccessory", fields: [storeId], references: [id])
+  name       String
+  slug       String
+  previewUrl String   @default("")
+  price      Decimal  @default(0)
+  sortOrder  Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([storeId, slug])
+  @@index([storeId])
+}
+
+model PriceTier {
+  id              String       @id @default(uuid())
+  storeId         String
+  store           Store        @relation("StoreToPriceTier", fields: [storeId], references: [id])
+  styleId         String
+  style           ConfigStyle  @relation(fields: [styleId], references: [id])
+  colorId         String? // Optional: color-specific pricing override
+  color           Color?       @relation(fields: [colorId], references: [id])
+  minWidth        Int // cm
+  maxWidth        Int // cm
+  minHeight       Int // cm
+  maxHeight       Int // cm
+  basePrice       Decimal
+  pricePerSection Decimal      @default(0) // Extra cost per additional section
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([storeId])
+  @@index([styleId])
+  @@index([colorId])
+}
+
+model ConfiguredOrderItem {
+  id              String   @id @default(uuid())
+  orderId         String
+  order           Order    @relation(fields: [orderId], references: [id])
+  configSnapshot  Json // Full configuration snapshot
+  styleName       String
+  colorName       String
+  colorValue      String   @default("")
+  width           Int
+  height          Int
+  depth           Int
+  ventilationName String   @default("")
+  mountingName    String   @default("")
+  sections        Int      @default(1)
+  accessories     Json     @default("[]") // Array of {name, price}
+  unitPrice       Decimal
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([orderId])
 }

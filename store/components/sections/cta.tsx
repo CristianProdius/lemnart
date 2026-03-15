@@ -1,0 +1,193 @@
+"use client"
+
+import { useRef } from "react"
+import { useGSAP } from "@gsap/react"
+import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+import Link from "next/link"
+import { ArrowRight, Phone, Mail } from "lucide-react"
+
+gsap.registerPlugin(ScrollTrigger)
+
+/**
+ * CTA — Infinite Marquee with Floating CTA
+ *
+ * Two rows of oversized text scroll infinitely in opposite
+ * directions — one left, one right — creating visual energy
+ * and movement. A static, sharp-cornered card floats centered
+ * on top containing the actual CTA content (subtitle, button,
+ * contact). The marquee text is the heading repeated.
+ *
+ * The contrast between the kinetic background and the still
+ * card creates tension and draws focus.
+ */
+
+interface CTAProps {
+    data?: {
+        marqueeText?: string;
+        heading?: string;
+        description?: string;
+        buttonLabel?: string;
+        buttonHref?: string;
+        phone?: string;
+        email?: string;
+    } | null;
+}
+
+const CTA: React.FC<CTAProps> = ({ data }) => {
+    const sectionRef = useRef<HTMLElement>(null)
+    const cardRef = useRef<HTMLDivElement>(null)
+    const marquee1Ref = useRef<HTMLDivElement>(null)
+    const marquee2Ref = useRef<HTMLDivElement>(null)
+
+    useGSAP(
+        () => {
+            if (!sectionRef.current) return
+
+            // Marquee 1 — scrolls left
+            if (marquee1Ref.current) {
+                gsap.to(marquee1Ref.current, {
+                    xPercent: -50,
+                    duration: 30,
+                    ease: "none",
+                    repeat: -1,
+                })
+            }
+
+            // Marquee 2 — scrolls right
+            if (marquee2Ref.current) {
+                gsap.fromTo(
+                    marquee2Ref.current,
+                    { xPercent: -50 },
+                    {
+                        xPercent: 0,
+                        duration: 30,
+                        ease: "none",
+                        repeat: -1,
+                    }
+                )
+            }
+
+            // Card entrance
+            if (cardRef.current) {
+                gsap.from(cardRef.current, {
+                    y: 60,
+                    opacity: 0,
+                    scale: 0.95,
+                    duration: 1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: sectionRef.current,
+                        start: "top 70%",
+                        toggleActions: "play none none reverse",
+                    },
+                })
+            }
+        },
+        { scope: sectionRef }
+    )
+
+    const marqueeText = (data?.marqueeText || "Transformă-ți Spațiul") + " — "
+    const repeated = marqueeText.repeat(6)
+    const heading = data?.heading || "Transformă-ți Spațiul"
+    const description = data?.description || "Solicită o consultație gratuită și descoperă soluția perfectă pentru casa ta."
+    const buttonLabel = data?.buttonLabel || "Contactează-ne"
+    const buttonHref = data?.buttonHref || "/contact"
+    const phone = data?.phone || "+40 700 000 000"
+    const email = data?.email || "contact@lemnart.ro"
+
+    return (
+        <section
+            ref={sectionRef}
+            className="relative overflow-hidden bg-[var(--th-surface)] py-32 text-[rgb(var(--th-text))] md:py-48"
+        >
+            {/* Marquee Row 1 — scrolls left */}
+            <div className="pointer-events-none select-none">
+                <div
+                    ref={marquee1Ref}
+                    className="flex whitespace-nowrap"
+                    style={{ width: "fit-content" }}
+                >
+                    <span
+                        className="text-7xl font-bold text-[var(--th-text-ghost)] md:text-9xl"
+                        aria-hidden="true"
+                    >
+                        {repeated}
+                    </span>
+                </div>
+            </div>
+
+            {/* Floating CTA Card — centered */}
+            <div className="absolute inset-0 flex items-center justify-center px-6">
+                <div
+                    ref={cardRef}
+                    className="w-full max-w-lg border border-[var(--th-border)] bg-[var(--th-surface)]/95 p-10 text-center backdrop-blur-sm md:p-14"
+                >
+                    <p className="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-[var(--color-accent-light)]">
+                        Contactează-ne
+                    </p>
+
+                    <h2
+                        className="text-balance text-3xl text-[rgb(var(--th-text))] md:text-4xl"
+                        style={{
+                            fontFamily: "var(--font-instrument-serif)",
+                            fontStyle: "italic",
+                        }}
+                    >
+                        {heading}
+                    </h2>
+
+                    <p className="text-pretty mx-auto mt-4 max-w-xs text-sm leading-relaxed text-[var(--th-text-tertiary)]">
+                        {description}
+                    </p>
+
+                    <Link
+                        href={buttonHref}
+                        className="group mt-8 inline-flex items-center gap-3 border border-[var(--color-accent-light)] px-10 py-4 text-sm font-medium text-[var(--color-accent-light)] transition-all duration-300 hover:bg-[var(--color-accent-light)] hover:text-[var(--th-btn-inverse-text)]"
+                    >
+                        {buttonLabel}
+                        <ArrowRight
+                            size={16}
+                            className="transition-transform duration-300 group-hover:translate-x-1"
+                        />
+                    </Link>
+
+                    <div className="mt-10 flex flex-col items-center justify-center gap-6 sm:flex-row">
+                        <a
+                            href={`tel:${phone.replace(/\s/g, "")}`}
+                            className="flex items-center gap-2 text-xs text-[var(--th-text-muted)] transition-colors duration-300 hover:text-[var(--color-accent-light)]"
+                        >
+                            <Phone size={12} />
+                            {phone}
+                        </a>
+                        <a
+                            href={`mailto:${email}`}
+                            className="flex items-center gap-2 text-xs text-[var(--th-text-muted)] transition-colors duration-300 hover:text-[var(--color-accent-light)]"
+                        >
+                            <Mail size={12} />
+                            {email}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {/* Marquee Row 2 — scrolls right */}
+            <div className="pointer-events-none select-none">
+                <div
+                    ref={marquee2Ref}
+                    className="flex whitespace-nowrap"
+                    style={{ width: "fit-content" }}
+                >
+                    <span
+                        className="text-7xl font-bold text-[var(--th-text-ghost)] md:text-9xl"
+                        aria-hidden="true"
+                    >
+                        {repeated}
+                    </span>
+                </div>
+            </div>
+        </section>
+    )
+}
+
+export default CTA

@@ -1,5 +1,4 @@
 "use client"
-import Button from '@/components/ui/button';
 import useCart from '@/hooks/use-cart';
 import { ShoppingBag } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -15,19 +14,41 @@ const NavbarActions = () => {
     const cart = useCart();
     const router = useRouter();
 
-    if(!isMounted) {
-        return null;
-    }
-
     return (
-        <div className="flex items-center ml-auto gap-x-4">
-            <Button className='flex items-center px-4 py-2 bg-black rounded-full'
-                onClick={() => router.push("/cart")}>
-                <ShoppingBag size={20} color='white' />
-                <span className='ml-2 text-sm font-medium text-white'>
-                    {cart?.items?.length}
+        <div className="flex items-center ml-auto gap-x-3">
+            <button
+                className="navbar-cart flex items-center px-4 py-2 rounded-full"
+                onClick={() => router.push("/cart")}
+                aria-label="Coș de cumpărături"
+            >
+                <ShoppingBag size={18} />
+                <span className='ml-2 text-sm font-medium tabular-nums'>
+                    {isMounted ? cart?.items?.length : 0}
                 </span>
-            </Button>
+            </button>
+
+            <a
+                href="/contact"
+                className="navbar-cta hidden lg:inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium"
+                style={{ fontFamily: "var(--font-barlow)" }}
+            >
+                Solicită Ofertă
+                <span className="navbar-cta-icon flex size-6 items-center justify-center rounded-full">
+                    <svg
+                        className="size-3"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2.5}
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M7 17L17 7M17 7H7M17 7v10"
+                        />
+                    </svg>
+                </span>
+            </a>
         </div>
     )
 }

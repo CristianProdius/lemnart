@@ -1,23 +1,51 @@
-import Container from "@/components/ui/container";
-import Billboard from "@/components/billboard";
-import getBillboard from "@/actions/get-billboard";
+import Hero from "@/components/sections/hero";
+import Collections from "@/components/sections/collections";
+import Process from "@/components/sections/process";
+import Quality from "@/components/sections/quality";
+import FeaturedProducts from "@/components/sections/featured-products";
+import Testimonials from "@/components/sections/testimonials";
+import FAQ from "@/components/sections/faq";
+import CTA from "@/components/sections/cta";
 import getProducts from "@/actions/get-products";
-import ProductList from "@/components/product-list";
+import getCategories from "@/actions/get-categories";
+import getSiteContent from "@/actions/get-site-content";
 
-export const revalidate = 0;
+export const revalidate = 3600;
 
 const HomePage = async () => {
-    const billboard = await getBillboard('1ed54d58-f16f-420e-8750-9c9cccdeedb3');
-    const products = await getProducts({ isFeatured: true })
+    const [products, allProducts, categories, heroData, processData, qualityData, testimonialsData, faqData, ctaData] = await Promise.all([
+        getProducts({ isFeatured: true }),
+        getProducts({}),
+        getCategories(),
+        getSiteContent('hero'),
+        getSiteContent('process'),
+        getSiteContent('quality'),
+        getSiteContent('testimonials'),
+        getSiteContent('faq'),
+        getSiteContent('cta'),
+    ])
+
+    const h = heroData as Record<string, string> | null;
+
     return (
-        <Container>
-            <div className="pb-10 space-y-10">
-                <Billboard data={billboard} />
-                <div className="flex flex-col px-4 gap-y-8 sm:px-6 lg:px-8">
-                    <ProductList title="Featured Products" items={products} />
-                </div>
-            </div>
-        </Container>
+        <>
+            <Hero
+                headingLine1={h?.headingLine1 || "Artizanatul care îți"}
+                headingLine2={h?.headingLine2 || "transformă casa."}
+                subtitle={h?.subtitle || "Mascare calorifere din lemn masiv, create manual cu atenție la fiecare detaliu."}
+                cta={{ label: h?.ctaLabel || "Descoperă Colecția", href: h?.ctaHref || "/category/all" }}
+                secondaryLink={{ label: h?.secondaryLabel || "Află mai multe", href: h?.secondaryHref || "/blog" }}
+                videoSrc={h?.videoSrc || "/hero-bg.mp4"}
+                posterSrc="/hero-poster.jpg"
+            />
+            <Collections categories={categories} products={allProducts} />
+            <Process data={processData as { steps: { number: string; title: string; description: string }[] } | null} />
+            <Quality data={qualityData as { badges: { title: string; description: string }[] } | null} />
+            <FeaturedProducts items={products} />
+            <Testimonials data={testimonialsData as { items: { quote: string; name: string; location: string }[] } | null} />
+            <FAQ data={faqData as { items: { question: string; answer: string }[] } | null} />
+            <CTA data={ctaData as { marqueeText?: string; heading?: string; description?: string; buttonLabel?: string; buttonHref?: string; phone?: string; email?: string } | null} />
+        </>
     )
 }
 

@@ -11,16 +11,33 @@ interface MainNavProps {
 const MainNav: React.FC<MainNavProps> = ({ data }) => {
     const pathname = usePathname();
 
-    const routes = data.map(route => ({
-        href: `/category/${route.id}`,
-        label: route.name,
-        active: pathname === `/category/${route.id}`
-    }))
+    const routes = [
+        ...data.map(route => ({
+            href: `/category/${route.id}`,
+            label: route.name,
+            active: pathname === `/category/${route.id}`
+        })),
+        {
+            href: '/configurator',
+            label: 'Configurator',
+            active: pathname === '/configurator'
+        },
+    ]
 
     return (
-        <nav className='flex items-center mx-6 space-x-4 lg:space-x-6'>
+        <nav
+            className='flex items-center mx-6 space-x-4 lg:space-x-6'
+            style={{ fontFamily: "var(--font-barlow)" }}
+        >
             {routes.map(route => (
-                <Link key={route.href} href={route.href} className={cn('text-sm font-medium transition-colors hover:text-black', route.active ? 'text-black' : 'text-neutral-500')}>
+                <Link
+                    key={route.href}
+                    href={route.href}
+                    className={cn(
+                        'nav-link text-sm font-medium',
+                        route.active && 'nav-link-active'
+                    )}
+                >
                     {route.label}
                 </Link>
             ))}

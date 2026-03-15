@@ -1,6 +1,5 @@
 "use client";
 
-import Button from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Color, Size } from '@/types';
 import qs from 'query-string'
@@ -32,18 +31,43 @@ const Filter: React.FC<FilterProps> = ({ data, name, valueKey }) => {
 
         router.push(url);
     }
+
+    const isColorFilter = valueKey === "colorId";
+
     return (
-        <div className='mb-8'>
-            <h3 className='text-lg font-semibold'>{name}</h3>
-            <hr className='my-4' />
-            <div className='flex flex-wrap gap-2'>
+        <div>
+            <p
+                className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-[var(--th-text-tertiary)]"
+                style={{ fontFamily: "var(--font-barlow)" }}
+            >
+                {name}
+            </p>
+            <div className="flex flex-wrap gap-2">
                 {data.map(filter => (
-                    <div key={filter.id} className='flex items-center'>
-                        <Button className={cn("rounded-md text-sm text-gray-800 p-2 bg-white border border-gray-300", selectedValue === filter.id && "bg-black text-white")}
-                        onClick={() => onClick(filter.id)}>
-                            {filter.name}
-                        </Button>
-                    </div>
+                    <button
+                        key={filter.id}
+                        onClick={() => onClick(filter.id)}
+                        className={cn(
+                            "flex items-center gap-2 px-4 py-2 text-sm transition-all duration-200",
+                            selectedValue === filter.id
+                                ? "bg-[var(--th-btn-inverse-bg)] text-[var(--th-btn-inverse-text)]"
+                                : "border border-[var(--th-border-strong)] text-[var(--th-text-tertiary)] hover:border-[var(--th-text-muted)] hover:text-[rgb(var(--th-text))]"
+                        )}
+                        style={{ fontFamily: "var(--font-barlow)" }}
+                    >
+                        {isColorFilter && (
+                            <span
+                                className={cn(
+                                    "h-3.5 w-3.5 rounded-full border",
+                                    selectedValue === filter.id
+                                        ? "border-[var(--th-btn-inverse-text)]/20"
+                                        : "border-[var(--th-text-muted)]"
+                                )}
+                                style={{ backgroundColor: (filter as Color).value }}
+                            />
+                        )}
+                        {filter.name}
+                    </button>
                 ))}
             </div>
         </div>
