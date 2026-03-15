@@ -22,17 +22,18 @@ const BlogList: React.FC<BlogListProps> = ({ posts }) => {
             if (!listRef.current) return
 
             const items = listRef.current.querySelectorAll(".blog-card")
-            gsap.from(items, {
-                y: 50,
-                opacity: 0,
-                duration: 0.8,
-                ease: "power3.out",
-                stagger: 0.12,
-                scrollTrigger: {
-                    trigger: listRef.current,
-                    start: "top 90%",
-                    toggleActions: "play none none reverse",
-                },
+            items.forEach((item) => {
+                gsap.from(item, {
+                    y: 40,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: item,
+                        start: "top 90%",
+                        toggleActions: "play none none none",
+                    },
+                })
             })
         },
         { scope: listRef }

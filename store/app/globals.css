@@ -41,12 +41,12 @@
   --th-text: 26 26 26;
   --th-text-secondary: rgba(26, 26, 26, 0.7);
   --th-text-tertiary: rgba(26, 26, 26, 0.45);
-  --th-text-muted: rgba(26, 26, 26, 0.2);
-  --th-text-ghost: rgba(26, 26, 26, 0.03);
-  --th-border: rgba(26, 26, 26, 0.1);
-  --th-border-strong: rgba(26, 26, 26, 0.15);
-  --th-overlay: rgba(26, 26, 26, 0.04);
-  --th-overlay-hover: rgba(26, 26, 26, 0.02);
+  --th-text-muted: rgba(26, 26, 26, 0.35);
+  --th-text-ghost: rgba(26, 26, 26, 0.08);
+  --th-border: rgba(26, 26, 26, 0.12);
+  --th-border-strong: rgba(26, 26, 26, 0.2);
+  --th-overlay: rgba(26, 26, 26, 0.05);
+  --th-overlay-hover: rgba(26, 26, 26, 0.03);
   --th-btn-inverse-bg: #1A1A1A;
   --th-btn-inverse-text: white;
 }
