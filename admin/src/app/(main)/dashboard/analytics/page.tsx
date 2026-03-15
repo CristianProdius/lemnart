@@ -1,23 +1,20 @@
-import { ActionsManagerQueue } from "./_components/analytics-actions-manager-queue";
-import { ActionsRiskLedger } from "./_components/analytics-actions-risk-ledger";
-import { DriversCoverageTriage } from "./_components/analytics-drivers-coverage-triage";
-import { DriversForecastTarget } from "./_components/analytics-drivers-forecast-target";
-import { AnalyticsOverview } from "./_components/analytics-overview";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function Page() {
-  return (
-    <div className="flex flex-col gap-4 md:gap-6">
-      <AnalyticsOverview />
+import { auth } from "@/lib/auth";
+import prismadb from "@/lib/prismadb";
 
-      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-3">
-        <div className="flex flex-col gap-4 lg:col-span-2">
-          <DriversForecastTarget />
-          <DriversCoverageTriage />
-        </div>
-        <ActionsManagerQueue />
-      </div>
+export default async function AnalyticsRedirectPage() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) redirect("/sign-in");
 
-      <ActionsRiskLedger />
-    </div>
-  );
+  const store = await prismadb.store.findFirst({
+    where: { userId: session.user.id },
+  });
+
+  if (store) {
+    redirect(`/dashboard/store/${store.id}/analytics`);
+  } else {
+    redirect("/dashboard/store/setup");
+  }
 }

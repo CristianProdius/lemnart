@@ -24,6 +24,21 @@ export const formatter = new Intl.NumberFormat("en-US", {
   currency: "USD"
 });
 
+export function calculateOrderTotal(order: {
+  orderItems: Array<{ product: { price: unknown } }>;
+  configuredItems: Array<{ unitPrice: unknown }>;
+}): number {
+  const productTotal = order.orderItems.reduce(
+    (total, oi) => total + Number(oi.product.price),
+    0
+  );
+  const configTotal = order.configuredItems.reduce(
+    (total, ci) => total + Number(ci.unitPrice),
+    0
+  );
+  return productTotal + configTotal;
+}
+
 export function formatCurrency(
   amount: number,
   opts?: {

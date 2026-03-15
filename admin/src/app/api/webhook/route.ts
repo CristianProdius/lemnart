@@ -1,8 +1,16 @@
+import { OpenPanel } from "@openpanel/sdk";
 import Stripe from "stripe";
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { stripe } from "@/lib/stripe";
 import prismadb from "@/lib/prismadb";
+
+const op = process.env.OPENPANEL_CLIENT_ID
+  ? new OpenPanel({
+      clientId: process.env.OPENPANEL_CLIENT_ID,
+      clientSecret: process.env.OPENPANEL_SECRET ?? "",
+    })
+  : null;
 
 export async function POST(req: Request) {
     const body = await req.text();
@@ -61,6 +69,19 @@ export async function POST(req: Request) {
                 isArchived: true,
             }
         })
+
+        // Track revenue in OpenPanel (non-blocking, never fails the webhook)
+        if (op) {
+            try {
+                const amount = session.amount_total ? session.amount_total / 100 : 0;
+                await op.revenue(amount, {
+                    orderId: order.id,
+                    currency: session.currency ?? "usd",
+                });
+            } catch (err) {
+                console.log("[WEBHOOK_OPENPANEL]", err);
+            }
+        }
     }
 
     return new NextResponse(null, { status: 200 });
