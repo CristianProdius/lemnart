@@ -19,7 +19,8 @@ const BackgroundVideo: React.FC<BackgroundVideoProps> = ({
     const [showVideo, setShowVideo] = useState(false);
 
     useEffect(() => {
-        if (disableOnMobile && window.innerWidth < 768) {
+        const isInIframe = window.parent !== window;
+        if (disableOnMobile && !isInIframe && window.innerWidth < 768) {
             setShowVideo(false);
         } else {
             setShowVideo(true);
