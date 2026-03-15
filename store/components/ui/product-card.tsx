@@ -50,13 +50,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ data }) => {
                 <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 transition-all duration-300 group-hover:opacity-100">
                     <button
                         onClick={onPreview}
-                        className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--th-border)] bg-[var(--th-overlay)] backdrop-blur-sm transition hover:scale-110 hover:border-[var(--color-accent-light)] hover:bg-[var(--color-accent-light)]/10"
+                        className="flex size-10 items-center justify-center rounded-full border border-[var(--th-border)] bg-[var(--th-overlay)] backdrop-blur-sm transition hover:scale-110 hover:border-[var(--color-accent-light)] hover:bg-[var(--color-accent-light)]/10"
+                        aria-label={`Previzualizare ${data.name}`}
                     >
                         <Expand size={16} className="text-[rgb(var(--th-text))]" />
                     </button>
                     <button
                         onClick={onAddToCart}
-                        className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--th-border)] bg-[var(--th-overlay)] backdrop-blur-sm transition hover:scale-110 hover:border-[var(--color-accent-light)] hover:bg-[var(--color-accent-light)]/10"
+                        className="flex size-10 items-center justify-center rounded-full border border-[var(--th-border)] bg-[var(--th-overlay)] backdrop-blur-sm transition hover:scale-110 hover:border-[var(--color-accent-light)] hover:bg-[var(--color-accent-light)]/10"
+                        aria-label={`Adaugă ${data.name} în coș`}
                     >
                         <ShoppingCart size={16} className="text-[rgb(var(--th-text))]" />
                     </button>

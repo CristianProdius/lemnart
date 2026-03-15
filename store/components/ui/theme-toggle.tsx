@@ -18,7 +18,7 @@ const ThemeToggle = () => {
         <button
             onClick={() => setTheme(isDark ? "light" : "dark")}
             className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--th-border)] text-[var(--th-text-secondary)] transition-colors hover:text-[rgb(var(--th-text))]"
-            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            aria-label={isDark ? "Comută la modul luminos" : "Comută la modul întunecat"}
         >
             {isDark ? <Sun size={16} /> : <Moon size={16} />}
         </button>

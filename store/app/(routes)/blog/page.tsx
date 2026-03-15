@@ -1,5 +1,7 @@
 import { getAllBlogPosts } from "@/lib/blog-data"
 import BlogList from "./components/blog-list"
+import BlogListSchema from "@/components/schema/blog-list-schema"
+import Breadcrumb from "@/components/ui/breadcrumb"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -13,17 +15,17 @@ const BlogPage = () => {
 
     return (
         <div className="bg-[var(--th-surface)]">
+            <BlogListSchema posts={posts} />
             {/* Hero */}
             <section className="py-24 md:py-32">
                 <div className="mx-auto max-w-7xl px-6">
-                    <p
-                        className="mb-8 text-xs font-medium uppercase tracking-[0.3em] text-[var(--color-accent-light)]"
-                        style={{ fontFamily: "var(--font-barlow)" }}
-                    >
-                        Acasă{" "}
-                        <span className="mx-2 text-[var(--th-text-muted)]">/</span>{" "}
-                        <span className="text-[var(--th-text-tertiary)]">Blog</span>
-                    </p>
+                    <Breadcrumb
+                        className="mb-8"
+                        items={[
+                            { label: "Acasă", href: "/" },
+                            { label: "Blog" },
+                        ]}
+                    />
 
                     <h1
                         className="text-5xl text-[rgb(var(--th-text))] md:text-7xl lg:text-8xl"

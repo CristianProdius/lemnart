@@ -9,7 +9,7 @@ import CTA from "@/components/sections/cta";
 import getProducts from "@/actions/get-products";
 import getCategories from "@/actions/get-categories";
 
-export const revalidate = 0;
+export const revalidate = 3600;
 
 const HomePage = async () => {
     const [products, allProducts, categories] = await Promise.all([
@@ -26,6 +26,7 @@ const HomePage = async () => {
                 cta={{ label: "Descoperă Colecția", href: "/category/all" }}
                 secondaryLink={{ label: "Află mai multe", href: "/blog" }}
                 videoSrc="/hero-bg.mp4"
+                posterSrc="/hero-poster.jpg"
             />
             <Collections categories={categories} products={allProducts} />
             <Process />

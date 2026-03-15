@@ -3,6 +3,7 @@ import { MainNav } from "@/components";
 import getCategories from "@/actions/get-categories";
 import NavbarActions from "./navbar-actions";
 import NavbarScrollWrapper from "./navbar-scroll-wrapper";
+import MobileNav from "./mobile-nav";
 
 export const revalidate = 0;
 
@@ -21,8 +22,11 @@ const Navbar = async () => {
                     </p>
                 </Link>
                 <span className="navbar-separator mx-5 hidden lg:block h-5 w-px" />
-                <MainNav data={categories || []} />
+                <div className="hidden lg:flex">
+                    <MainNav data={categories || []} />
+                </div>
                 <NavbarActions />
+                <MobileNav categories={categories || []} />
             </div>
         </NavbarScrollWrapper>
     )

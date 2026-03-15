@@ -101,13 +101,12 @@ const Hero: React.FC<HeroProps> = ({
                 )
             }
 
-            // CTA — scale in
+            // CTA — scale in (no opacity to ensure visibility without JS)
             if (ctaRef.current) {
                 tl.from(
                     ctaRef.current,
                     {
-                        scale: 0.8,
-                        opacity: 0,
+                        scale: 0.95,
                         duration: 0.8,
                         ease: "back.out(1.7)",
                     },
@@ -147,7 +146,6 @@ const Hero: React.FC<HeroProps> = ({
                 <BackgroundVideo
                     src={videoSrc}
                     poster={posterSrc}
-                    disableOnMobile={false}
                 />
             </div>
 
@@ -163,38 +161,32 @@ const Hero: React.FC<HeroProps> = ({
                 )}
             >
                 <div className="max-w-3xl">
-                    <div
-                        ref={line1Ref}
-                        className="text-balance text-5xl italic leading-[1.05] text-[#F5F0EB] drop-shadow-lg sm:text-6xl md:text-7xl lg:text-8xl xl:text-[96px]"
-                        style={{ fontFamily: "var(--font-instrument-serif)" }}
-                    >
-                        {words1.map((word, i) => (
-                            <span
-                                key={i}
-                                className="hero-word inline-block"
-                                style={{ backfaceVisibility: "hidden" }}
-                            >
-                                {word}
-                                {i < words1.length - 1 && "\u00A0"}
-                            </span>
-                        ))}
-                    </div>
-                    <div
-                        ref={line2Ref}
-                        className="text-balance text-5xl italic leading-[1.05] text-[#F5F0EB] drop-shadow-lg sm:text-6xl md:text-7xl lg:text-8xl xl:text-[96px]"
-                        style={{ fontFamily: "var(--font-instrument-serif)" }}
-                    >
-                        {words2.map((word, i) => (
-                            <span
-                                key={i}
-                                className="hero-word inline-block"
-                                style={{ backfaceVisibility: "hidden" }}
-                            >
-                                {word}
-                                {i < words2.length - 1 && "\u00A0"}
-                            </span>
-                        ))}
-                    </div>
+                    <h1 className="text-balance text-5xl italic leading-[1.05] text-[#F5F0EB] drop-shadow-lg sm:text-6xl md:text-7xl lg:text-8xl xl:text-[96px]" style={{ fontFamily: "var(--font-instrument-serif)" }}>
+                        <span ref={line1Ref} className="block">
+                            {words1.map((word, i) => (
+                                <span
+                                    key={i}
+                                    className="hero-word inline-block"
+                                    style={{ backfaceVisibility: "hidden" }}
+                                >
+                                    {word}
+                                    {i < words1.length - 1 && "\u00A0"}
+                                </span>
+                            ))}
+                        </span>
+                        <span ref={line2Ref} className="block">
+                            {words2.map((word, i) => (
+                                <span
+                                    key={i}
+                                    className="hero-word inline-block"
+                                    style={{ backfaceVisibility: "hidden" }}
+                                >
+                                    {word}
+                                    {i < words2.length - 1 && "\u00A0"}
+                                </span>
+                            ))}
+                        </span>
+                    </h1>
 
                     {/* Subtitle */}
                     {subtitle && (

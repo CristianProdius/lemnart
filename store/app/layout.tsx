@@ -6,6 +6,7 @@ import AnimationProvider from '@/providers/animation-provider'
 import ModalProvider from '@/providers/modal-provider'
 import ToastProvider from '@/providers/toast-provider'
 import ThemeProvider from '@/providers/theme-provider'
+import OrganizationSchema from '@/components/schema/organization-schema'
 
 const urban = Urbanist({ subsets: ['latin'] })
 
@@ -23,8 +24,25 @@ const instrumentSerif = Instrument_Serif({
 })
 
 export const metadata: Metadata = {
-  title: 'LemnArt — Mascare Calorifere Premium',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://lemnart.ro'),
+  title: {
+    default: 'LemnArt — Mascare Calorifere Premium din Lemn Masiv',
+    template: '%s | LemnArt',
+  },
   description: 'Mascare calorifere din lemn masiv, fabricate artizanal. Design premium, materiale naturale, montaj inclus.',
+  openGraph: {
+    type: 'website',
+    locale: 'ro_RO',
+    siteName: 'LemnArt',
+    title: 'LemnArt — Mascare Calorifere Premium din Lemn Masiv',
+    description: 'Mascare calorifere din lemn masiv, fabricate artizanal. Design premium, materiale naturale, montaj inclus.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
+  alternates: {
+    canonical: '/',
+  },
 }
 
 export default function RootLayout({
@@ -35,12 +53,18 @@ export default function RootLayout({
   return (
     <html lang="ro" suppressHydrationWarning>
       <body className={`${urban.className} ${barlow.variable} ${instrumentSerif.variable} bg-[var(--th-surface)] text-[rgb(var(--th-text))]`}>
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-[var(--th-surface)] focus:px-4 focus:py-2 focus:text-sm focus:shadow-lg">
+          Salt la conținut
+        </a>
+        <OrganizationSchema />
         <ThemeProvider>
           <AnimationProvider>
             <ModalProvider />
             <ToastProvider />
             <Navbar />
-            {children}
+            <main id="main-content">
+              {children}
+            </main>
             <Footer />
           </AnimationProvider>
         </ThemeProvider>

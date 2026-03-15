@@ -170,6 +170,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ items }) => {
                                         onClick={(e) =>
                                             onPreview(e, product)
                                         }
+                                        aria-label={`Previzualizare ${product.name}`}
                                         icon={
                                             <Expand
                                                 size={16}
@@ -181,6 +182,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({ items }) => {
                                         onClick={(e) =>
                                             onAddToCart(e, product)
                                         }
+                                        aria-label={`Adaugă ${product.name} în coș`}
                                         icon={
                                             <ShoppingCart
                                                 size={16}

@@ -6,11 +6,35 @@ import CategoryHero from "./components/category-hero";
 import Filter from "./components/filter";
 import ProductGrid from "./components/product-grid";
 import MobileFilters from "./components/mobile-filters";
+import CategorySchema from "@/components/schema/category-schema";
+import type { Metadata } from "next";
 
-export const revalidate = 0;
+export const revalidate = 3600;
 
 type Params = Promise<{ categoryId: string }>
 type SearchParams = Promise<{ colorId: string, sizeId: string }>
+
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+    const { categoryId } = await params;
+    const isAll = categoryId === "all";
+
+    if (isAll) {
+        return {
+            title: "Toate Produsele — Mascare Calorifere",
+            description: "Descoperă întreaga colecție de mascare calorifere din lemn masiv LemnArt. Filtrează după dimensiune și culoare.",
+            alternates: { canonical: "/category/all" },
+        };
+    }
+
+    const category = await getCategory(categoryId);
+    const name = category?.name || "Colecție";
+
+    return {
+        title: `Colecția ${name} — Mascare Calorifere`,
+        description: `Explorează mascările calorifere din colecția ${name}. Lemn masiv, design premium, montaj inclus.`,
+        alternates: { canonical: `/category/${categoryId}` },
+    };
+}
 
 const CategoryPage = async ({ params, searchParams }: { params: Params, searchParams: SearchParams }) => {
     const { categoryId } = await params;
@@ -29,6 +53,7 @@ const CategoryPage = async ({ params, searchParams }: { params: Params, searchPa
 
     return (
         <div className="bg-[var(--th-surface)]">
+            <CategorySchema category={category} products={products} isAll={isAll} />
             {/* Hero */}
             <CategoryHero
                 name={isAll ? "Toate Produsele" : category?.name ?? ""}

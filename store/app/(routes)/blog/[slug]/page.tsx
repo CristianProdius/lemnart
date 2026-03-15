@@ -1,6 +1,7 @@
 import { getBlogPost, getAllBlogPosts } from "@/lib/blog-data"
 import { notFound } from "next/navigation"
 import BlogPostContent from "./components/blog-post-content"
+import BlogPostingSchema from "@/components/schema/blog-posting-schema"
 import type { Metadata } from "next"
 
 type Params = Promise<{ slug: string }>
@@ -39,7 +40,12 @@ const BlogPostPage = async ({ params }: { params: Params }) => {
     const nextPost = allPosts[currentIndex + 1] || null
     const prevPost = allPosts[currentIndex - 1] || null
 
-    return <BlogPostContent post={post} nextPost={nextPost} prevPost={prevPost} />
+    return (
+        <>
+            <BlogPostingSchema post={post} />
+            <BlogPostContent post={post} nextPost={nextPost} prevPost={prevPost} />
+        </>
+    )
 }
 
 export default BlogPostPage

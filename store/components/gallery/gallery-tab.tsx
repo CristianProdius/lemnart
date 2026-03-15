@@ -5,9 +5,10 @@ import { Image as ImageType } from '@/types';
 
 interface GalleryTabProps {
     image: ImageType
+    alt?: string
 }
 
-const GalleryTab: React.FC<GalleryTabProps> = ({ image }) => {
+const GalleryTab: React.FC<GalleryTabProps> = ({ image, alt = "" }) => {
     return (
         <Tab className="relative flex cursor-pointer items-center justify-center aspect-square overflow-hidden bg-[var(--color-muted)]">
             {({ selected }) => (
@@ -15,7 +16,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ image }) => {
                     <span className="absolute inset-0 aspect-square overflow-hidden">
                         <Image
                             fill
-                            alt=""
+                            alt={alt}
                             src={image.url}
                             className="object-cover object-center"
                         />

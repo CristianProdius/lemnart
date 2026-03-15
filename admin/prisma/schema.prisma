@@ -80,9 +80,11 @@ model Store {
   products   Product[]   @relation("StoreToProduct")
   sizes      Size[]      @relation("StoreToSize")
   colors     Color[]     @relation("StoreToColor")
-  orders     Order[]     @relation("StoreToOrder")
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  orders       Order[]       @relation("StoreToOrder")
+  blogPosts    BlogPost[]    @relation("StoreToBlogPost")
+  siteContents SiteContent[] @relation("StoreToSiteContent")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 model Billboard {
@@ -200,4 +202,40 @@ model Image {
   updatedAt DateTime @updatedAt
 
   @@index([productId])
+}
+
+model BlogPost {
+  id          String    @id @default(uuid())
+  storeId     String
+  store       Store     @relation("StoreToBlogPost", fields: [storeId], references: [id])
+  title       String
+  slug        String
+  excerpt     String    @db.Text
+  content     String    @db.Text
+  coverImage  String    @default("")
+  category    String    @default("")
+  readTime    String    @default("")
+  authorName  String    @default("")
+  authorRole  String    @default("")
+  isPublished Boolean   @default(false)
+  sortOrder   Int       @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([storeId, slug])
+  @@index([storeId])
+}
+
+model SiteContent {
+  id        String   @id @default(uuid())
+  storeId   String
+  store     Store    @relation("StoreToSiteContent", fields: [storeId], references: [id])
+  key       String
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([storeId, key])
+  @@index([storeId])
 }

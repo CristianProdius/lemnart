@@ -14,32 +14,28 @@ const NavbarActions = () => {
     const cart = useCart();
     const router = useRouter();
 
-    if(!isMounted) {
-        return null;
-    }
-
     return (
         <div className="flex items-center ml-auto gap-x-3">
             <button
                 className="navbar-cart flex items-center px-4 py-2 rounded-full"
                 onClick={() => router.push("/cart")}
-                aria-label="Shopping cart"
+                aria-label="Coș de cumpărături"
             >
                 <ShoppingBag size={18} />
-                <span className='ml-2 text-sm font-medium'>
-                    {cart?.items?.length}
+                <span className='ml-2 text-sm font-medium tabular-nums'>
+                    {isMounted ? cart?.items?.length : 0}
                 </span>
             </button>
 
             <a
                 href="/contact"
-                className="navbar-cta hidden md:inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium"
+                className="navbar-cta hidden lg:inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium"
                 style={{ fontFamily: "var(--font-barlow)" }}
             >
                 Solicită Ofertă
-                <span className="navbar-cta-icon flex h-6 w-6 items-center justify-center rounded-full">
+                <span className="navbar-cta-icon flex size-6 items-center justify-center rounded-full">
                     <svg
-                        className="h-3 w-3"
+                        className="size-3"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"

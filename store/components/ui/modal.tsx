@@ -30,7 +30,8 @@ const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
                                 <div className="relative overflow-hidden bg-[var(--th-surface)] p-6 shadow-2xl sm:p-8 lg:p-10">
                                     <button
                                         onClick={onClose}
-                                        className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center text-[var(--th-text-tertiary)] transition hover:text-[rgb(var(--th-text))]"
+                                        className="absolute right-4 top-4 flex size-8 items-center justify-center text-[var(--th-text-tertiary)] transition hover:text-[rgb(var(--th-text))]"
+                                        aria-label="Închide"
                                     >
                                         <X size={18} />
                                     </button>
