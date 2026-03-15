@@ -1,8 +1,10 @@
 import {
+  Barlow,
   DM_Sans,
   Figtree,
   Geist,
   Geist_Mono,
+  Instrument_Serif,
   Inter,
   JetBrains_Mono,
   Lora,
@@ -107,6 +109,19 @@ const playfairDisplay = Playfair_Display({
   variable: "--font-playfair-display",
 });
 
+const barlow = Barlow({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-barlow",
+});
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-instrument-serif",
+});
+
 export const fontRegistry = {
   geist: {
     label: "Geist",
@@ -179,6 +194,14 @@ export const fontRegistry = {
   playfairDisplay: {
     label: "Playfair Display",
     font: playfairDisplay,
+  },
+  barlow: {
+    label: "Barlow",
+    font: barlow,
+  },
+  instrumentSerif: {
+    label: "Instrument Serif",
+    font: instrumentSerif,
   },
 } as const;
 
