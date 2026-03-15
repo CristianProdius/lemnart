@@ -16,13 +16,20 @@ const ConfiguratorClient: React.FC<ConfiguratorClientProps> = ({ options }) => {
     const { styleId, colorId, width, height, depth, setStyleId, setColorId } =
         useConfigurator()
 
-    // Pre-fill from URL params (linked from product pages)
-    useEffect(() => {
-        const urlStyle = searchParams.get("style")
-        const urlColor = searchParams.get("color")
+    // Compute effective IDs synchronously so modelUrl is correct on first render
+    const urlStyle = searchParams.get("style")
+    const urlColor = searchParams.get("color")
 
+    const effectiveStyleId = styleId || (urlStyle
+        ? (options.styles.find((s) => s.id === urlStyle || s.slug === urlStyle)?.id ?? "")
+        : "")
+    const effectiveColorId = colorId || (urlColor
+        ? (options.colors.find((c) => c.id === urlColor)?.id ?? "")
+        : "")
+
+    // Sync URL params into Zustand store (for ConfiguratorPanel and other steps)
+    useEffect(() => {
         if (urlStyle && !styleId) {
-            // Try to match by category ID or slug
             const matchedStyle = options.styles.find(
                 (s) => s.id === urlStyle || s.slug === urlStyle
             )
@@ -38,8 +45,8 @@ const ConfiguratorClient: React.FC<ConfiguratorClientProps> = ({ options }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const selectedStyle = options.styles.find((s) => s.id === styleId)
-    const selectedColor = options.colors.find((c) => c.id === colorId)
+    const selectedStyle = options.styles.find((s) => s.id === effectiveStyleId)
+    const selectedColor = options.colors.find((c) => c.id === effectiveColorId)
 
     // Fallback: use the first style's model if no style is selected yet
     const defaultStyle = options.styles[0]

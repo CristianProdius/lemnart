@@ -1,6 +1,6 @@
 "use client"
 
-import { Component, Suspense, useRef, useState, type ErrorInfo, type ReactNode } from "react"
+import { Suspense, useRef, useState } from "react"
 import { Canvas } from "@react-three/fiber"
 import { Environment, OrbitControls } from "@react-three/drei"
 import RadiatorModel from "./radiator-model"
@@ -81,25 +81,6 @@ const ProductViewer: React.FC<ProductViewerProps> = ({
                         >
                             ✕
                         </button>
-                        <CanvasErrorBoundary>
-                            <Suspense fallback={<ViewerFallback />}>
-                                <ThreeCanvas
-                                    modelUrl={resolvedModelUrl}
-                                    colorHex={colorHex}
-                                    width={width}
-                                    height={height}
-                                    depth={depth}
-                                />
-                            </Suspense>
-                        </CanvasErrorBoundary>
-                    </div>
-                )}
-            </div>
-
-            {/* Desktop */}
-            <div className="hidden h-full w-full md:block">
-                <CanvasErrorBoundary>
-                    <Suspense fallback={<ViewerFallback />}>
                         <ThreeCanvas
                             modelUrl={resolvedModelUrl}
                             colorHex={colorHex}
@@ -107,57 +88,22 @@ const ProductViewer: React.FC<ProductViewerProps> = ({
                             height={height}
                             depth={depth}
                         />
-                    </Suspense>
-                </CanvasErrorBoundary>
+                    </div>
+                )}
+            </div>
+
+            {/* Desktop */}
+            <div className="hidden h-full w-full md:block">
+                <ThreeCanvas
+                    modelUrl={resolvedModelUrl}
+                    colorHex={colorHex}
+                    width={width}
+                    height={height}
+                    depth={depth}
+                />
             </div>
         </div>
     )
-}
-
-class CanvasErrorBoundary extends Component<
-    { children: ReactNode },
-    { hasError: boolean; key: number }
-> {
-    constructor(props: { children: ReactNode }) {
-        super(props)
-        this.state = { hasError: false, key: 0 }
-    }
-
-    static getDerivedStateFromError() {
-        return { hasError: true }
-    }
-
-    componentDidCatch(error: Error, info: ErrorInfo) {
-        console.log("[CANVAS_ERROR]", error.message, info.componentStack)
-    }
-
-    handleRetry = () => {
-        this.setState((s) => ({ hasError: false, key: s.key + 1 }))
-    }
-
-    render() {
-        if (this.state.hasError) {
-            return (
-                <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-[var(--th-bg-secondary)]">
-                    <p
-                        className="text-xs uppercase tracking-[0.2em] text-[var(--th-text-tertiary)]"
-                        style={{ fontFamily: "var(--font-barlow)" }}
-                    >
-                        Vizualizarea 3D nu a putut fi încărcată
-                    </p>
-                    <button
-                        onClick={this.handleRetry}
-                        className="border border-[var(--th-border-strong)] bg-[var(--th-bg)]/90 px-5 py-2.5 text-xs font-medium uppercase tracking-[0.2em] text-[var(--th-text-tertiary)] backdrop-blur-sm transition hover:border-[var(--color-accent-light)] hover:text-[var(--color-accent-light)]"
-                        style={{ fontFamily: "var(--font-barlow)" }}
-                    >
-                        Reîncearcă
-                    </button>
-                </div>
-            )
-        }
-
-        return <div key={this.state.key} className="h-full w-full">{this.props.children}</div>
-    }
 }
 
 interface ThreeCanvasProps {
@@ -175,18 +121,21 @@ function ThreeCanvas({ modelUrl, colorHex, width, height, depth }: ThreeCanvasPr
             dpr={[1, 1.5]}
             gl={{ antialias: true, alpha: true }}
             style={{ touchAction: "none", cursor: "grab" }}
+            fallback={<ViewerFallback />}
         >
             <ambientLight intensity={0.5} />
             <directionalLight position={[5, 5, 5]} intensity={1} color="#FFF8E7" />
             <pointLight position={[-3, 2, 2]} intensity={0.6} color="#C8A55C" />
             <Environment preset="studio" />
-            <RadiatorModel
-                modelUrl={modelUrl}
-                colorHex={colorHex}
-                width={width}
-                height={height}
-                depth={depth}
-            />
+            <Suspense fallback={null}>
+                <RadiatorModel
+                    modelUrl={modelUrl}
+                    colorHex={colorHex}
+                    width={width}
+                    height={height}
+                    depth={depth}
+                />
+            </Suspense>
             <OrbitControls
                 enablePan={false}
                 enableZoom={true}

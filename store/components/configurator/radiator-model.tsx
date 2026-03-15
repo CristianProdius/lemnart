@@ -30,24 +30,29 @@ const RadiatorModelInner: React.FC<RadiatorModelProps> = ({
 }) => {
     const { scene } = useGLTF(modelUrl)
     const groupRef = useRef<THREE.Group>(null!)
+    const materialsRef = useRef<THREE.MeshStandardMaterial[]>([])
 
+    // Effect 1 — Clone scene (only when the model changes)
     useEffect(() => {
         if (!groupRef.current) return
 
         const cloned = scene.clone(true)
-        const color = new THREE.Color(colorHex)
+        const mats: THREE.MeshStandardMaterial[] = []
 
         cloned.traverse((child) => {
             if (child instanceof THREE.Mesh) {
                 child.geometry = child.geometry.clone()
-                child.material = new THREE.MeshStandardMaterial({
-                    color,
+                const mat = new THREE.MeshStandardMaterial({
+                    color: new THREE.Color(colorHex),
                     roughness: 0.6,
                     metalness: 0.1,
                 })
+                child.material = mat
+                mats.push(mat)
             }
         })
 
+        materialsRef.current = mats
         groupRef.current.add(cloned)
 
         return () => {
@@ -58,8 +63,17 @@ const RadiatorModelInner: React.FC<RadiatorModelProps> = ({
                     ;(child.material as THREE.Material).dispose()
                 }
             })
+            materialsRef.current = []
         }
-    }, [scene, colorHex])
+    }, [scene])
+
+    // Effect 2 — Apply color (no clone/dispose, just update material property)
+    useEffect(() => {
+        const color = new THREE.Color(colorHex)
+        for (const mat of materialsRef.current) {
+            mat.color.set(color)
+        }
+    }, [colorHex])
 
     const sx = width / REF_WIDTH
     const sy = height / REF_HEIGHT
