@@ -356,6 +356,7 @@ export function PageEditor({
                                     {/* Preview content */}
                                     <div className="min-h-0 flex-1 bg-muted/30">
                                         <PagePreviewPanel
+                                            pageKey={pageKey}
                                             sectionKeys={sectionKeys}
                                             forms={forms}
                                             expandedSection={expandedSection}

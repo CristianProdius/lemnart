@@ -4,6 +4,16 @@ export const SITE_PAGES = {
         description: "Main landing page sections",
         sections: ["hero", "process", "quality", "testimonials", "faq", "cta"] as const,
     },
+    contact: {
+        label: "Contact Page",
+        description: "Contact page sections",
+        sections: ["contact-hero", "contact-info", "contact-hours"] as const,
+    },
+    blog: {
+        label: "Blog Page",
+        description: "Blog listing page sections",
+        sections: ["blog-hero"] as const,
+    },
 } as const;
 
 export type PageKey = keyof typeof SITE_PAGES;
@@ -15,6 +25,10 @@ export const SECTION_LABELS: Record<string, string> = {
     testimonials: "Testimonials",
     faq: "FAQ",
     cta: "CTA",
+    "contact-hero": "Hero",
+    "contact-info": "Contact Info",
+    "contact-hours": "Business Hours",
+    "blog-hero": "Hero",
 };
 
 export const SECTION_DEFAULTS: Record<string, Record<string, unknown>> = {
@@ -138,5 +152,29 @@ export const SECTION_DEFAULTS: Record<string, Record<string, unknown>> = {
         buttonHref: "/contact",
         phone: "+40 700 000 000",
         email: "contact@lemnart.ro",
+    },
+    "contact-hero": {
+        heading: "Contactează-ne",
+        description:
+            "Suntem aici pentru a vă ajuta cu orice întrebare despre produsele noastre, comenzi personalizate sau montaj.",
+    },
+    "contact-info": {
+        phone: "+40 700 000 000",
+        phoneHref: "tel:+40700000000",
+        email: "contact@lemnart.ro",
+        emailHref: "mailto:contact@lemnart.ro",
+        location: "București, România",
+    },
+    "contact-hours": {
+        rows: [
+            { label: "Luni – Vineri", value: "09:00 – 18:00" },
+            { label: "Sâmbătă", value: "10:00 – 14:00" },
+            { label: "Duminică", value: "Închis" },
+        ],
+    },
+    "blog-hero": {
+        heading: "Blog",
+        description:
+            "Ghiduri, inspirație și sfaturi de la echipa noastră de artizani. Totul despre mascări calorifere și design interior.",
     },
 };

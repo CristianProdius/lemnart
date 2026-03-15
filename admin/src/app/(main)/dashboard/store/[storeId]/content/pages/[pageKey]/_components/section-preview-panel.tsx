@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 type AnyForm = UseFormReturn<FieldValues, any, any>;
 
 interface PagePreviewPanelProps {
+    pageKey: string;
     sectionKeys: string[];
     forms: Record<string, AnyForm>;
     expandedSection: string;
@@ -28,6 +29,7 @@ function useAllSectionValues(
 }
 
 export function PagePreviewPanel({
+    pageKey,
     sectionKeys,
     forms,
     expandedSection,
@@ -99,7 +101,7 @@ export function PagePreviewPanel({
         <div className="flex h-full items-start justify-center overflow-auto bg-muted/30 p-4">
             <iframe
                 ref={iframeRef}
-                src={`${storeUrl}/preview/page`}
+                src={`${storeUrl}/preview/page?pageKey=${pageKey}`}
                 title="Full page preview"
                 allow="autoplay"
                 className={cn(

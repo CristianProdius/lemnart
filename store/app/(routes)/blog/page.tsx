@@ -1,5 +1,6 @@
 import { getAllBlogPosts } from "@/lib/blog-data"
 import getBlogPosts from "@/actions/get-blog-posts"
+import getSiteContent from "@/actions/get-site-content"
 import BlogList from "./components/blog-list"
 import BlogListSchema from "@/components/schema/blog-list-schema"
 import Breadcrumb from "@/components/ui/breadcrumb"
@@ -12,7 +13,14 @@ export const metadata: Metadata = {
 }
 
 const BlogPage = async () => {
-    const apiBlogPosts = await getBlogPosts()
+    const [apiBlogPosts, heroData] = await Promise.all([
+        getBlogPosts(),
+        getSiteContent("blog-hero"),
+    ])
+
+    const hero = (heroData ?? {}) as { heading?: string; description?: string }
+    const heading = hero.heading || "Blog"
+    const description = hero.description || "Ghiduri, inspirație și sfaturi de la echipa noastră de artizani. Totul despre mascări calorifere și design interior."
 
     // Map API posts to the format expected by BlogList, or fallback to hardcoded
     const posts = apiBlogPosts.length > 0
@@ -53,16 +61,14 @@ const BlogPage = async () => {
                             fontStyle: "italic",
                         }}
                     >
-                        Blog
+                        {heading}
                     </h1>
 
                     <p
                         className="mt-6 max-w-xl text-base leading-relaxed text-[var(--th-text-tertiary)] md:text-lg"
                         style={{ fontFamily: "var(--font-barlow)" }}
                     >
-                        Ghiduri, inspirație și sfaturi de la echipa noastră de
-                        artizani. Totul despre mascări calorifere și design
-                        interior.
+                        {description}
                     </p>
 
                     <div className="mt-10 h-px w-16 bg-[var(--color-accent-light)]/30" />
