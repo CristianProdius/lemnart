@@ -1,0 +1,17 @@
+admin.lemnartdecor.md {
+	reverse_proxy admin:3001
+}
+
+store.lemnartdecor.md {
+	reverse_proxy store:3002
+}
+
+# Public MinIO access (for serving images)
+minio.lemnartdecor.md {
+	reverse_proxy minio:9000
+}
+
+# MinIO console (restrict access in production)
+minio-console.lemnartdecor.md {
+	reverse_proxy minio:9001
+}

@@ -1,0 +1,93 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+    volumes:
+      - minio_data:/data
+    networks:
+      - internal
+
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - minio
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: https://admin.lemnartdecor.md
+      STRIPE_API_KEY: ${STRIPE_API_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      FRONTEND_STORE_URL: https://store.lemnartdecor.md
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_USE_SSL: "false"
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_BUCKET: uploads
+    networks:
+      - internal
+    expose:
+      - "3001"
+
+  store:
+    build:
+      context: ./store
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - admin
+    environment:
+      NEXT_PUBLIC_API_URL: https://admin.lemnartdecor.md/api
+      NEXT_PUBLIC_MINIO_HOSTNAME: minio.lemnartdecor.md
+      MINIO_USE_SSL: "true"
+      NEXT_PUBLIC_SITE_URL: https://store.lemnartdecor.md
+    networks:
+      - internal
+    expose:
+      - "3002"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - internal
+    depends_on:
+      - admin
+      - store
+      - minio
+
+volumes:
+  postgres_data:
+  minio_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  internal:
