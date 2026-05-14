@@ -30,7 +30,6 @@ export function normalizeProduct(raw: unknown): Product | null {
     return {
         ...(p as unknown as Product),
         colors,
-        color: colors[0] ?? null,
         images,
     };
 }

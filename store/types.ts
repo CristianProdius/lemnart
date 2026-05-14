@@ -18,8 +18,6 @@ export interface Product {
     isFeatured: boolean;
     size: Size;
     colors: Color[];
-    /** @deprecated Use colors[]. Kept on the type during the API transition; removed in the cleanup task. */
-    color?: Color | null;
     images: Image[];
     /** Cart-only — never set by the API. The customer's chosen color for this cart line. */
     selectedColorId?: string | null;
