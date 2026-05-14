@@ -205,7 +205,7 @@ const Hero: React.FC<HeroProps> = ({
                     <div ref={ctaRef} className="mt-10 flex items-center gap-6">
                         <Link
                             href={cta.href}
-                            className="group inline-flex items-center gap-3 rounded-full bg-[#1A1A1A] px-7 py-4 text-sm font-medium text-white transition-all duration-200 hover:bg-[#333]"
+                            className="group inline-flex items-center gap-3 rounded-full bg-[var(--th-btn-inverse-bg)] px-7 py-4 text-sm font-medium text-[var(--th-btn-inverse-text)] transition-all duration-200 hover:opacity-85"
                             style={{ fontFamily: "var(--font-barlow)" }}
                         >
                             {cta.label}
