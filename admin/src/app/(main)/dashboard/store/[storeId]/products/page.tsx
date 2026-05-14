@@ -14,7 +14,11 @@ const ProductsPage = async ({ params }: { params: Promise<{ storeId: string }> }
     const [products, categories, billboards, sizes, colors] = await Promise.all([
         prismadb.product.findMany({
             where: { storeId },
-            include: { category: true, size: true, color: true },
+            include: {
+                category: true,
+                size: true,
+                productColors: { include: { color: true } },
+            },
             orderBy: { createdAt: 'desc' }
         }),
         prismadb.category.findMany({
@@ -44,7 +48,7 @@ const ProductsPage = async ({ params }: { params: Promise<{ storeId: string }> }
         price: formatter.format(Number(item.price)),
         category: item.category.name,
         size: item.size.name,
-        color: item.color.value,
+        colors: item.productColors.map((pc) => ({ name: pc.color.name, value: pc.color.value })),
         createdAt: format(item.createdAt, "MMMM do, yyyy"),
     }));
 
