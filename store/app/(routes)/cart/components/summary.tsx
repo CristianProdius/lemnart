@@ -31,9 +31,14 @@ const Summary = () => {
     }, [searchParams, removeAll])
 
     const onCheckout = async () => {
-        const productIds = items
-            .filter((item) => !isConfiguredItem(item))
-            .map((item) => item.id);
+        const productLines = items.flatMap((item) => {
+            if (isConfiguredItem(item)) return [];
+            return [{
+                productId: item.id,
+                cartLineId: item.cartLineId,
+                selectedColorId: item.selectedColorId ?? null,
+            }];
+        });
 
         const configuredItems = items
             .filter(isConfiguredItem)
@@ -59,7 +64,7 @@ const Summary = () => {
             }));
 
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/checkout`, {
-            productIds: productIds.length > 0 ? productIds : undefined,
+            productLines: productLines.length > 0 ? productLines : undefined,
             configuredItems: configuredItems.length > 0 ? configuredItems : undefined,
         });
 
