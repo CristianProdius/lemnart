@@ -52,7 +52,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ro" suppressHydrationWarning>
-      <body className={`${urban.className} ${barlow.variable} ${instrumentSerif.variable} bg-[var(--th-surface)] text-[rgb(var(--th-text))]`}>
+      <body className={`${urban.className} ${barlow.variable} ${instrumentSerif.variable} flex min-h-screen flex-col bg-[var(--th-surface)] text-[rgb(var(--th-text))]`}>
         <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-[var(--th-surface)] focus:px-4 focus:py-2 focus:text-sm focus:shadow-lg">
           Salt la conținut
         </a>
@@ -62,7 +62,7 @@ export default function RootLayout({
             <ModalProvider />
             <ToastProvider />
             <Navbar />
-            <main id="main-content">
+            <main id="main-content" className="flex-1">
               {children}
             </main>
             <Footer />
