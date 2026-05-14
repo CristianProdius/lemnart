@@ -17,13 +17,18 @@ export interface Product {
     price: string;
     isFeatured: boolean;
     size: Size;
-    color: Color;
-    images: Image[]
+    colors: Color[];
+    /** @deprecated Use colors[]. Kept on the type during the API transition; removed in the cleanup task. */
+    color?: Color | null;
+    images: Image[];
+    /** Cart-only — never set by the API. The customer's chosen color for this cart line. */
+    selectedColorId?: string | null;
 }
 
 export interface Image {
     id: string;
     url: string;
+    colorId: string | null;
 }
 
 export interface Size {
