@@ -35,16 +35,21 @@ const useCart = create(persist<CartStore>((set, get) => ({
             toast.success("Produs adăugat în coș.");
             return;
         }
-        // Dedup standard product lines by (productId, selectedColorId).
+        // Default selectedColorId to the first available color so every callsite
+        // produces a consistent line shape — otherwise dedup, the cart-item
+        // swatch, the configurator deeplink, and the checkout payload all behave
+        // subtly differently for callers that forgot to set it.
+        const productData = data as Product;
+        const selectedColorId = productData.selectedColorId ?? productData.colors?.[0]?.id ?? null;
         const dup = currentItems.find((item) => {
             if (isConfiguredItem(item)) return false;
-            return item.id === data.id && (item.selectedColorId ?? null) === (data.selectedColorId ?? null);
+            return item.id === productData.id && (item.selectedColorId ?? null) === selectedColorId;
         });
         if (dup) {
             toast("Produsul este deja în coș.");
             return;
         }
-        const line: CartLineProduct = { ...(data as Product), cartLineId: makeCartLineId() };
+        const line: CartLineProduct = { ...productData, selectedColorId, cartLineId: makeCartLineId() };
         set({ items: [...currentItems, line] });
         toast.success("Produs adăugat în coș.");
     },
