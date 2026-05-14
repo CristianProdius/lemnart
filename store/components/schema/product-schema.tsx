@@ -15,7 +15,7 @@ const ProductSchema: React.FC<ProductSchemaProps> = ({ product }) => {
                 "@id": `${SITE_URL}/product/${product.id}#product`,
                 name: product.name,
                 image: product.images?.map((img) => img.url),
-                description: `Mascare calorifer din lemn masiv — ${product.name}. Dimensiune: ${product.size?.value}. Culoare: ${product.color?.name}.`,
+                description: `Mascare calorifer din lemn masiv — ${product.name}. Dimensiune: ${product.size?.value}. Culori: ${product.colors?.map((c) => c.name).join(", ") || "diverse"}.`,
                 sku: product.id,
                 brand: {
                     "@type": "Brand",
