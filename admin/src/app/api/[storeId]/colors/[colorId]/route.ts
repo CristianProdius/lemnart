@@ -38,44 +38,21 @@ export async function PATCH (
         const { name, value } = body;
         const { storeId, colorId } = await params;
 
-        if (!userId) {
-            return new NextResponse("Unauthenticated", { status: 401 })
-        }
+        if (!userId) return new NextResponse("Unauthenticated", { status: 401 });
+        if (!name) return new NextResponse("Name is required", { status: 400 });
+        if (!value) return new NextResponse("Value is required", { status: 400 });
+        if (!colorId) return new NextResponse("Color id is required", { status: 400 });
 
-        if (!name) {
-            return new NextResponse("Name is required", { status: 400 });
-        }
+        const storeByUserId = await prismadb.store.findFirst({ where: { id: storeId, userId } });
+        if (!storeByUserId) return new NextResponse("Unauthorized", { status: 403 });
 
-        if (!value) {
-            return new NextResponse("Value is required", { status: 400 });
-        }
+        const result = await prismadb.color.updateMany({
+            where: { id: colorId, storeId },
+            data: { name, value },
+        });
+        if (result.count === 0) return new NextResponse("Not found", { status: 404 });
 
-        if(!colorId) {
-            return new NextResponse("Color id is required", { status: 400 });
-        }
-
-        const storeByUserId = await prismadb.store.findFirst({
-            where: {
-                id: storeId,
-                userId
-            }
-        })
-
-        if (!storeByUserId) {
-            return new NextResponse("Unauthorized", { status: 403 });
-        }
-
-        const color = await prismadb.color.updateMany({
-            where: {
-                id: colorId
-            },
-            data: {
-                name,
-                value
-            }
-        })
-
-        return NextResponse.json(color);
+        return NextResponse.json(result);
     } catch (err) {
         console.log('[COLOR_PATCH]', err)
         return new NextResponse('Internal error', { status: 500 })
@@ -93,32 +70,28 @@ export async function DELETE (
         const userId = session?.user?.id;
         const { storeId, colorId } = await params;
 
-        if (!userId) {
-            return new NextResponse("Unauthenticated", { status: 401 })
+        if (!userId) return new NextResponse("Unauthenticated", { status: 401 });
+        if (!colorId) return new NextResponse("Color id is required", { status: 400 });
+
+        const storeByUserId = await prismadb.store.findFirst({ where: { id: storeId, userId } });
+        if (!storeByUserId) return new NextResponse("Unauthorized", { status: 403 });
+
+        // Refuse deletion if the color is in use anywhere — relationMode = "prisma" gives no DB cascade.
+        const [productCount, productColorCount, imageCount, priceTierCount, orderItemCount] = await Promise.all([
+            prismadb.product.count({ where: { colorId, storeId } }), // legacy singular FK — removed in final cleanup task
+            prismadb.productColor.count({ where: { colorId } }),
+            prismadb.image.count({ where: { colorId } }),
+            prismadb.priceTier.count({ where: { colorId } }),
+            prismadb.orderItem.count({ where: { colorId } }),
+        ]);
+        if (productCount + productColorCount + imageCount + priceTierCount + orderItemCount > 0) {
+            return new NextResponse("Color is in use by products, images, price tiers, or orders. Detach it first.", { status: 409 });
         }
 
-        if(!colorId) {
-            return new NextResponse("Color id is required", { status: 400 });
-        }
+        const result = await prismadb.color.deleteMany({ where: { id: colorId, storeId } });
+        if (result.count === 0) return new NextResponse("Not found", { status: 404 });
 
-        const storeByUserId = await prismadb.store.findFirst({
-            where: {
-                id: storeId,
-                userId
-            }
-        })
-
-        if (!storeByUserId) {
-            return new NextResponse("Unauthorized", { status: 403 });
-        }
-
-        const color = await prismadb.color.deleteMany({
-            where: {
-                id: colorId,
-            }
-        })
-
-        return NextResponse.json(color);
+        return NextResponse.json(result);
     } catch (err) {
         console.log('[COLOR_DELETE]', err)
         return new NextResponse('Internal error', { status: 500 })
