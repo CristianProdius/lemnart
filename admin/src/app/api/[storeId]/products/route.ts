@@ -100,33 +100,40 @@ export async function GET(
         const isFeatured = searchParams.get('isFeatured');
 
         if (!storeId) {
-            return new NextResponse("Store Id is required", { status: 400});
+            return new NextResponse("Store Id is required", { status: 400 });
         }
 
         const products = await prismadb.product.findMany({
             where: {
-                storeId: storeId,
+                storeId,
                 categoryId,
-                colorId,
                 sizeId,
                 isFeatured: isFeatured ? true : undefined,
-                isArchived: false
+                isArchived: false,
+                ...(colorId ? { productColors: { some: { colorId } } } : {}),
             },
             include: {
-                images: true,
+                images: { include: { color: true } },
                 category: true,
-                color: true,
-                size: true
+                size: true,
+                productColors: { include: { color: true } },
             },
-            orderBy: {
-                createdAt: 'desc'
-            }
-        })
+            orderBy: { createdAt: 'desc' },
+        });
 
-        return NextResponse.json(products);
+        const projected = products.map(({ productColors, ...p }) => {
+            const colors = productColors.map((pc) => pc.color);
+            return {
+                ...p,
+                colors,
+                color: colors[0] ?? null, // legacy compat — removed once storefront no longer reads it
+            };
+        });
+
+        return NextResponse.json(projected);
 
     } catch (err) {
-        console.log(`[PRODUCTS_GET] ${err}`);
-        return new NextResponse(`Internal error`, { status: 500})
+        console.log('[PRODUCTS_GET]', err);
+        return new NextResponse('Internal error', { status: 500 });
     }
 }

@@ -14,18 +14,24 @@ export async function GET (
         }
 
         const product = await prismadb.product.findUnique({
-            where: {
-                id: productId,
-            },
+            where: { id: productId },
             include: {
-                images: true,
+                images: { include: { color: true } },
                 category: true,
                 size: true,
-                color: true
-            }
-        })
+                productColors: { include: { color: true } },
+            },
+        });
 
-        return NextResponse.json(product);
+        if (!product) return NextResponse.json(null);
+
+        const { productColors, ...rest } = product;
+        const colors = productColors.map((pc) => pc.color);
+        return NextResponse.json({
+            ...rest,
+            colors,
+            color: colors[0] ?? null, // legacy compat
+        });
     } catch (err) {
         console.log('[PRODUCT_GET]', err)
         return new NextResponse('Internal error', { status: 500 })
