@@ -114,8 +114,10 @@ export const ProductForm: React.FC<ProductFromProps> = ({ initialData, categorie
                                 <ImageUpload
                                     value={field.value.map((image) => image.url)}
                                     disabled={loading}
-                                    onChange={(url) => field.onChange([...field.value, { url }])}
-                                    onRemove={(url) => field.onChange([...field.value.filter((image) => image.url !== url)])}
+                                    // Read fresh state via getValues — ImageUpload calls onChange once per file
+                                    // inside a single async loop, so the field.value closure would be stale.
+                                    onChange={(url) => form.setValue('images', [...form.getValues('images'), { url }], { shouldValidate: true, shouldDirty: true })}
+                                    onRemove={(url) => form.setValue('images', form.getValues('images').filter((image) => image.url !== url), { shouldValidate: true, shouldDirty: true })}
                                 />
                             </FormControl>
                             <FormMessage />
