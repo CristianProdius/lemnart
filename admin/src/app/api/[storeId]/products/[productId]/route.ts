@@ -100,7 +100,6 @@ export async function PATCH (
                     isArchived,
                     categoryId,
                     sizeId,
-                    colorId: uniqueColorIds[0], // legacy column kept in sync until final cleanup
                 },
             });
             await tx.image.createMany({ data: sanitizedImages.map((img: { url: string; colorId: string | null }) => ({ ...img, productId })) });

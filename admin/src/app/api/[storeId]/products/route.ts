@@ -62,7 +62,6 @@ export async function POST(
                     categoryId,
                     sizeId,
                     storeId,
-                    colorId: uniqueColorIds[0], // legacy column — dropped in final cleanup task
                     images: { createMany: { data: sanitizedImages } },
                     productColors: { createMany: { data: uniqueColorIds.map((cid) => ({ colorId: cid })) } },
                 },

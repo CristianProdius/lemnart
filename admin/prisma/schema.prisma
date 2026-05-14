@@ -132,8 +132,6 @@ model Product {
   isArchived    Boolean        @default(false)
   sizeId        String // Foreign Key to Size
   size          Size           @relation(fields: [sizeId], references: [id])
-  colorId       String // LEGACY — removed in final cleanup task after backfill + storefront cutover
-  color         Color          @relation(fields: [colorId], references: [id])
   productColors ProductColor[]
   images        Image[]
   orderItems    OrderItem[]
@@ -143,7 +141,6 @@ model Product {
   @@index([storeId])
   @@index([categoryId])
   @@index([sizeId])
-  @@index([colorId])
 }
 
 model Order {
@@ -198,7 +195,6 @@ model Color {
   store         Store          @relation("StoreToColor", fields: [storeId], references: [id])
   name          String
   value         String
-  products      Product[] // legacy singular relation — removed in final cleanup task
   productColors ProductColor[]
   images        Image[]
   orderItems    OrderItem[]

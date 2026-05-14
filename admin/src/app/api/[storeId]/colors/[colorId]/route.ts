@@ -77,14 +77,13 @@ export async function DELETE (
         if (!storeByUserId) return new NextResponse("Unauthorized", { status: 403 });
 
         // Refuse deletion if the color is in use anywhere — relationMode = "prisma" gives no DB cascade.
-        const [productCount, productColorCount, imageCount, priceTierCount, orderItemCount] = await Promise.all([
-            prismadb.product.count({ where: { colorId, storeId } }), // legacy singular FK — removed in final cleanup task
+        const [productColorCount, imageCount, priceTierCount, orderItemCount] = await Promise.all([
             prismadb.productColor.count({ where: { colorId } }),
             prismadb.image.count({ where: { colorId } }),
             prismadb.priceTier.count({ where: { colorId } }),
             prismadb.orderItem.count({ where: { colorId } }),
         ]);
-        if (productCount + productColorCount + imageCount + priceTierCount + orderItemCount > 0) {
+        if (productColorCount + imageCount + priceTierCount + orderItemCount > 0) {
             return new NextResponse("Color is in use by products, images, price tiers, or orders. Detach it first.", { status: 409 });
         }
 
