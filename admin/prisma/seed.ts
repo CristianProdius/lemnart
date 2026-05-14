@@ -13,6 +13,87 @@ async function main() {
 
     console.log(`Seeding content for store: ${store.name} (${store.id})`);
 
+    // ─── Billboards ────────────────────────────────────────────
+    const billboard1 = await prisma.billboard.upsert({
+        where: { id: "seed-billboard-main" },
+        update: {},
+        create: {
+            id: "seed-billboard-main",
+            storeId: store.id,
+            label: "Mascări Calorifere din Lemn Masiv",
+            imageUrl: "/billboards/mascare-hero.jpg",
+        },
+    });
+    console.log(`  Billboard: ${billboard1.label}`);
+
+    const billboard2 = await prisma.billboard.upsert({
+        where: { id: "seed-billboard-accesorii" },
+        update: {},
+        create: {
+            id: "seed-billboard-accesorii",
+            storeId: store.id,
+            label: "Accesorii și Piese",
+            imageUrl: "/billboards/accesorii.jpg",
+        },
+    });
+    console.log(`  Billboard: ${billboard2.label}`);
+
+    // ─── Categories ────────────────────────────────────────────
+    const categories = [
+        { id: "seed-cat-clasic", name: "Clasic", billboardId: billboard1.id },
+        { id: "seed-cat-modern", name: "Modern", billboardId: billboard1.id },
+        { id: "seed-cat-decorativ", name: "Decorativ", billboardId: billboard1.id },
+        { id: "seed-cat-accesorii", name: "Accesorii", billboardId: billboard2.id },
+    ];
+
+    for (const cat of categories) {
+        await prisma.category.upsert({
+            where: { id: cat.id },
+            update: { name: cat.name, billboardId: cat.billboardId },
+            create: { ...cat, storeId: store.id },
+        });
+        console.log(`  Category: ${cat.name}`);
+    }
+
+    // ─── Sizes ─────────────────────────────────────────────────
+    const sizes = [
+        { id: "seed-size-s", name: "Mic (60–80 cm)", value: "S" },
+        { id: "seed-size-m", name: "Mediu (80–120 cm)", value: "M" },
+        { id: "seed-size-l", name: "Mare (120–160 cm)", value: "L" },
+        { id: "seed-size-xl", name: "Extra Mare (160–200 cm)", value: "XL" },
+        { id: "seed-size-custom", name: "La Comandă", value: "Custom" },
+    ];
+
+    for (const size of sizes) {
+        await prisma.size.upsert({
+            where: { id: size.id },
+            update: { name: size.name, value: size.value },
+            create: { ...size, storeId: store.id },
+        });
+        console.log(`  Size: ${size.name}`);
+    }
+
+    // ─── Colors ────────────────────────────────────────────────
+    const colors = [
+        { id: "seed-color-stejar", name: "Stejar Natural", value: "#C4A882" },
+        { id: "seed-color-nuc", name: "Nuc", value: "#5C4033" },
+        { id: "seed-color-alb", name: "Alb", value: "#FFFFFF" },
+        { id: "seed-color-negru", name: "Negru", value: "#1A1A1A" },
+        { id: "seed-color-gri", name: "Gri Antracit", value: "#3D3D3D" },
+        { id: "seed-color-cires", name: "Cireș", value: "#8B4513" },
+        { id: "seed-color-wenge", name: "Wenge", value: "#3C2415" },
+        { id: "seed-color-fag", name: "Fag", value: "#D4B896" },
+    ];
+
+    for (const color of colors) {
+        await prisma.color.upsert({
+            where: { id: color.id },
+            update: { name: color.name, value: color.value },
+            create: { ...color, storeId: store.id },
+        });
+        console.log(`  Color: ${color.name}`);
+    }
+
     // ─── Blog Posts ─────────────────────────────────────────────
     const blogPosts = [
         {
