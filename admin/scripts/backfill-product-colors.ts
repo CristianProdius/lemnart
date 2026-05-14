@@ -1,4 +1,26 @@
+// ONE-TIME PRE-CUTOVER MIGRATION. Do NOT re-run after admins start tagging images.
+//
+// This script copies the legacy Product.colorId into ProductColor and seeds
+// Image.colorId / OrderItem color snapshots from it. After the storefront PR
+// ships, Image.colorId = null is a LEGITIMATE value (a "generic" image that
+// applies to all colors) — re-running this script would overwrite those nulls
+// with whatever Product.colorId still happens to hold, AND the strict null
+// invariant at the bottom would then mask the data destruction by passing.
+//
+// To run intentionally (only valid before any admin has saved a generic image):
+//   BACKFILL_CONFIRM=yes npx tsx scripts/backfill-product-colors.ts
+
 import prismadb from "../src/lib/prismadb";
+
+if (process.env.BACKFILL_CONFIRM !== "yes") {
+    console.error(
+        "[BACKFILL] Refusing to run without BACKFILL_CONFIRM=yes. " +
+        "This is a one-time pre-cutover migration; running it after admins start " +
+        "tagging images as generic will overwrite legitimate null colorIds. " +
+        "Read the file header before re-running."
+    );
+    process.exit(1);
+}
 
 async function main() {
     console.log("[BACKFILL] Starting product-color + image-color + order-item-color backfill");
