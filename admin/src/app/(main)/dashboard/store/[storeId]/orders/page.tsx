@@ -16,7 +16,9 @@ const OrdersPage = async ({ params }: { params: Promise<{ storeId: string }> }) 
     })
 
     const formattedOrders: OrderColumn[] = orders.map(item => {
-        const productNames = item.orderItems.map((oi) => oi.product.name);
+        const productNames = item.orderItems.map((oi) =>
+            oi.colorName ? `${oi.product.name} (${oi.colorName})` : oi.product.name
+        );
         const configNames = item.configuredItems.map(
             (ci) => `${ci.styleName} (${ci.width}×${ci.height}cm)`
         );
