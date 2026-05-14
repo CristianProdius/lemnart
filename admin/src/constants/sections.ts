@@ -41,7 +41,6 @@ export const SECTION_DEFAULTS: Record<string, Record<string, unknown>> = {
         ctaHref: "/category/all",
         secondaryLabel: "Află mai multe",
         secondaryHref: "/blog",
-        videoSrc: "/hero-bg.mp4",
     },
     process: {
         steps: [

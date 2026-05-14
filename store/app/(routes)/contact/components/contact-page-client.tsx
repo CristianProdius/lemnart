@@ -9,12 +9,20 @@ import toast from "react-hot-toast"
 
 gsap.registerPlugin(ScrollTrigger)
 
+type ContactIconName = "phone" | "mail" | "mapPin"
+
+const ICONS: Record<ContactIconName, typeof Phone> = {
+    phone: Phone,
+    mail: Mail,
+    mapPin: MapPin,
+}
+
 interface ContactItem {
     num: string
     label: string
     value: string
     href: string | null
-    icon: typeof Phone
+    iconName: ContactIconName
 }
 
 interface ContactPageClientProps {
@@ -159,13 +167,15 @@ const ContactPageClient = ({
                             </p>
 
                             <div className="space-y-8">
-                                {contactItems.map((item) => (
+                                {contactItems.map((item) => {
+                                    const Icon = ICONS[item.iconName]
+                                    return (
                                     <div
                                         key={item.num}
                                         className="contact-item flex items-start gap-4"
                                     >
                                         <div className="flex h-12 w-12 shrink-0 items-center justify-center border border-[var(--th-border)] bg-[var(--th-overlay-hover)]">
-                                            <item.icon
+                                            <Icon
                                                 size={18}
                                                 className="text-[var(--color-accent-light)]"
                                             />
@@ -207,7 +217,8 @@ const ContactPageClient = ({
                                             )}
                                         </div>
                                     </div>
-                                ))}
+                                    )
+                                })}
                             </div>
 
                             {/* Divider */}

@@ -240,7 +240,7 @@ const SummaryStep: React.FC<SummaryStepProps> = ({ options }) => {
                 className={cn(
                     "w-full py-3 text-sm font-medium uppercase tracking-[0.2em] transition-all duration-200",
                     priceBreakdown
-                        ? "bg-[var(--color-accent-light)] text-white hover:opacity-90"
+                        ? "bg-[var(--color-accent-light)] text-[var(--th-btn-inverse-text)] hover:opacity-90"
                         : "cursor-not-allowed bg-[var(--th-border-strong)] text-[var(--th-text-muted)]"
                 )}
                 style={{ fontFamily: "var(--font-barlow)" }}

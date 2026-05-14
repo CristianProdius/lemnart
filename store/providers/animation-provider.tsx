@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -9,6 +10,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const AnimationProvider = ({ children }: { children: React.ReactNode }) => {
     const [isMounted, setIsMounted] = useState(false);
+    const pathname = usePathname();
 
     useEffect(() => {
         setIsMounted(true);
@@ -42,6 +44,13 @@ const AnimationProvider = ({ children }: { children: React.ReactNode }) => {
             ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
         };
     }, []);
+
+    // Recompute trigger positions after client-side route changes so animations
+    // whose triggers are already in view on the new page fire correctly.
+    useEffect(() => {
+        const id = requestAnimationFrame(() => ScrollTrigger.refresh());
+        return () => cancelAnimationFrame(id);
+    }, [pathname]);
 
     if (!isMounted) {
         return null;

@@ -32,6 +32,10 @@
   --th-overlay-hover: rgba(255, 255, 255, 0.03);
   --th-btn-inverse-bg: white;
   --th-btn-inverse-text: #1A1A1A;
+  --th-hero-bg: #1A1A1A;
+  --th-hero-glow: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(200, 165, 92, 0.08), transparent 70%);
+  --th-footer-bg: #0F0F0F;
+  --th-footer-ghost: rgba(255, 255, 255, 0.04);
 }
 
 [data-theme="light"] {
@@ -49,6 +53,10 @@
   --th-overlay-hover: rgba(26, 26, 26, 0.03);
   --th-btn-inverse-bg: #1A1A1A;
   --th-btn-inverse-text: white;
+  --th-hero-bg: #FAF6F0;
+  --th-hero-glow: radial-gradient(ellipse 80% 60% at 50% 35%, rgba(200, 165, 92, 0.18), transparent 70%);
+  --th-footer-bg: #EDE5D7;
+  --th-footer-ghost: rgba(26, 26, 26, 0.18);
 }
 
 @layer base {
@@ -177,50 +185,6 @@ body {
 
 [data-theme="light"] .navbar-cta-icon {
   background: rgba(26, 26, 26, 0.08);
-}
-
-/* ─── Navbar: over hero on homepage = force white (overrides light mode) ─── */
-[data-theme="light"] .navbar-hero .navbar-logo {
-  color: white;
-}
-
-[data-theme="light"] .navbar-hero .navbar-separator {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-[data-theme="light"] .navbar-hero .nav-link {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-[data-theme="light"] .navbar-hero .nav-link:hover {
-  color: white;
-}
-
-[data-theme="light"] .navbar-hero .nav-link.nav-link-active {
-  color: white;
-}
-
-[data-theme="light"] .navbar-hero .navbar-cart {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-[data-theme="light"] .navbar-hero .navbar-cart:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-[data-theme="light"] .navbar-hero .navbar-cta {
-  color: white;
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-[data-theme="light"] .navbar-hero .navbar-cta:hover {
-  border-color: rgba(255, 255, 255, 0.6);
-}
-
-[data-theme="light"] .navbar-hero .navbar-cta-icon {
-  background: rgba(255, 255, 255, 0.15);
 }
 
 /* Text outline effect — used by CTA section */

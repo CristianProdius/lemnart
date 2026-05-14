@@ -11,6 +11,10 @@ interface Query {
 }
 
 const getProducts = async (query: Query): Promise<Product[]> => {
+    if (!process.env.NEXT_PUBLIC_API_URL) {
+        console.warn('[GET_PRODUCTS] NEXT_PUBLIC_API_URL not set; returning []');
+        return [];
+    }
     const url = qs.stringifyUrl({
         url: URL,
         query: {
@@ -20,8 +24,22 @@ const getProducts = async (query: Query): Promise<Product[]> => {
             isFeatured: query.isFeatured
         }
     })
-    const res = await fetch(url);
-    return res.json();
+    try {
+        const res = await fetch(url);
+        if (!res.ok) {
+            console.warn('[GET_PRODUCTS]', res.status, res.statusText);
+            return [];
+        }
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+            console.warn('[GET_PRODUCTS] response was not an array:', data);
+            return [];
+        }
+        return data;
+    } catch (err) {
+        console.warn('[GET_PRODUCTS]', err);
+        return [];
+    }
 }
 
 export default getProducts;

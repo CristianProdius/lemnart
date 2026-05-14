@@ -40,7 +40,6 @@ function HomePreview({ sections, sectionRefs }: {
                             ? { label: h.secondaryLabel, href: h.secondaryHref || "#" }
                             : undefined
                     }
-                    videoSrc={h.videoSrc || ""}
                 />
             </div>
             <div ref={(el) => { sectionRefs.current.process = el }}>

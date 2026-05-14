@@ -120,7 +120,7 @@ const Footer = () => {
     return (
         <footer
             ref={footerRef}
-            className="bg-[var(--th-surface-elevated)] py-20 text-[rgb(var(--th-text))] md:py-28"
+            className="bg-[var(--th-footer-bg)] py-20 text-[rgb(var(--th-text))] md:py-28"
         >
             <div className="mx-auto max-w-7xl px-6">
                 {/* Two-column split */}
@@ -130,7 +130,7 @@ const Footer = () => {
                         {/* Ghost brand */}
                         <span
                             ref={ghostRef}
-                            className="pointer-events-none select-none text-[80px] font-bold uppercase leading-none tracking-[0.2em] text-[var(--th-text-ghost)] md:text-[120px]"
+                            className="pointer-events-none select-none text-[80px] font-bold uppercase leading-none tracking-[0.2em] text-[var(--th-footer-ghost)] md:text-[120px]"
                             style={{ fontFamily: "var(--font-barlow)" }}
                             aria-hidden="true"
                         >

@@ -86,9 +86,9 @@ const ConfiguratorPanel: React.FC<ConfiguratorPanelProps> = ({ options }) => {
                                 className={cn(
                                     "flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium transition-all duration-200",
                                     isCurrent &&
-                                        "bg-[var(--color-accent-light)] text-white",
+                                        "bg-[var(--color-accent-light)] text-[var(--th-btn-inverse-text)]",
                                     isCompleted &&
-                                        "cursor-pointer border-2 border-[var(--color-accent-light)] text-[var(--color-accent-light)] hover:bg-[var(--color-accent-light)] hover:text-white",
+                                        "cursor-pointer border-2 border-[var(--color-accent-light)] text-[var(--color-accent-light)] hover:bg-[var(--color-accent-light)] hover:text-[var(--th-btn-inverse-text)]",
                                     !isCurrent &&
                                         !isCompleted &&
                                         "border border-[var(--th-border-strong)] text-[var(--th-text-muted)]"
