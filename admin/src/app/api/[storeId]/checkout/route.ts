@@ -25,19 +25,33 @@ interface ConfiguredItemPayload {
     configSnapshot: Record<string, unknown>;
 }
 
+interface ProductLinePayload {
+    productId: string;
+    cartLineId?: string;
+    selectedColorId: string | null;
+}
+
 export async function OPTIONS() {
     return NextResponse.json({}, { headers: corsHeaders });
 }
 
 export async function POST(req: Request, { params }: { params: Promise<{ storeId: string }> }) {
-    const { productIds, configuredItems } = await req.json();
+    const body = await req.json();
     const { storeId } = await params;
 
-    const hasProducts = productIds && productIds.length > 0;
-    const hasConfigured = configuredItems && configuredItems.length > 0;
+    // Accept both new productLines payload and legacy productIds payload (back-compat for older store builds).
+    const productLines: ProductLinePayload[] = Array.isArray(body.productLines)
+        ? body.productLines
+        : (Array.isArray(body.productIds)
+            ? body.productIds.map((id: string) => ({ productId: id, selectedColorId: null }))
+            : []);
+    const configuredItems = body.configuredItems as ConfiguredItemPayload[] | undefined;
 
-    if(!hasProducts && !hasConfigured) {
-        return new NextResponse("Product ids or configured items are required", { status: 400 });
+    const hasProducts = productLines.length > 0;
+    const hasConfigured = Array.isArray(configuredItems) && configuredItems.length > 0;
+
+    if (!hasProducts && !hasConfigured) {
+        return new NextResponse("Product lines or configured items are required", { status: 400 });
     }
 
     if (!stripe) {
@@ -45,64 +59,73 @@ export async function POST(req: Request, { params }: { params: Promise<{ storeId
     }
 
     const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+    const orderItemsCreate: { productId: string; colorId: string | null; colorName: string | null; colorValue: string | null }[] = [];
 
-    // Handle standard products
     if (hasProducts) {
+        const ids = [...new Set(productLines.map((l) => l.productId))];
         const products = await prismadb.product.findMany({
-            where: {
-                id: {
-                    in: productIds
-                }
-            }
+            where: { id: { in: ids }, storeId },
+            include: { productColors: { include: { color: true } } },
         });
+        const productMap = new Map(products.map((p) => [p.id, p]));
 
-        products.forEach((product) => {
+        for (const line of productLines) {
+            const product = productMap.get(line.productId);
+            if (!product) {
+                return new NextResponse(`Product ${line.productId} not found in store`, { status: 400, headers: corsHeaders });
+            }
+            let selectedColor: { id: string; name: string; value: string } | null = null;
+            if (line.selectedColorId) {
+                const match = product.productColors.find((pc) => pc.colorId === line.selectedColorId);
+                if (!match) {
+                    // Reject tampered cart payloads — do NOT silently downgrade to a null color.
+                    return new NextResponse(
+                        `Color ${line.selectedColorId} is not associated with product ${line.productId}`,
+                        { status: 400, headers: corsHeaders }
+                    );
+                }
+                selectedColor = match.color;
+            }
+
+            const colorSuffix = selectedColor ? ` — ${selectedColor.name}` : "";
             line_items.push({
                 quantity: 1,
                 price_data: {
                     currency: 'USD',
-                    product_data: {
-                        name: product.name,
-                    },
-                    unit_amount: Number(product.price) * 100
-                }
+                    product_data: { name: `${product.name}${colorSuffix}` },
+                    unit_amount: Number(product.price) * 100,
+                },
             });
-        });
+            orderItemsCreate.push({
+                productId: product.id,
+                colorId: selectedColor?.id ?? null,
+                colorName: selectedColor?.name ?? null,
+                colorValue: selectedColor?.value ?? null,
+            });
+        }
     }
 
-    // Handle configured items
     if (hasConfigured) {
-        (configuredItems as ConfiguredItemPayload[]).forEach((item) => {
+        configuredItems!.forEach((item) => {
             const description = `${item.width}×${item.height}×${item.depth}cm | ${item.colorName}`;
             line_items.push({
                 quantity: 1,
                 price_data: {
                     currency: 'USD',
-                    product_data: {
-                        name: `${item.styleName} (Configurație)`,
-                        description,
-                    },
-                    unit_amount: Math.round(item.unitPrice * 100)
-                }
+                    product_data: { name: `${item.styleName} (Configurație)`, description },
+                    unit_amount: Math.round(item.unitPrice * 100),
+                },
             });
         });
     }
 
     const order = await prismadb.order.create({
         data: {
-            storeId: storeId,
+            storeId,
             isPaid: false,
-            orderItems: hasProducts ? {
-                create: productIds.map((productId: string) => ({
-                    product: {
-                        connect: {
-                            id: productId
-                        }
-                    }
-                }))
-            } : undefined,
+            orderItems: hasProducts ? { create: orderItemsCreate } : undefined,
             configuredItems: hasConfigured ? {
-                create: (configuredItems as ConfiguredItemPayload[]).map((item) => ({
+                create: configuredItems!.map((item) => ({
                     configSnapshot: item.configSnapshot as Prisma.InputJsonValue,
                     styleName: item.styleName,
                     colorName: item.colorName,
@@ -115,7 +138,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ storeId
                     sections: item.sections,
                     accessories: item.accessories as Prisma.InputJsonValue,
                     unitPrice: item.unitPrice,
-                }))
+                })),
             } : undefined,
         }
     });

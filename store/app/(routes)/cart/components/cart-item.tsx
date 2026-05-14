@@ -1,19 +1,19 @@
 "use client"
 import Currency from '@/components/ui/currency';
-import useCart, { isConfiguredItem } from '@/hooks/use-cart';
+import useCart, { isConfiguredItem, type CartLine } from '@/hooks/use-cart';
 import { X } from 'lucide-react';
 import Image from 'next/image';
-import { CartItem as CartItemType } from '@/types';
 
 interface CartItemProps {
-    data: CartItemType;
+    data: CartLine;
 }
 
 const CartItem: React.FC<CartItemProps> = ({ data }) => {
     const cart = useCart();
 
     const onRemove = () => {
-        cart.removeItem(data.id);
+        // Configured items use their own UUID as id; product lines use cartLineId for variant-aware removal.
+        cart.removeItem(isConfiguredItem(data) ? data.id : data.cartLineId);
     }
 
     if (isConfiguredItem(data)) {
@@ -114,8 +114,21 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
                         {data.name}
                     </p>
                     <div className="mt-2 flex items-center gap-3 text-sm text-[var(--th-text-tertiary)]">
-                        <span>{data.color.name}</span>
-                        <span className="h-3 w-px bg-[var(--th-border-strong)]" />
+                        {(() => {
+                            const selected = data.colors?.find((c) => c.id === data.selectedColorId) ?? data.colors?.[0];
+                            return selected ? (
+                                <>
+                                    <div className="flex items-center gap-1.5">
+                                        <span
+                                            className="h-3.5 w-3.5 rounded-full border border-[var(--th-text-muted)]"
+                                            style={{ backgroundColor: selected.value }}
+                                        />
+                                        <span>{selected.name}</span>
+                                    </div>
+                                    <span className="h-3 w-px bg-[var(--th-border-strong)]" />
+                                </>
+                            ) : null;
+                        })()}
                         <span>{data.size.name}</span>
                     </div>
                 </div>

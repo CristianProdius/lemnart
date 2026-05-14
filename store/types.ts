@@ -17,13 +17,16 @@ export interface Product {
     price: string;
     isFeatured: boolean;
     size: Size;
-    color: Color;
-    images: Image[]
+    colors: Color[];
+    images: Image[];
+    /** Cart-only — never set by the API. The customer's chosen color for this cart line. */
+    selectedColorId?: string | null;
 }
 
 export interface Image {
     id: string;
     url: string;
+    colorId: string | null;
 }
 
 export interface Size {

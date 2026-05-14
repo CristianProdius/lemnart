@@ -8,10 +8,13 @@ import Link from "next/link";
 
 interface InfoProps {
     data: Product;
+    selectedColorId: string | null;
+    onSelectColor: (colorId: string) => void;
 }
 
-const Info: React.FC<InfoProps> = ({ data }) => {
+const Info: React.FC<InfoProps> = ({ data, selectedColorId, onSelectColor }) => {
     const cart = useCart();
+    const selectedColor = data.colors.find((c) => c.id === selectedColorId) ?? data.colors[0];
 
     return (
         <div>
@@ -65,24 +68,38 @@ const Info: React.FC<InfoProps> = ({ data }) => {
                     >
                         Culoare
                     </span>
-                    <div className="flex items-center gap-2">
-                        <span
-                            className="h-5 w-5 rounded-full border border-[var(--th-text-muted)]"
-                            style={{ backgroundColor: data?.color?.value }}
-                        />
-                        <span
-                            className="text-sm text-[var(--th-text-secondary)]"
-                            style={{ fontFamily: "var(--font-barlow)" }}
-                        >
-                            {data?.color?.name}
-                        </span>
+                    <div className="flex items-center gap-2 flex-wrap">
+                        {data.colors.map((color) => {
+                            const isActive = color.id === selectedColor?.id;
+                            return (
+                                <button
+                                    key={color.id}
+                                    type="button"
+                                    onClick={() => onSelectColor(color.id)}
+                                    aria-label={`Selectează culoarea ${color.name}`}
+                                    aria-pressed={isActive}
+                                    className={`flex items-center gap-2 px-2 py-1 rounded-full border transition ${isActive ? "border-[var(--color-accent-light)] bg-[var(--color-accent-light)]/10" : "border-[var(--th-text-muted)] hover:border-[var(--color-accent-light)]"}`}
+                                >
+                                    <span
+                                        className="h-5 w-5 rounded-full border border-[var(--th-text-muted)]"
+                                        style={{ backgroundColor: color.value }}
+                                    />
+                                    <span
+                                        className="text-sm text-[var(--th-text-secondary)]"
+                                        style={{ fontFamily: "var(--font-barlow)" }}
+                                    >
+                                        {color.name}
+                                    </span>
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
             </div>
 
             {/* Add to cart */}
             <button
-                onClick={() => cart.addItem(data)}
+                onClick={() => cart.addItem({ ...data, selectedColorId: selectedColor?.id ?? null })}
                 className="mt-10 flex w-full items-center justify-center gap-3 bg-[var(--color-accent-light)] px-8 py-4 text-sm font-semibold text-[var(--th-btn-inverse-text)] transition-all duration-200 hover:bg-[var(--color-accent)] sm:w-auto"
                 style={{ fontFamily: "var(--font-barlow)" }}
             >
@@ -92,7 +109,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
 
             {/* Customize */}
             <Link
-                href={`/configurator?style=${data?.category?.id}&color=${data?.color?.id}`}
+                href={`/configurator?style=${data?.category?.id}${selectedColor ? `&color=${selectedColor.id}` : ""}`}
                 className="mt-4 flex w-full items-center justify-center gap-3 border border-[var(--color-accent-light)] px-8 py-4 text-sm font-semibold text-[var(--color-accent-light)] transition-all duration-200 hover:bg-[var(--color-accent-light)] hover:text-[var(--th-btn-inverse-text)] sm:w-auto"
                 style={{ fontFamily: "var(--font-barlow)" }}
             >

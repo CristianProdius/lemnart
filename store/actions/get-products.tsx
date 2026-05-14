@@ -1,4 +1,5 @@
 import { Product } from "@/types";
+import { normalizeProducts } from "@/lib/normalize-product";
 import qs from 'query-string';
 
 const URL = `${process.env.NEXT_PUBLIC_API_URL}/products`;
@@ -35,7 +36,7 @@ const getProducts = async (query: Query): Promise<Product[]> => {
             console.warn('[GET_PRODUCTS] response was not an array:', data);
             return [];
         }
-        return data;
+        return normalizeProducts(data);
     } catch (err) {
         console.warn('[GET_PRODUCTS]', err);
         return [];

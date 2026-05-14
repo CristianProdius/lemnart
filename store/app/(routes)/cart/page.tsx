@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react";
-import useCart from "@/hooks/use-cart";
+import useCart, { isConfiguredItem } from "@/hooks/use-cart";
 import CartItem from "./components/cart-item";
 import Summary from "./components/summary";
 
@@ -57,7 +57,7 @@ const CartPage = () => {
                         <ul>
                             {cart?.items?.map(item => (
                                 <CartItem
-                                    key={item.id}
+                                    key={isConfiguredItem(item) ? item.id : item.cartLineId}
                                     data={item}
                                 />
                             ))}
