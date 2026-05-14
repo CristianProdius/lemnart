@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { minioClient, MINIO_BUCKET } from "@/lib/minio";
+import { getMinioClient, MINIO_BUCKET } from "@/lib/minio";
 import { randomUUID } from "crypto";
 
 export async function POST(req: Request) {
@@ -24,19 +24,17 @@ export async function POST(req: Request) {
     const objectName = `${randomUUID()}.${ext}`;
 
     // Ensure bucket exists
-    const bucketExists = await minioClient.bucketExists(MINIO_BUCKET);
+    const bucketExists = await getMinioClient().bucketExists(MINIO_BUCKET);
     if (!bucketExists) {
-      await minioClient.makeBucket(MINIO_BUCKET);
+      await getMinioClient().makeBucket(MINIO_BUCKET);
     }
 
-    await minioClient.putObject(MINIO_BUCKET, objectName, buffer, buffer.length, {
+    await getMinioClient().putObject(MINIO_BUCKET, objectName, buffer, buffer.length, {
       "Content-Type": file.type,
     });
 
-    const protocol = process.env.MINIO_USE_SSL === "true" ? "https" : "http";
-    const port = process.env.MINIO_PORT || "9000";
-    const endpoint = process.env.MINIO_ENDPOINT;
-    const url = `${protocol}://${endpoint}:${port}/${MINIO_BUCKET}/${objectName}`;
+    const publicUrl = process.env.MINIO_PUBLIC_URL || "https://minio.lemnartdecor.md";
+    const url = `${publicUrl}/${MINIO_BUCKET}/${objectName}`;
 
     return NextResponse.json({ url });
   } catch (err) {

@@ -20,6 +20,9 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
     volumes:
       - minio_data:/data
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
     networks:
       - internal
 
@@ -44,50 +47,36 @@ services:
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
       MINIO_BUCKET: uploads
+      MINIO_PUBLIC_URL: https://minio.lemnartdecor.md
     networks:
       - internal
-    expose:
-      - "3001"
+    ports:
+      - "127.0.0.1:3001:3001"
 
   store:
     build:
       context: ./store
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: https://admin.lemnartdecor.md/api/ac0031e6-7cc4-4095-b711-c98a52cfcaa6
+        NEXT_PUBLIC_MINIO_HOSTNAME: minio.lemnartdecor.md
+        NEXT_PUBLIC_SITE_URL: https://store.lemnartdecor.md
+        MINIO_USE_SSL: "true"
     restart: unless-stopped
     depends_on:
       - admin
     environment:
-      NEXT_PUBLIC_API_URL: https://admin.lemnartdecor.md/api
-      NEXT_PUBLIC_MINIO_HOSTNAME: minio.lemnartdecor.md
+      NEXT_PUBLIC_API_URL: https://admin.lemnartdecor.md/api/ac0031e6-7cc4-4095-b711-c98a52cfcaa6
       MINIO_USE_SSL: "true"
       NEXT_PUBLIC_SITE_URL: https://store.lemnartdecor.md
     networks:
       - internal
-    expose:
-      - "3002"
-
-  caddy:
-    image: caddy:2-alpine
-    restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
-    networks:
-      - internal
-    depends_on:
-      - admin
-      - store
-      - minio
+      - "127.0.0.1:3002:3002"
 
 volumes:
   postgres_data:
   minio_data:
-  caddy_data:
-  caddy_config:
 
 networks:
   internal:

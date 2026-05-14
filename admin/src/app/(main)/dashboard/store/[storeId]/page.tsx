@@ -26,7 +26,7 @@ export default async function StoreDashboardPage({
   ]);
 
   const chartData = overviewData.chart.map((entry) => ({
-    date: entry.date,
+    date: entry.day,
     revenue: entry.revenue,
   }));
 

@@ -8,8 +8,13 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: process.env.MINIO_USE_SSL === "true" ? "https" : "http",
-        hostname: process.env.MINIO_ENDPOINT || "localhost",
+        protocol: "https",
+        hostname: "minio.lemnartdecor.md",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "9000",
       },
     ],
   },
