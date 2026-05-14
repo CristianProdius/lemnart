@@ -111,6 +111,85 @@ export async function getOverviewData(
   };
 }
 
+// ─── Store Overview Cards ────────────────────────────────────────────────────
+
+export type StoreOverviewCardsData = {
+  totalRevenue: number;
+  totalRevenueChange: number;
+  totalOrders: number;
+  totalOrdersChange: number;
+  uniqueCustomers: number;
+  uniqueCustomersChange: number;
+  avgOrderValue: number;
+  avgOrderValueChange: number;
+};
+
+export async function getStoreOverviewCards(
+  storeId: string
+): Promise<StoreOverviewCardsData> {
+  const now = new Date();
+  const thirtyDaysAgo = subDays(now, 30);
+  const sixtyDaysAgo = subDays(now, 60);
+
+  const [currentOrders, previousOrders] = await Promise.all([
+    prismadb.order.findMany({
+      where: { storeId, createdAt: { gte: thirtyDaysAgo, lte: now } },
+      include: {
+        orderItems: { include: { product: true } },
+        configuredItems: true,
+      },
+    }),
+    prismadb.order.findMany({
+      where: { storeId, createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } },
+      include: {
+        orderItems: { include: { product: true } },
+        configuredItems: true,
+      },
+    }),
+  ]);
+
+  const currentPaid = currentOrders.filter((o) => o.isPaid);
+  const previousPaid = previousOrders.filter((o) => o.isPaid);
+
+  const totalRevenue = currentPaid.reduce(
+    (sum, o) => sum + calculateOrderTotal(o),
+    0
+  );
+  const prevRevenue = previousPaid.reduce(
+    (sum, o) => sum + calculateOrderTotal(o),
+    0
+  );
+
+  const totalOrders = currentOrders.length;
+  const prevTotalOrders = previousOrders.length;
+
+  const currentPhones = new Set(
+    currentOrders.map((o) => o.phone).filter(Boolean)
+  );
+  const prevPhones = new Set(
+    previousOrders.map((o) => o.phone).filter(Boolean)
+  );
+
+  const avgOrderValue =
+    currentPaid.length > 0 ? totalRevenue / currentPaid.length : 0;
+  const prevAvgOrderValue =
+    previousPaid.length > 0 ? prevRevenue / previousPaid.length : 0;
+
+  const pctChange = (curr: number, prev: number) =>
+    prev > 0 ? ((curr - prev) / prev) * 100 : curr > 0 ? 100 : 0;
+
+  return {
+    totalRevenue,
+    totalRevenueChange: pctChange(totalRevenue, prevRevenue),
+    totalOrders,
+    totalOrdersChange: pctChange(totalOrders, prevTotalOrders),
+    uniqueCustomers: currentPhones.size,
+    uniqueCustomersChange: pctChange(currentPhones.size, prevPhones.size),
+    avgOrderValue,
+    avgOrderValueChange: pctChange(avgOrderValue, prevAvgOrderValue),
+  };
+}
+
 // ─── Trends ────────────────────────────────────────────────────────────────────
 
 export type TrendsData = {

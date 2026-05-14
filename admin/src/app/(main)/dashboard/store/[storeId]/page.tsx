@@ -1,3 +1,6 @@
+import { subDays } from "date-fns";
+
+import { getOverviewData, getStoreOverviewCards } from "@/lib/analytics";
 import prismadb from "@/lib/prismadb";
 import { ChartAreaInteractive } from "../../default/_components/chart-area-interactive";
 import { SectionCards } from "../../default/_components/section-cards";
@@ -10,10 +13,22 @@ export default async function StoreDashboardPage({
 }) {
   const { storeId } = await params;
 
-  const blogPosts = await prismadb.blogPost.findMany({
-    where: { storeId },
-    orderBy: { sortOrder: "asc" },
-  });
+  const now = new Date();
+  const ninetyDaysAgo = subDays(now, 90);
+
+  const [cardsData, overviewData, blogPosts] = await Promise.all([
+    getStoreOverviewCards(storeId),
+    getOverviewData(storeId, ninetyDaysAgo, now),
+    prismadb.blogPost.findMany({
+      where: { storeId },
+      orderBy: { sortOrder: "asc" },
+    }),
+  ]);
+
+  const chartData = overviewData.chart.map((entry) => ({
+    date: entry.date,
+    revenue: entry.revenue,
+  }));
 
   const blogPostRows = blogPosts.map((post) => ({
     ...post,
@@ -24,8 +39,8 @@ export default async function StoreDashboardPage({
 
   return (
     <div className="@container/main flex flex-col gap-4 md:gap-6">
-      <SectionCards />
-      <ChartAreaInteractive />
+      <SectionCards data={cardsData} />
+      <ChartAreaInteractive data={chartData} />
       <ContentTabs blogPosts={blogPostRows} />
     </div>
   );

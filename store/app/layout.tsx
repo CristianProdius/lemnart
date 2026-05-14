@@ -1,4 +1,3 @@
-import { OpenPanelComponent } from '@openpanel/nextjs'
 import { Footer, Navbar } from '@/components'
 import './globals.css'
 import type { Metadata } from 'next'
@@ -57,14 +56,6 @@ export default function RootLayout({
         <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-[var(--th-surface)] focus:px-4 focus:py-2 focus:text-sm focus:shadow-lg">
           Salt la conținut
         </a>
-        {process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID && (
-          <OpenPanelComponent
-            clientId={process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID}
-            trackScreenViews={true}
-            trackOutgoingLinks={true}
-            apiUrl="/api/op"
-          />
-        )}
         <OrganizationSchema />
         <ThemeProvider>
           <AnimationProvider>
