@@ -121,23 +121,24 @@ model Category {
 }
 
 model Product {
-  id         String      @id @default(uuid())
-  storeId    String // Foreign Key to Store
-  store      Store       @relation("StoreToProduct", fields: [storeId], references: [id])
-  categoryId String // Foreign Key to Category
-  category   Category    @relation("CategoryToProduct", fields: [categoryId], references: [id])
-  name       String
-  price      Decimal
-  isFeatured Boolean     @default(false)
-  isArchived Boolean     @default(false)
-  sizeId     String // Foreign Key to Size
-  size       Size        @relation(fields: [sizeId], references: [id])
-  colorId    String // Foreign Key to Color
-  color      Color       @relation(fields: [colorId], references: [id])
-  images     Image[] // Relation to Image model
-  orderItems OrderItem[] // Relation to Order model
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id            String         @id @default(uuid())
+  storeId       String // Foreign Key to Store
+  store         Store          @relation("StoreToProduct", fields: [storeId], references: [id])
+  categoryId    String // Foreign Key to Category
+  category      Category       @relation("CategoryToProduct", fields: [categoryId], references: [id])
+  name          String
+  price         Decimal
+  isFeatured    Boolean        @default(false)
+  isArchived    Boolean        @default(false)
+  sizeId        String // Foreign Key to Size
+  size          Size           @relation(fields: [sizeId], references: [id])
+  colorId       String // LEGACY — removed in final cleanup task after backfill + storefront cutover
+  color         Color          @relation(fields: [colorId], references: [id])
+  productColors ProductColor[]
+  images        Image[]
+  orderItems    OrderItem[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
   @@index([storeId])
   @@index([categoryId])
@@ -163,14 +164,19 @@ model Order {
 // Intermediary for a many-to-many relationship
 
 model OrderItem {
-  id        String  @id @default(uuid())
-  orderId   String // Foreign Key to Order
-  order     Order   @relation(fields: [orderId], references: [id])
-  productId String // Foreign Key to Product
-  product   Product @relation(fields: [productId], references: [id])
+  id         String  @id @default(uuid())
+  orderId    String // Foreign Key to Order
+  order      Order   @relation(fields: [orderId], references: [id])
+  productId  String // Foreign Key to Product
+  product    Product @relation(fields: [productId], references: [id])
+  colorId    String?
+  color      Color?  @relation(fields: [colorId], references: [id])
+  colorName  String?
+  colorValue String?
 
   @@index([orderId])
   @@index([productId])
+  @@index([colorId])
 }
 
 model Size {
@@ -187,15 +193,18 @@ model Size {
 }
 
 model Color {
-  id         String      @id @default(uuid())
-  storeId    String // Foreign Key to Store
-  store      Store       @relation("StoreToColor", fields: [storeId], references: [id])
-  name       String
-  value      String
-  products   Product[] // Relation to Product model
-  priceTiers PriceTier[]
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id            String         @id @default(uuid())
+  storeId       String // Foreign Key to Store
+  store         Store          @relation("StoreToColor", fields: [storeId], references: [id])
+  name          String
+  value         String
+  products      Product[] // legacy singular relation — removed in final cleanup task
+  productColors ProductColor[]
+  images        Image[]
+  orderItems    OrderItem[]
+  priceTiers    PriceTier[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
   @@index([storeId])
 }
@@ -204,11 +213,25 @@ model Image {
   id        String   @id @default(uuid())
   productId String // Foreign Key to Product
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  colorId   String? // null = generic image (applies to all colors)
+  color     Color?   @relation(fields: [colorId], references: [id])
   url       String // URL of the image
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([productId])
+  @@index([colorId])
+}
+
+model ProductColor {
+  productId String
+  colorId   String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  color     Color   @relation(fields: [colorId], references: [id])
+
+  @@id([productId, colorId])
+  @@index([productId])
+  @@index([colorId])
 }
 
 model BlogPost {
