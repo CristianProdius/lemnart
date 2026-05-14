@@ -33,11 +33,9 @@ export async function GET (
         if (!product) return NextResponse.json(null);
 
         const { productColors, ...rest } = product;
-        const colors = productColors.map((pc) => pc.color);
         return NextResponse.json({
             ...rest,
-            colors,
-            color: colors[0] ?? null, // legacy compat
+            colors: productColors.map((pc) => pc.color),
         });
     } catch (err) {
         console.log('[PRODUCT_GET]', err)

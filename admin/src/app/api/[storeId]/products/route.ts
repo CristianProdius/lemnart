@@ -111,14 +111,10 @@ export async function GET(
             orderBy: { createdAt: 'desc' },
         });
 
-        const projected = products.map(({ productColors, ...p }) => {
-            const colors = productColors.map((pc) => pc.color);
-            return {
-                ...p,
-                colors,
-                color: colors[0] ?? null, // legacy compat — removed once storefront no longer reads it
-            };
-        });
+        const projected = products.map(({ productColors, ...p }) => ({
+            ...p,
+            colors: productColors.map((pc) => pc.color),
+        }));
 
         return NextResponse.json(projected);
 
