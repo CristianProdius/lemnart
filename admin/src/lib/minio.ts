@@ -15,7 +15,4 @@ export function getMinioClient(): Minio.Client {
   return _minioClient;
 }
 
-/** @deprecated Use getMinioClient() instead */
-export const minioClient = null as unknown as Minio.Client;
-
 export const MINIO_BUCKET = process.env.MINIO_BUCKET || "uploads";

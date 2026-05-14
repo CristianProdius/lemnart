@@ -11,6 +11,11 @@ const nextConfig = {
         protocol: "https",
         hostname: "minio.lemnartdecor.md",
       },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "9000",
+      },
     ],
   },
 };

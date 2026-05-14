@@ -48,7 +48,6 @@ services:
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
       MINIO_BUCKET: uploads
       MINIO_PUBLIC_URL: https://minio.lemnartdecor.md
-      MINIO_PUBLIC_HOSTNAME: minio.lemnartdecor.md
     networks:
       - internal
     ports:
@@ -68,7 +67,6 @@ services:
       - admin
     environment:
       NEXT_PUBLIC_API_URL: https://admin.lemnartdecor.md/api/ac0031e6-7cc4-4095-b711-c98a52cfcaa6
-      NEXT_PUBLIC_MINIO_HOSTNAME: minio.lemnartdecor.md
       MINIO_USE_SSL: "true"
       NEXT_PUBLIC_SITE_URL: https://store.lemnartdecor.md
     networks:
