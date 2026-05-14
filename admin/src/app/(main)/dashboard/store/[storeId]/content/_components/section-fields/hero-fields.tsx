@@ -73,14 +73,6 @@ export function HeroFields({ loading }: { loading: boolean }) {
                     />
                 </div>
             </div>
-            <div className="space-y-2">
-                <Label htmlFor="videoSrc">Video Source</Label>
-                <Input
-                    id="videoSrc"
-                    disabled={loading}
-                    {...register("videoSrc")}
-                />
-            </div>
         </div>
     );
 }

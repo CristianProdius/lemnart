@@ -66,7 +66,7 @@ const AccessoriesStep: React.FC<AccessoriesStepProps> = ({ accessories }) => {
                             >
                                 {isSelected && (
                                     <svg
-                                        className="h-3 w-3 text-white"
+                                        className="h-3 w-3 text-[var(--th-btn-inverse-text)]"
                                         fill="none"
                                         viewBox="0 0 24 24"
                                         stroke="currentColor"

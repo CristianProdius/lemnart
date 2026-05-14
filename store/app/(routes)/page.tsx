@@ -35,8 +35,6 @@ const HomePage = async () => {
                 subtitle={h?.subtitle || "Mascare calorifere din lemn masiv, create manual cu atenție la fiecare detaliu."}
                 cta={{ label: h?.ctaLabel || "Descoperă Colecția", href: h?.ctaHref || "/category/all" }}
                 secondaryLink={{ label: h?.secondaryLabel || "Află mai multe", href: h?.secondaryHref || "/blog" }}
-                videoSrc={h?.videoSrc || "/hero-bg.mp4"}
-                posterSrc="/hero-poster.jpg"
             />
             <Collections categories={categories} products={allProducts} />
             <Process data={processData as { steps: { number: string; title: string; description: string }[] } | null} />

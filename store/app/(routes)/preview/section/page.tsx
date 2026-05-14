@@ -95,7 +95,6 @@ function SectionRenderer({
                               }
                             : undefined
                     }
-                    videoSrc={(data.videoSrc as string) || ""}
                 />
             )
         case "process":

@@ -144,7 +144,7 @@ const Collections: React.FC<CollectionsProps> = ({ categories, products }) => {
     return (
         <section
             ref={sectionRef}
-            className="py-28 md:py-40 bg-[var(--th-surface)] text-[rgb(var(--th-text))]"
+            className="pt-12 pb-28 md:pt-16 md:pb-40 bg-[var(--th-surface)] text-[rgb(var(--th-text))]"
             onMouseMove={handleMouseMove}
         >
                 {/* Cursor-following preview image */}

@@ -1,4 +1,3 @@
-import { Phone, Mail, MapPin } from "lucide-react"
 import getSiteContent from "@/actions/get-site-content"
 import ContactPageClient from "./components/contact-page-client"
 
@@ -43,21 +42,21 @@ const ContactPage = async () => {
             label: "Telefon",
             value: info.phone,
             href: info.phoneHref,
-            icon: Phone,
+            iconName: "phone" as const,
         },
         {
             num: "02",
             label: "Email",
             value: info.email,
             href: info.emailHref,
-            icon: Mail,
+            iconName: "mail" as const,
         },
         {
             num: "03",
             label: "Locație",
             value: info.location,
             href: null,
-            icon: MapPin,
+            iconName: "mapPin" as const,
         },
     ]
 
