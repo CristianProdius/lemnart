@@ -161,15 +161,17 @@ model Order {
 // Intermediary for a many-to-many relationship
 
 model OrderItem {
-  id         String  @id @default(uuid())
+  id         String   @id @default(uuid())
   orderId    String // Foreign Key to Order
-  order      Order   @relation(fields: [orderId], references: [id])
+  order      Order    @relation(fields: [orderId], references: [id])
   productId  String // Foreign Key to Product
-  product    Product @relation(fields: [productId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
   colorId    String?
-  color      Color?  @relation(fields: [colorId], references: [id])
+  color      Color?   @relation(fields: [colorId], references: [id])
   colorName  String?
   colorValue String?
+  quantity   Int      @default(1)
+  unitPrice  Decimal? // immutable price snapshot at checkout time; backfilled, then required for new rows
 
   @@index([orderId])
   @@index([productId])
