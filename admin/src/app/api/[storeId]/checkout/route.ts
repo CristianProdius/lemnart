@@ -4,6 +4,10 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { Prisma } from "@prisma/client";
 
+// MUST stay in sync with store/hooks/use-cart.tsx MAX_QTY. Both apps validate
+// independently because they don't share a module. If you change one, change both.
+const MAX_QTY = 99;
+
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -29,6 +33,7 @@ interface ProductLinePayload {
     productId: string;
     cartLineId?: string;
     selectedColorId: string | null;
+    quantity?: number;
 }
 
 export async function OPTIONS() {
@@ -43,7 +48,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ storeId
     const productLines: ProductLinePayload[] = Array.isArray(body.productLines)
         ? body.productLines
         : (Array.isArray(body.productIds)
-            ? body.productIds.map((id: string) => ({ productId: id, selectedColorId: null }))
+            ? body.productIds.map((id: string) => ({ productId: id, selectedColorId: null, quantity: 1 }))
             : []);
     const configuredItems = body.configuredItems as ConfiguredItemPayload[] | undefined;
 
@@ -59,7 +64,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ storeId
     }
 
     const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
-    const orderItemsCreate: { productId: string; colorId: string | null; colorName: string | null; colorValue: string | null }[] = [];
+    const orderItemsCreate: {
+        productId: string;
+        colorId: string | null;
+        colorName: string | null;
+        colorValue: string | null;
+        quantity: number;
+        unitPrice: Prisma.Decimal | number;
+    }[] = [];
 
     if (hasProducts) {
         const ids = [...new Set(productLines.map((l) => l.productId))];
@@ -74,6 +86,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ storeId
             if (!product) {
                 return new NextResponse(`Product ${line.productId} not found in store`, { status: 400, headers: corsHeaders });
             }
+
+            // Strict quantity validation — silent clamp would create a cart-shows-N-but-Stripe-charges-MAX_QTY
+            // mismatch if the client and server limits drift.
+            const rawQty = line.quantity ?? 1;
+            if (!Number.isInteger(rawQty) || rawQty < 1 || rawQty > MAX_QTY) {
+                return new NextResponse(
+                    `Invalid quantity for product ${line.productId}: ${rawQty} (must be integer in 1..${MAX_QTY})`,
+                    { status: 400, headers: corsHeaders }
+                );
+            }
+            const qty = rawQty;
+
             let selectedColor: { id: string; name: string; value: string } | null = null;
             if (line.selectedColorId) {
                 const match = product.productColors.find((pc) => pc.colorId === line.selectedColorId);
@@ -89,7 +113,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ storeId
 
             const colorSuffix = selectedColor ? ` — ${selectedColor.name}` : "";
             line_items.push({
-                quantity: 1,
+                quantity: qty,
                 price_data: {
                     currency: 'USD',
                     product_data: { name: `${product.name}${colorSuffix}` },
@@ -101,6 +125,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ storeId
                 colorId: selectedColor?.id ?? null,
                 colorName: selectedColor?.name ?? null,
                 colorValue: selectedColor?.value ?? null,
+                quantity: qty,
+                unitPrice: product.price, // immutable snapshot — admin orders page uses this, not current product.price
             });
         }
     }
