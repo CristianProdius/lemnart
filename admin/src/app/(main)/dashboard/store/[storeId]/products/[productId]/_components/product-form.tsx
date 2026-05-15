@@ -16,7 +16,6 @@ import {
 } from "@dnd-kit/core";
 import {
   SortableContext,
-  arrayMove,
   sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
@@ -128,9 +127,10 @@ export const ProductForm: React.FC<ProductFromProps> = ({ initialData, categorie
     const newIdx = imagesArray.fields.findIndex((f) => f.id === over.id);
     if (oldIdx === -1 || newIdx === -1) return;
     imagesArray.move(oldIdx, newIdx);
-    // Re-sequence sortOrder via path-based setValue so we don't regenerate field IDs.
-    const moved = arrayMove(imagesArray.fields, oldIdx, newIdx);
-    moved.forEach((_, i) => form.setValue(`images.${i}.sortOrder`, i, { shouldDirty: true }));
+    // Re-sequence sortOrder via path-based setValue (NOT update/replace) so field IDs stay stable
+    // — imagesArray.move() already mutates the fields array synchronously, so iterating
+    // imagesArray.fields here reflects the post-move order.
+    imagesArray.fields.forEach((_, i) => form.setValue(`images.${i}.sortOrder`, i, { shouldDirty: true }));
   };
 
   const clearImageTagsForColor = (removedColorId: string) => {
@@ -163,7 +163,7 @@ export const ProductForm: React.FC<ProductFromProps> = ({ initialData, categorie
       if (axios.isAxiosError(err) && err.response?.status === 409) {
         toast.error("Acest produs a fost modificat în alt tab. Reîncarcă pagina și reîncearcă.");
       } else if (axios.isAxiosError(err) && err.response?.status === 428) {
-        toast.error("Sesiune expirată. Reîncarcă pagina și reîncearcă.");
+        toast.error("Versiune veche a paginii. Reîncarcă (Ctrl+R) și reîncearcă.");
       } else {
         toast.error("Something went wrong.");
       }
@@ -220,7 +220,9 @@ export const ProductForm: React.FC<ProductFromProps> = ({ initialData, categorie
                       const idx = imagesArray.fields.findIndex((f) => f.url === url);
                       if (idx === -1) return;
                       imagesArray.remove(idx);
-                      // Re-sequence remaining sortOrders so they stay 0..N-1.
+                      // Defer to microtask so RHF settles the post-remove field-array state
+                      // before we re-sequence sortOrder — otherwise the setValue calls can
+                      // race the field-array re-render and write stale indices.
                       queueMicrotask(() => {
                         form.getValues("images").forEach((_, i) => {
                           form.setValue(`images.${i}.sortOrder`, i, { shouldDirty: true });

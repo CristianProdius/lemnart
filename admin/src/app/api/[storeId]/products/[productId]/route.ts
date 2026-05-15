@@ -74,9 +74,20 @@ export async function PATCH (
         // PATCH (delete/recreate of images + productColors). Missing/invalid → 428 Precondition
         // Required (stale browser bundles must reload). Old API callers without the field also
         // hard-fail rather than silently full-replacing.
+        //
+        // Strict ISO-8601 with milliseconds + Z suffix (the shape toISOString() produces). Loose
+        // Date parsing accepts things like "2026", "May 14", or any locale-formatted string,
+        // which would silently produce a Date that never matches the DB and would surface as a
+        // 409 "edited in another tab" — confusing UX for what is actually bad input.
         if (typeof body.expectedUpdatedAt !== 'string') {
             return new NextResponse(
                 "Missing expectedUpdatedAt — reload the form and re-submit.",
+                { status: 428 }
+            );
+        }
+        if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/.test(body.expectedUpdatedAt)) {
+            return new NextResponse(
+                "Invalid expectedUpdatedAt format (expected ISO-8601 UTC) — reload the form and re-submit.",
                 { status: 428 }
             );
         }
@@ -97,6 +108,7 @@ export async function PATCH (
         }));
 
         const product = await prismadb.$transaction(async (tx) => {
+            // 1. Read-side FK validation. Cheap, no row locks acquired.
             const [categoryOk, sizeOk, ownedColors] = await Promise.all([
                 tx.category.count({ where: { id: categoryId, storeId } }),
                 tx.size.count({ where: { id: sizeId, storeId } }),
@@ -108,14 +120,14 @@ export async function PATCH (
                 throw new ValidationError("One or more colors not found in this store");
             }
 
-            await tx.image.deleteMany({ where: { productId } });
-            await tx.productColor.deleteMany({ where: { productId } });
-
-            // Atomic optimistic concurrency. updateMany with the version in WHERE returns
-            // count===0 when the row's updatedAt has moved since the form was loaded. Postgres
-            // takes a row-level lock on the matched row inside this transaction, so two
-            // concurrent PATCH requests serialize: only one matches the version, the other
-            // finds zero matches and gets 409.
+            // 2. Atomic optimistic concurrency — MUST run before any destructive write so a
+            // stale request fast-fails without wasting I/O on deletes that will roll back.
+            // updateMany with the version in WHERE returns count===0 when Product.updatedAt
+            // has moved since the form was loaded. Relies on Postgres READ COMMITTED's
+            // EvalPlanQual semantics: when a concurrent T2 blocks on T1's row lock, T2
+            // re-evaluates the WHERE on unblock against T1's committed (now-fresh) updatedAt
+            // — so the loser sees count=0 and throws 409. Do NOT change isolation level to
+            // REPEATABLE READ without re-validating; that semantics is Postgres-specific.
             const updateResult = await tx.product.updateMany({
                 where: { id: productId, storeId, updatedAt: expectedUpdatedAt },
                 // Do NOT mutate storeId on update — would let a user move a product into their store.
@@ -132,6 +144,9 @@ export async function PATCH (
                 throw new StaleEditError();
             }
 
+            // 3. Destructive work — protected by the version check + the row lock above.
+            await tx.image.deleteMany({ where: { productId } });
+            await tx.productColor.deleteMany({ where: { productId } });
             await tx.image.createMany({ data: sanitizedImages.map((img: { url: string; colorId: string | null; sortOrder: number }) => ({ ...img, productId })) });
             await tx.productColor.createMany({ data: uniqueColorIds.map((cid) => ({ productId, colorId: cid })) });
             return tx.product.findUnique({ where: { id: productId } });
