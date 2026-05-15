@@ -3,8 +3,13 @@ import { ConfiguredItem, Product } from "@/types";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { toast } from "react-hot-toast";
 
+// MUST stay in sync with admin checkout route's MAX_QTY constant. Both apps
+// validate independently because they don't share a module.
+export const MAX_QTY = 99;
+
 interface CartLineProduct extends Product {
     cartLineId: string;
+    quantity: number;
 }
 
 type CartLine = CartLineProduct | ConfiguredItem;
@@ -12,6 +17,7 @@ type CartLine = CartLineProduct | ConfiguredItem;
 interface CartStore {
     items: CartLine[];
     addItem: (data: Product | ConfiguredItem) => void;
+    setQuantity: (cartLineId: string, quantity: number) => void;
     removeItem: (cartLineId: string) => void;
     removeAll: () => void;
 }
@@ -35,23 +41,37 @@ const useCart = create(persist<CartStore>((set, get) => ({
             toast.success("Produs adăugat în coș.");
             return;
         }
-        // Default selectedColorId to the first available color so every callsite
-        // produces a consistent line shape — otherwise dedup, the cart-item
-        // swatch, the configurator deeplink, and the checkout payload all behave
-        // subtly differently for callers that forgot to set it.
         const productData = data as Product;
         const selectedColorId = productData.selectedColorId ?? productData.colors?.[0]?.id ?? null;
-        const dup = currentItems.find((item) => {
+        const existingIdx = currentItems.findIndex((item) => {
             if (isConfiguredItem(item)) return false;
             return item.id === productData.id && (item.selectedColorId ?? null) === selectedColorId;
         });
-        if (dup) {
-            toast("Produsul este deja în coș.");
+        if (existingIdx !== -1) {
+            const next = [...currentItems];
+            const existing = next[existingIdx] as CartLineProduct;
+            if (existing.quantity >= MAX_QTY) {
+                toast(`Cantitatea maximă pe linie este ${MAX_QTY}.`);
+                return;
+            }
+            next[existingIdx] = { ...existing, quantity: existing.quantity + 1 };
+            set({ items: next });
+            toast.success("Cantitate actualizată.");
             return;
         }
-        const line: CartLineProduct = { ...productData, selectedColorId, cartLineId: makeCartLineId() };
+        const line: CartLineProduct = { ...productData, selectedColorId, cartLineId: makeCartLineId(), quantity: 1 };
         set({ items: [...currentItems, line] });
         toast.success("Produs adăugat în coș.");
+    },
+    setQuantity: (cartLineId, quantity) => {
+        const clamped = Math.max(1, Math.min(MAX_QTY, Math.floor(quantity)));
+        set({
+            items: get().items.map((item) => {
+                if (isConfiguredItem(item)) return item;
+                if (item.cartLineId !== cartLineId) return item;
+                return { ...item, quantity: clamped };
+            }),
+        });
     },
     removeItem: (cartLineId) => {
         set({
@@ -65,7 +85,7 @@ const useCart = create(persist<CartStore>((set, get) => ({
 }), {
     name: "cart-storage",
     storage: createJSONStorage(() => localStorage),
-    version: 2,
+    version: 3,
     // Custom merge: shallow-merge persisted state into the live store so the action
     // functions defined in the store factory are NEVER overwritten by hydration.
     merge: (persisted, current) => ({
@@ -99,11 +119,16 @@ const useCart = create(persist<CartStore>((set, get) => ({
             const selectedColorId = typeof item.selectedColorId === "string"
                 ? item.selectedColorId
                 : (legacyColor?.id ?? null);
+            const rawQty = typeof item.quantity === "number" && item.quantity >= 1
+                ? Math.floor(item.quantity)
+                : 1;
+            const quantity = Math.min(MAX_QTY, rawQty);
             return [{
                 ...(item as unknown as Product),
                 colors: colors as Product["colors"],
                 selectedColorId,
                 cartLineId: typeof item.cartLineId === "string" ? item.cartLineId : makeCartLineId(),
+                quantity,
             } as CartLineProduct];
         });
 
