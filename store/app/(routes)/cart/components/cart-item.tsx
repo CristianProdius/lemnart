@@ -1,6 +1,6 @@
 "use client"
 import Currency from '@/components/ui/currency';
-import useCart, { isConfiguredItem, type CartLine } from '@/hooks/use-cart';
+import useCart, { isConfiguredItem, MAX_QTY, type CartLine } from '@/hooks/use-cart';
 import { X } from 'lucide-react';
 import Image from 'next/image';
 
@@ -131,9 +131,30 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
                         })()}
                         <span>{data.size.name}</span>
                     </div>
+                    <div className="mt-3 flex items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={() => cart.setQuantity(data.cartLineId, data.quantity - 1)}
+                            disabled={data.quantity <= 1}
+                            aria-label="Scade cantitatea"
+                            className="flex h-8 w-8 items-center justify-center border border-[var(--th-border)] text-sm hover:bg-[var(--th-bg-secondary)] disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                            −
+                        </button>
+                        <span className="min-w-[2ch] text-center text-sm tabular-nums" aria-live="polite">{data.quantity}</span>
+                        <button
+                            type="button"
+                            onClick={() => cart.setQuantity(data.cartLineId, data.quantity + 1)}
+                            disabled={data.quantity >= MAX_QTY}
+                            aria-label="Crește cantitatea"
+                            className="flex h-8 w-8 items-center justify-center border border-[var(--th-border)] text-sm hover:bg-[var(--th-bg-secondary)] disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                            +
+                        </button>
+                    </div>
                 </div>
                 <div className="mt-4 text-sm tabular-nums text-[var(--color-accent-light)]">
-                    <Currency value={data.price} />
+                    <Currency value={Number(data.price) * data.quantity} />
                 </div>
             </div>
         </li>
