@@ -70,7 +70,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ storeId
         colorName: string | null;
         colorValue: string | null;
         quantity: number;
-        unitPrice: Prisma.Decimal | number;
+        unitPrice: Prisma.Decimal;
     }[] = [];
 
     if (hasProducts) {
