@@ -1,13 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-
-class ValidationError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = 'ValidationError';
-    }
-}
+import { ValidationError } from "@/lib/errors";
 
 export async function POST(
     req: Request,

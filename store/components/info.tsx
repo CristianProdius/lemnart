@@ -61,40 +61,42 @@ const Info: React.FC<InfoProps> = ({ data, selectedColorId, onSelectColor }) => 
                         {data?.size?.value}
                     </span>
                 </div>
-                <div className="flex items-center gap-x-4">
-                    <span
-                        className="text-xs font-medium uppercase tracking-[0.2em] text-[var(--th-text-tertiary)]"
-                        style={{ fontFamily: "var(--font-barlow)" }}
-                    >
-                        Culoare
-                    </span>
-                    <div className="flex items-center gap-2 flex-wrap">
-                        {data.colors.map((color) => {
-                            const isActive = color.id === selectedColor?.id;
-                            return (
-                                <button
-                                    key={color.id}
-                                    type="button"
-                                    onClick={() => onSelectColor(color.id)}
-                                    aria-label={`Selectează culoarea ${color.name}`}
-                                    aria-pressed={isActive}
-                                    className={`flex items-center gap-2 px-2 py-1 rounded-full border transition ${isActive ? "border-[var(--color-accent-light)] bg-[var(--color-accent-light)]/10" : "border-[var(--th-text-muted)] hover:border-[var(--color-accent-light)]"}`}
-                                >
-                                    <span
-                                        className="h-5 w-5 rounded-full border border-[var(--th-text-muted)]"
-                                        style={{ backgroundColor: color.value }}
-                                    />
-                                    <span
-                                        className="text-sm text-[var(--th-text-secondary)]"
-                                        style={{ fontFamily: "var(--font-barlow)" }}
+                {data.colors.length > 0 && (
+                    <div className="flex items-center gap-x-4">
+                        <span
+                            className="text-xs font-medium uppercase tracking-[0.2em] text-[var(--th-text-tertiary)]"
+                            style={{ fontFamily: "var(--font-barlow)" }}
+                        >
+                            Culoare
+                        </span>
+                        <div className="flex items-center gap-2 flex-wrap">
+                            {data.colors.map((color) => {
+                                const isActive = color.id === selectedColor?.id;
+                                return (
+                                    <button
+                                        key={color.id}
+                                        type="button"
+                                        onClick={() => onSelectColor(color.id)}
+                                        aria-label={`Selectează culoarea ${color.name}`}
+                                        aria-pressed={isActive}
+                                        className={`flex items-center gap-2 px-2 py-1 rounded-full border transition ${isActive ? "border-[var(--color-accent-light)] bg-[var(--color-accent-light)]/10" : "border-[var(--th-text-muted)] hover:border-[var(--color-accent-light)]"}`}
                                     >
-                                        {color.name}
-                                    </span>
-                                </button>
-                            );
-                        })}
+                                        <span
+                                            className="h-5 w-5 rounded-full border border-[var(--th-text-muted)]"
+                                            style={{ backgroundColor: color.value }}
+                                        />
+                                        <span
+                                            className="text-sm text-[var(--th-text-secondary)]"
+                                            style={{ fontFamily: "var(--font-barlow)" }}
+                                        >
+                                            {color.name}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
 
             {/* Add to cart */}
