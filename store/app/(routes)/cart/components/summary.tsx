@@ -17,7 +17,7 @@ const Summary = () => {
         if (isConfiguredItem(item)) {
             return total + item.totalPrice;
         }
-        return total + Number(item.price);
+        return total + Number(item.price) * item.quantity;
     }, 0);
 
     useEffect(() => {
@@ -37,6 +37,7 @@ const Summary = () => {
                 productId: item.id,
                 cartLineId: item.cartLineId,
                 selectedColorId: item.selectedColorId ?? null,
+                quantity: item.quantity,
             }];
         });
 
