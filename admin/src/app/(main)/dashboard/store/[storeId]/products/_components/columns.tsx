@@ -24,6 +24,10 @@ export const columns: ColumnDef<ProductColumn>[] = [
     {
         accessorKey: 'colors',
         header: 'Colors',
+        filterFn: (row, _columnId, filterValue: string) => {
+            if (!filterValue) return true;
+            return row.original.colors.some((c) => c.value === filterValue);
+        },
         cell: ({ row }) => (
             <div className='flex items-center gap-2 flex-wrap'>
                 {row.original.colors.map((c) => (

@@ -27,15 +27,25 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[],
   searchKey: string,
+  // Optional controlled mode — when both are provided, the parent owns the
+  // ColumnFiltersState and the search input + parent UI cooperate via the
+  // same source of truth (each mutates only its own column entry).
+  columnFilters?: ColumnFiltersState,
+  onColumnFiltersChange?: (updater: ColumnFiltersState | ((old: ColumnFiltersState) => ColumnFiltersState)) => void,
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  searchKey
+  searchKey,
+  columnFilters: controlledFilters,
+  onColumnFiltersChange: controlledOnChange,
 }: DataTableProps<TData, TValue>) {
 
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [internalFilters, setInternalFilters] = useState<ColumnFiltersState>([]);
+  const isControlled = controlledFilters !== undefined && controlledOnChange !== undefined;
+  const columnFilters = isControlled ? controlledFilters : internalFilters;
+  const setColumnFilters = isControlled ? controlledOnChange : setInternalFilters;
 
   const table = useReactTable({
     data,
