@@ -1,4 +1,5 @@
 import prismadb from "@/lib/prismadb";
+import { orderItemRevenue } from "@/lib/utils";
 
 interface GraphData {
     name: string;
@@ -27,7 +28,7 @@ export const getGraphRevenue = async (storeId: string) => {
         let revenueForOrder = 0;
 
         for (const item of order.orderItems) {
-            revenueForOrder += Number(item.product.price);
+            revenueForOrder += orderItemRevenue(item, { orderId: order.id });
         }
 
         monthlyRevenue[month] = (monthlyRevenue[month] || 0) + revenueForOrder;

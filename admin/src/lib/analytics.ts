@@ -8,7 +8,7 @@ import {
 } from "date-fns";
 
 import prismadb from "@/lib/prismadb";
-import { calculateOrderTotal } from "@/lib/utils";
+import { calculateOrderTotal, orderItemRevenue } from "@/lib/utils";
 
 type OrderWithItems = Awaited<
   ReturnType<typeof prismadb.order.findMany<{
@@ -309,8 +309,9 @@ export async function getTopPerformersData(
         unitsSold: 0,
         revenue: 0,
       };
-      existing.unitsSold += 1;
-      existing.revenue += Number(oi.product.price);
+      const qty = typeof oi.quantity === "number" && oi.quantity >= 1 ? oi.quantity : 1;
+      existing.unitsSold += qty;
+      existing.revenue += orderItemRevenue(oi, { orderId: order.id });
       productMap.set(oi.productId, existing);
     }
   }

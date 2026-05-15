@@ -24,17 +24,52 @@ export const formatter = new Intl.NumberFormat("en-US", {
   currency: "USD"
 });
 
+/**
+ * Compute the revenue contribution of a single OrderItem row.
+ * Uses the immutable `unitPrice` snapshot × `quantity`.
+ * Null `unitPrice` is treated as exceptional (logged, skipped) after the
+ * unitPrice backfill — does NOT fall back to live `product.price`.
+ *
+ * Configured items have a single-row `unitPrice` (already a snapshot) and
+ * implicit quantity=1; callers use `Number(ci.unitPrice)` directly.
+ */
+export function orderItemRevenue(
+  oi: {
+    id?: string;
+    quantity?: number;
+    unitPrice?: unknown | null;
+    product?: { price?: unknown };
+  },
+  context?: { orderId?: string },
+): number {
+  if (oi.unitPrice == null) {
+    console.warn('[ANALYTICS] OrderItem missing unitPrice — skipping from total', {
+      orderId: context?.orderId,
+      orderItemId: oi.id,
+    });
+    return 0;
+  }
+  const qty = typeof oi.quantity === 'number' && oi.quantity >= 1 ? oi.quantity : 1;
+  return Number(oi.unitPrice) * qty;
+}
+
 export function calculateOrderTotal(order: {
-  orderItems: Array<{ product: { price: unknown } }>;
+  id?: string;
+  orderItems: Array<{
+    id?: string;
+    quantity?: number;
+    unitPrice?: unknown | null;
+    product: { price: unknown };
+  }>;
   configuredItems: Array<{ unitPrice: unknown }>;
 }): number {
   const productTotal = order.orderItems.reduce(
-    (total, oi) => total + Number(oi.product.price),
-    0
+    (total, oi) => total + orderItemRevenue(oi, { orderId: order.id }),
+    0,
   );
   const configTotal = order.configuredItems.reduce(
     (total, ci) => total + Number(ci.unitPrice),
-    0
+    0,
   );
   return productTotal + configTotal;
 }
