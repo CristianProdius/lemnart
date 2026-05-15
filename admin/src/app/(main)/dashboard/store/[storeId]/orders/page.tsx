@@ -16,15 +16,23 @@ const OrdersPage = async ({ params }: { params: Promise<{ storeId: string }> }) 
     })
 
     const formattedOrders: OrderColumn[] = orders.map(item => {
-        const productNames = item.orderItems.map((oi) =>
-            oi.colorName ? `${oi.product.name} (${oi.colorName})` : oi.product.name
-        );
+        const productNames = item.orderItems.map((oi) => {
+            const base = oi.colorName ? `${oi.product.name} (${oi.colorName})` : oi.product.name;
+            return oi.quantity > 1 ? `${base} ×${oi.quantity}` : base;
+        });
         const configNames = item.configuredItems.map(
             (ci) => `${ci.styleName} (${ci.width}×${ci.height}cm)`
         );
 
         const productTotal = item.orderItems.reduce(
-            (total, oi) => total + Number(oi.product.price),
+            (total, oi) => {
+                if (oi.unitPrice == null) {
+                    // Should never happen after the OrderItem.unitPrice backfill ran. Log so we notice.
+                    console.warn('[ORDERS_PAGE] OrderItem missing unitPrice', { orderId: item.id, orderItemId: oi.id });
+                    return total; // skip — better to under-report than to retroactively change with live price
+                }
+                return total + Number(oi.unitPrice) * oi.quantity;
+            },
             0
         );
         const configTotal = item.configuredItems.reduce(
