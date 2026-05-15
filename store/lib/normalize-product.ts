@@ -24,7 +24,7 @@ export function normalizeProduct(raw: unknown): Product | null {
             id: typeof img.id === "string" ? img.id : "",
             url: typeof img.url === "string" ? img.url : "",
             colorId: typeof img.colorId === "string" ? img.colorId : null,
-        })).filter((img) => img.url)
+        })).filter((img) => img.url && img.id)
         : [];
 
     return {
