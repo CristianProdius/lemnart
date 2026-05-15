@@ -20,11 +20,21 @@ export function normalizeProduct(raw: unknown): Product | null {
         : (legacyColor ? [legacyColor] : []);
 
     const images: Image[] = Array.isArray(p.images)
-        ? (p.images as Array<Record<string, unknown>>).map((img) => ({
-            id: typeof img.id === "string" ? img.id : "",
-            url: typeof img.url === "string" ? img.url : "",
-            colorId: typeof img.colorId === "string" ? img.colorId : null,
-        })).filter((img) => img.url && img.id)
+        ? (p.images as Array<Record<string, unknown>>)
+            .map((img) => ({
+                id: typeof img.id === "string" ? img.id : "",
+                url: typeof img.url === "string" ? img.url : "",
+                colorId: typeof img.colorId === "string" ? img.colorId : null,
+                sortOrder: typeof img.sortOrder === "number" ? img.sortOrder : undefined,
+            }))
+            .filter((img) => img.url && img.id)
+            // Defensive client-side sort with id tiebreaker. The admin API already orders
+            // images server-side; this guards against a misconfigured cache or stale CDN.
+            .sort((a, b) => {
+                const so = (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
+                if (so !== 0) return so;
+                return a.id.localeCompare(b.id);
+            })
         : [];
 
     return {

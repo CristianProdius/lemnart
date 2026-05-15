@@ -5,10 +5,26 @@ import { useState } from "react";
 import NextImage from "next/image";
 import { useParams, useRouter } from "next/navigation";
 
+import {
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Category, Color, Product, Size } from "@prisma/client";
 import axios from "axios";
-import { Trash } from "lucide-react";
+import { GripVertical, Trash } from "lucide-react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -27,7 +43,7 @@ interface ProductFromProps {
   initialData:
     | (Product & {
         colors: Color[];
-        images: { id?: string; url: string; colorId: string | null }[];
+        images: { id?: string; url: string; colorId: string | null; sortOrder?: number }[];
       })
     | null;
   categories: Category[];
@@ -37,7 +53,14 @@ interface ProductFromProps {
 
 const formSchema = z.object({
   name: z.string().min(1),
-  images: z.object({ url: z.string(), colorId: z.string().nullable().optional() }).array().min(1),
+  images: z
+    .object({
+      url: z.string(),
+      colorId: z.string().nullable().optional(),
+      sortOrder: z.number().int().nonnegative().optional(),
+    })
+    .array()
+    .min(1),
   price: z.coerce.number().min(1),
   categoryId: z.string().min(1),
   colorIds: z.array(z.string().min(1)).min(1, "Pick at least one color"),
@@ -64,7 +87,11 @@ export const ProductForm: React.FC<ProductFromProps> = ({ initialData, categorie
     defaultValues: initialData
       ? {
           name: initialData.name,
-          images: initialData.images.map((i) => ({ url: i.url, colorId: i.colorId ?? null })),
+          images: initialData.images.map((i, idx) => ({
+            url: i.url,
+            colorId: i.colorId ?? null,
+            sortOrder: i.sortOrder ?? idx,
+          })),
           price: parseFloat(String(initialData.price)),
           categoryId: initialData.categoryId,
           colorIds: initialData.colors.map((c) => c.id),
@@ -88,6 +115,24 @@ export const ProductForm: React.FC<ProductFromProps> = ({ initialData, categorie
   const selectedColorIds = useWatch({ control: form.control, name: "colorIds" }) ?? [];
   const imagesArray = useFieldArray({ control: form.control, name: "images" });
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIdx = imagesArray.fields.findIndex((f) => f.id === active.id);
+    const newIdx = imagesArray.fields.findIndex((f) => f.id === over.id);
+    if (oldIdx === -1 || newIdx === -1) return;
+    imagesArray.move(oldIdx, newIdx);
+    // Re-sequence sortOrder via path-based setValue (NOT update/replace) so field IDs stay stable
+    // — imagesArray.move() already mutates the fields array synchronously, so iterating
+    // imagesArray.fields here reflects the post-move order.
+    imagesArray.fields.forEach((_, i) => form.setValue(`images.${i}.sortOrder`, i, { shouldDirty: true }));
+  };
+
   const clearImageTagsForColor = (removedColorId: string) => {
     form.getValues("images").forEach((img, idx) => {
       if (img.colorId === removedColorId) {
@@ -100,15 +145,28 @@ export const ProductForm: React.FC<ProductFromProps> = ({ initialData, categorie
     try {
       setLoading(true);
       if (initialData) {
-        await axios.patch(`/api/${params.storeId}/products/${params.productId}`, data);
+        const payload = {
+          ...data,
+          expectedUpdatedAt:
+            initialData.updatedAt instanceof Date
+              ? initialData.updatedAt.toISOString()
+              : initialData.updatedAt,
+        };
+        await axios.patch(`/api/${params.storeId}/products/${params.productId}`, payload);
       } else {
         await axios.post(`/api/${params.storeId}/products`, data);
       }
       router.refresh();
       router.push(`/dashboard/store/${params.storeId}/products`);
       toast.success(toastMessage);
-    } catch {
-      toast.error("Something went wrong.");
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
+        toast.error("Acest produs a fost modificat în alt tab. Reîncarcă pagina și reîncearcă.");
+      } else if (axios.isAxiosError(err) && err.response?.status === 428) {
+        toast.error("Versiune veche a paginii. Reîncarcă (Ctrl+R) și reîncearcă.");
+      } else {
+        toast.error("Something went wrong.");
+      }
     } finally {
       setLoading(false);
     }
@@ -155,54 +213,52 @@ export const ProductForm: React.FC<ProductFromProps> = ({ initialData, categorie
                   <ImageUpload
                     value={imagesArray.fields.map((f) => f.url)}
                     disabled={loading}
-                    onChange={(url) => imagesArray.append({ url, colorId: null })}
+                    onChange={(url) =>
+                      imagesArray.append({ url, colorId: null, sortOrder: imagesArray.fields.length })
+                    }
                     onRemove={(url) => {
                       const idx = imagesArray.fields.findIndex((f) => f.url === url);
-                      if (idx !== -1) imagesArray.remove(idx);
+                      if (idx === -1) return;
+                      imagesArray.remove(idx);
+                      // Defer to microtask so RHF settles the post-remove field-array state
+                      // before we re-sequence sortOrder — otherwise the setValue calls can
+                      // race the field-array re-render and write stale indices.
+                      queueMicrotask(() => {
+                        form.getValues("images").forEach((_, i) => {
+                          form.setValue(`images.${i}.sortOrder`, i, { shouldDirty: true });
+                        });
+                      });
                     }}
                   />
                 </FormControl>
                 {imagesArray.fields.length > 0 && (
                   <div className="mt-4 space-y-2">
                     <p className="text-sm text-muted-foreground">
-                      Tag each image with the color it represents (or leave as &quot;Generic&quot; to show for all
-                      colors):
+                      Drag the grip handle to reorder. Tag each image with the color it represents (or leave as
+                      &quot;Generic&quot; to show for all colors):
                     </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {imagesArray.fields.map((field, idx) => (
-                        <div key={field.id} className="flex items-center gap-3 border rounded-md p-2">
-                          <div className="relative w-12 h-12 rounded overflow-hidden bg-muted shrink-0">
-                            <NextImage fill className="object-cover" alt="thumb" src={field.url} />
-                          </div>
-                          <Select
-                            value={field.colorId ?? "__generic__"}
-                            onValueChange={(val) => {
-                              const newColorId = val === "__generic__" ? null : val;
-                              // Path-based setValue keeps field.id stable so the row doesn't remount.
-                              form.setValue(`images.${idx}.colorId`, newColorId, { shouldDirty: true });
-                            }}
-                          >
-                            <SelectTrigger className="flex-1">
-                              <SelectValue placeholder="Select color" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="__generic__">Generic (all colors)</SelectItem>
-                              {selectedColors.map((c) => (
-                                <SelectItem key={c.id} value={c.id}>
-                                  <span className="inline-flex items-center gap-2">
-                                    <span
-                                      className="h-3 w-3 rounded-full border"
-                                      style={{ backgroundColor: c.value }}
-                                    />
-                                    {c.name}
-                                  </span>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                      <SortableContext
+                        items={imagesArray.fields.map((f) => f.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        <div className="grid grid-cols-1 gap-2">
+                          {imagesArray.fields.map((field, idx) => (
+                            <SortableImageRow
+                              key={field.id}
+                              id={field.id}
+                              url={field.url}
+                              colorId={field.colorId ?? null}
+                              idx={idx}
+                              selectedColors={selectedColors}
+                              onColorChange={(newColorId) =>
+                                form.setValue(`images.${idx}.colorId`, newColorId, { shouldDirty: true })
+                              }
+                            />
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </SortableContext>
+                    </DndContext>
                   </div>
                 )}
                 <FormMessage />
@@ -377,5 +433,58 @@ export const ProductForm: React.FC<ProductFromProps> = ({ initialData, categorie
         </form>
       </Form>
     </>
+  );
+};
+
+interface SortableImageRowProps {
+  id: string;
+  url: string;
+  colorId: string | null;
+  idx: number;
+  selectedColors: Color[];
+  onColorChange: (newColorId: string | null) => void;
+}
+
+const SortableImageRow: React.FC<SortableImageRowProps> = ({ id, url, colorId, idx, selectedColors, onColorChange }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+  return (
+    <div ref={setNodeRef} style={style} className="flex items-center gap-3 border rounded-md p-2 bg-background">
+      <button
+        type="button"
+        {...attributes}
+        {...listeners}
+        aria-label={`Mută poza ${idx + 1}`}
+        className="cursor-grab touch-none p-1 text-muted-foreground hover:text-foreground"
+      >
+        <GripVertical className="h-4 w-4" />
+      </button>
+      <div className="relative w-12 h-12 rounded overflow-hidden bg-muted shrink-0">
+        <NextImage fill className="object-cover" alt="thumb" src={url} />
+      </div>
+      <Select
+        value={colorId ?? "__generic__"}
+        onValueChange={(val) => onColorChange(val === "__generic__" ? null : val)}
+      >
+        <SelectTrigger className="flex-1">
+          <SelectValue placeholder="Select color" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="__generic__">Generic (all colors)</SelectItem>
+          {selectedColors.map((c) => (
+            <SelectItem key={c.id} value={c.id}>
+              <span className="inline-flex items-center gap-2">
+                <span className="h-3 w-3 rounded-full border" style={{ backgroundColor: c.value }} />
+                {c.name}
+              </span>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 };

@@ -29,9 +29,10 @@ export async function POST(
 
         const uniqueColorIds: string[] = [...new Set<string>(colorIds)];
         const colorIdSet = new Set<string>(uniqueColorIds);
-        const sanitizedImages = images.map((img: { url: string; colorId?: string | null }) => ({
+        const sanitizedImages = images.map((img: { url: string; colorId?: string | null; sortOrder?: number }, idx: number) => ({
             url: img.url,
             colorId: img.colorId && colorIdSet.has(img.colorId) ? img.colorId : null,
+            sortOrder: typeof img.sortOrder === "number" ? img.sortOrder : idx,
         }));
 
         // Validation + write inside a single transaction — closes the TOCTOU window
@@ -96,7 +97,7 @@ export async function GET(
                 ...(colorId ? { productColors: { some: { colorId } } } : {}),
             },
             include: {
-                images: { include: { color: true } },
+                images: { include: { color: true }, orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }] },
                 category: true,
                 size: true,
                 productColors: { include: { color: true } },

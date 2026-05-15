@@ -214,6 +214,7 @@ model Image {
   colorId   String? // null = generic image (applies to all colors)
   color     Color?   @relation(fields: [colorId], references: [id])
   url       String // URL of the image
+  sortOrder Int      @default(0) // position within product's gallery; backfilled from createdAt
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
