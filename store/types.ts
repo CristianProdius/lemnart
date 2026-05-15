@@ -27,6 +27,7 @@ export interface Image {
     id: string;
     url: string;
     colorId: string | null;
+    sortOrder?: number;
 }
 
 export interface Size {

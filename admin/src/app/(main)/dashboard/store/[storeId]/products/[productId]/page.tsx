@@ -7,7 +7,7 @@ const ProductPage = async ({ params }: { params: Promise<{ productId: string, st
     const product = await prismadb.product.findUnique({
         where: { id: productId },
         include: {
-            images: { include: { color: true } },
+            images: { include: { color: true }, orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }] },
             productColors: { include: { color: true } },
         },
     });
@@ -16,7 +16,7 @@ const ProductPage = async ({ params }: { params: Promise<{ productId: string, st
         ? {
             ...product,
             colors: product.productColors.map((pc) => pc.color),
-            images: product.images.map((img) => ({ id: img.id, url: img.url, colorId: img.colorId })),
+            images: product.images.map((img) => ({ id: img.id, url: img.url, colorId: img.colorId, sortOrder: img.sortOrder })),
         }
         : null;
 
